@@ -1,0 +1,68 @@
+################################################################################
+# Makefile for generating:
+# 1) XML and CSV mapping of Alarm strings
+# 2) XML mapping of Product Verification strings
+# 3) CSV mapping of GUI Screen IDs
+# 4) CSV mapping of GUI Button IDs
+################################################################################
+
+MAINDIR = ../..
+GUI_DIR = $(MAINDIR)/gui
+
+# The files to be generated
+#
+XML_FILES   = alarmList.xml productVerificationStrs.xml
+GUI_ID_MAPS = guiScreenIds.csv guiButtonIds.csv
+CSV_FILES   = alarmList.csv $(GUI_ID_MAPS) 
+INP_FILE    = strfiles.tmp
+TMP_FILES   = $(XML_FILES:.xml=.tmp) $(INP_FILE) gui.pp guimaps.tmp
+
+# Paths to the string info files in DOS format
+STRING_FILES = $(addprefix $(subst /,\,$(LANGDIR))\, $(LANGS))
+
+# Need to use gawk
+AWK = gawk
+
+ADDN_INCDIR = -I $(MAINDIR)/trima_common
+
+.PHONY: all guiIdMaps
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+all: $(XML_FILES) guiIdMaps
+endif
+
+include $(MAINDIR)/makefile.vxc
+
+# Get definition of LANGS
+include $(GUI_DIR)/stringFiles.vx
+
+# This is a temporary file used as input to the awk scripts
+#
+$(INP_FILE): $(STRING_FILES)
+	@cmd /c "dir /b $^" > $@	
+	
+# Note: alarmReport.awk also generates alarmList.csv
+#
+alarmList.xml: $(INP_FILE)
+	@echo x Generating: $@
+	$(Q)$(AWK) -f alarmReport.awk -f common.awk $^ > $@ 2>$(@:.xml=.tmp) 
+
+productVerificationStrs.xml: $(INP_FILE) 
+	@echo x Generating: $@
+	$(Q)$(AWK) -f mkProdVerifyStrs.awk -f common.awk $^ > $@ 2>$(@:.xml=.tmp) 
+
+# Note: mkGuiIdMaps.awk generates all of the $(GUI_ID_MAPS) in one pass
+#
+guiIdMaps: gui.pp
+	@echo x Generating: $(GUI_ID_MAPS)
+	$(Q)$(AWK) -f mkGuiIdMaps.awk -f common.awk $< 2>guimaps.tmp
+
+# This generates C++ pre-processor output required for $(GUI_ID_MAPS)
+#
+gui.pp: $(GUI_DIR)/gui.cpp $(GUI_DIR)/gui.h
+	$(Q)$(CXX) -E $(CXXFLAGS) $(BUILD_OPTIONS) $< > $@
+
+clean:
+	@rm -f $(XML_FILES) $(CSV_FILES) $(TMP_FILES)

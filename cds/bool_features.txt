@@ -1,0 +1,31 @@
+#
+# Format: EnumName ID ConfigFileLabel StringLabel Permission[SERVICE|RND_ONLY|ANYONE]
+# 
+BOOL_FEATURE_FILE_TABLE_START
+EnableScreenshotButton                  0  enable_screenshot_button                    textEnableScreenshotButton                 RND_ONLY 
+ApsHighSpeedLogEnable                   1  aps_high_speed_log_enable                   textApsHighSpeedLogEnable                  RND_ONLY
+CpsHighSpeedLogEnable                   2  cps_high_speed_log_enable                   textCpsHighSpeedLogEnable                  RND_ONLY
+SelectScreenDisplayPlateletVolume       4  select_screen_display_platelet_volume       textSelectScreenDisplayPlateletVolume      SERVICE
+AllowAdjustFlowRatesOnProcedureSelect   5  allow_adjust_flow_rates_on_procedure_select textAllowAdjustFlowRatesOnProcedureSelect  SERVICE
+ConfirmAcConnection                     6  confirm_ac_connection                       textConfirmAcConnection                    SERVICE
+DisplayResidualVolumes                  8  display_residual_volumes                    textDisplayResidualVolumes                 SERVICE
+PostcountPlateletMobilizationAlgorithm  9  postcount_platelet_mobilization_algorithm   textPostcountPlateletMobilizationAlgorithm SERVICE
+AiroutMitigation                        10 airout_mitigation                           textAiroutMitigation                       SERVICE
+AmapPlateletsAvailable                  11 amap_platelets_available                    textAmapPlateletsAvailable                 SERVICE
+ComplementaryPlasmaAvailable            12 complementary_plasma_available              textComplementaryPlasmaAvailable           SERVICE
+EnableVistaCfr11PinLogging              14 cfr11_pin_logging                           textEnableVistaCfr11PinLogging             RND_ONLY
+AllowExtraWbcMessages                   15 allow_extra_wbc_messages                    textAllowExtraWbcMessage                   SERVICE
+ServiceModePeriodicLog                  16 service_mode_periodic_log                   textServiceModePeriodicLog                 SERVICE
+SpecialBlackStampNeedle                 20 special_black_stamp_needle                  textSpecialBlackStampNeedle                SERVICE
+PloFlag                                 21 plo_flag                                    textPloFlag                                SERVICE
+PloPcaFlag                              22 plopca_flag                                 textPloPca                                 SERVICE
+#ApsAlarmDetectPosPressure              23 this feature is obsolete per IT13457
+ShowPlasmaVolume                        24 show_plasma_volume                          textShowPlasmaVolume                       SERVICE
+ExtraPlasmaNoAc                         25 extra_plasma_no_ac                          textExtraPlasmaNoAc                        SERVICE
+JapanFeatures                           26 japan_features                              textJapanFeatures                          SERVICE
+AllowAutoConfPlasmaProcs                27 allow_auto_conf_plasma_procs                textAllowAutoConfPlasmaProcs               SERVICE
+ProcedureConfirmPopup                   28 procedure_confirmation_popup                textProcConfirmPopup                       SERVICE
+ConfirmPasBagBarcodeScan                29 confirm_pas_bag_barcode_scan                textPasBagBarcodeScanFeature               SERVICE
+PIRPreferred                            30 pir_preferred                               textPIRPreferred                           SERVICE
+TriplePpcFlag                           31 triple_ppc_flag                             textTriplePpcFlag                          SERVICE
+BOOL_FEATURE_TABLE_END

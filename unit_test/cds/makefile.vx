@@ -1,0 +1,86 @@
+# $Header: I:/BCT_Development/vxWorks/Trima/unit_test/cds/rcs/makefile.vx 1.14 2002/10/16 20:27:19Z rm70006 Exp rm70006 $
+#
+# Makefile - makefile for the cds unit_test library
+#
+# $Log: makefile.vx $
+# Revision 1.14  2002/10/16 20:27:19Z  rm70006
+# Fix dependency problem.  Remove unneeded stuff.
+# Revision 1.13  2002/09/13 20:10:18Z  rm70006
+# Updated unit test.
+# Revision 1.12  2002/08/23 15:01:09Z  rm70006
+# Added system setup file.
+# Revision 1.11  2002/08/20 19:17:57Z  rm70006
+# Put libs back into the build list
+# Revision 1.10  2002/08/15 21:11:47Z  jl11312
+# - updated for new makefile templates
+# Revision 1.9  2002/08/09 17:51:29  rm70006
+# Remove other reference to datalogger lib
+# Revision 1.8  2002/08/09 17:19:53Z  rm70006
+# Removed dependency to deprecated library.
+# Revision 1.7  2002/08/09 16:37:18Z  rm70006
+# Changed LIBDIR path for copy
+# Revision 1.6  2002/08/09 16:08:56Z  rm70006
+# Added extra dependencies for logging system
+# Revision 1.5  2002/06/26 15:54:45Z  rm70006
+# John moved common_cds
+# Revision 1.4  2002/06/24 19:49:54Z  rm70006
+# Finished unit test.
+# Revision 1.3  2002/06/17 18:46:41Z  rm70006
+# Changed cds test class to match changes made to datastore class.
+# Revision 1.2  2002/06/04 17:19:54Z  rm70006
+# Updated test code.
+# Revision 1.1  2002/05/28 19:25:37Z  rm70006
+# Initial revision
+#
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I$(MAINDIR)/trima_common -I$(MAINDIR)/cds -I$(COMDIR)/include 
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all local_build
+all: check_opt_change libs local_build
+endif
+
+include $(MAINDIR)/makefile.vxc
+
+#
+# Definitions required for building CDS Test
+#
+APP_NAME := cds_test
+cds_test_dir  = ..\bin
+cds_test_map  = cds_test.map
+cds_test_libs = $(addprefix $(LIBDIR)/lib, trima_common.a)
+cds_test_c_files =
+cds_test_cxx_files = cds_test.cpp config_cds_test.cpp cds_timing_test.cpp pfr_test.cpp
+include $(MAINDIR)/makefile.process_app
+
+#
+# cd must use \ (DOS/Windows # style) directory separators if they are needed.
+#
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\cds && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\config && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+
+local_build: $(APP_LIST)
+include $(MAINDIR)/makefile.build_apps
+

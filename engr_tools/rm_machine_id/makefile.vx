@@ -1,0 +1,50 @@
+#
+# Makefile - makefile for Machine ID removal utility
+#
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+all: check_opt_change app
+endif
+
+#
+# Local overrides - must be defined before including makefile.vxc
+#
+ADDN_INCDIR = -I..\..\trima_common
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME   := rm_machine_id
+rm_machine_id_dir  = bin
+rm_machine_id_map  = rm_machine_id.map
+rm_machine_id_cxx_files = updateTrima.cpp
+rm_machine_id_libs = $(COMDIR)/softcrc/lib/libsoftcrc.a
+include $(MAINDIR)/makefile.process_app
+
+ADDN_CLEAN := $(rm_machine_id_dir)/updateTrima
+
+#
+# This is the rule that copies update.out to updateTrima
+#
+$(rm_machine_id_dir)/updateTrima: $(APP_LIST)
+	$(Q)cp -f $< $@
+
+app : $(APP_LIST) $(rm_machine_id_dir)/updateTrima
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps

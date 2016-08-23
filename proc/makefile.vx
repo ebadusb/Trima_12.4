@@ -1,0 +1,296 @@
+################################################################################
+#
+# Makefile for Proc apps and libraries
+#
+################################################################################
+
+#
+# Define include directories needed for apps built in this directory
+#
+ifeq ($(CPU),SIMNT)
+ADDN_INCDIR = -I..\trima_common -Iproc -Ialgorithm -Iinterface -Ihal -Imonitor -I..\cds -I$(COMDIR)\include
+else
+ADDN_INCDIR = -I..\trima_common -Iproc -Ialgorithm -Iinterface -Ihal -Ialarm -Imonitor -I..\cds -I$(COMDIR)\include
+endif
+ADDN_LDFLAGS = -split-by-reloc=8000
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+
+#
+# VPATH must include the relative pathnames (from the directory containing this
+# makefile) to any directories containing source files used for the applications.
+#
+vpath %.cpp alarm:proc
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: local_libs clean
+else
+ifeq ($(CPU),SIMNT)
+all: check_opt_change libs
+else
+all: check_opt_change libs apps
+endif
+endif
+
+include $(MAINDIR)/makefile.vxc 
+
+ifeq ($(CPU),SIMNT)
+
+# Exclude all the app stuff if this is the simulator.
+DIR_LIST = interface algorithm predict
+
+.PHONY: clean
+clean:
+
+else
+
+# Otherwise, build all of the proc apps and libraries
+DIR_LIST = interface algorithm hal alarm monitor predict
+
+PROC_CPP_FILES = \
+proc/proc.cpp \
+proc/statecontrol.cpp \
+proc/startprotocol.cpp \
+proc/startuptest.cpp \
+proc/pfr.cpp \
+proc/pfinit.cpp \
+proc/pfpowertest.cpp \
+proc/pfrecover.cpp \
+proc/pfbranch.cpp \
+proc/calibverification.cpp \
+proc/powertest.cpp \
+proc/safetypowertest.cpp \
+proc/powerontest.cpp \
+proc/valvestest.cpp \
+proc/leakdetectortest.cpp \
+proc/doorlatchtest.cpp \
+proc/guistarted.cpp \
+proc/operatorresponse.cpp \
+proc/loadcassette.cpp \
+proc/centrifugetests.cpp \
+proc/safetypowertest_64v.cpp \
+proc/centshutdowntest.cpp \
+proc/openvalves.cpp \
+proc/startpumps.cpp \
+proc/lowercassette.cpp \
+proc/stoppumps.cpp \
+proc/cassetteid.cpp \
+proc/lowernotification.cpp \
+proc/unloadcassette.cpp \
+proc/raisecassette.cpp \
+proc/disposabletest.cpp \
+proc/closevalves.cpp \
+proc/closevalvesanddisconnect.cpp \
+proc/pressinletline.cpp \
+proc/inletpresstest.cpp \
+proc/inletPressTest2.cpp \
+proc/inletdecaytest.cpp \
+proc/negativepresstest.cpp \
+proc/connectac.cpp \
+proc/acprime.cpp \
+proc/acprimeinlet.cpp \
+proc/acpressreturnline.cpp \
+proc/connectdonor.cpp \
+proc/donorconnected.cpp \
+proc/bloodprime.cpp \
+proc/bloodprimeinlet.cpp \
+proc/bloodprimereturn.cpp \
+proc/evacendsetvalves.cpp \
+proc/evacendresetvalves.cpp \
+proc/evacuatebags.cpp \
+proc/evacuatesetvalves.cpp \
+proc/bloodrun.cpp \
+proc/primechannel.cpp \
+proc/primechannel2.cpp \
+proc/primechannel2a.cpp \
+proc/primechannel3.cpp \
+proc/primechannel4.cpp \
+proc/primevent.cpp \
+proc/rampcentrifuge.cpp \
+proc/primeairout1.cpp \
+proc/primeairout2.cpp \
+proc/collect.cpp \
+proc/prerinseback.cpp \
+proc/normalrinseback.cpp \
+proc/rinsebacklower.cpp \
+proc/rinsebackrecirculate.cpp \
+proc/rinsebackreservoir.cpp \
+proc/rinseback.cpp \
+proc/plasmarinseback.cpp \
+proc/plsrinsebackspillover.cpp \
+proc/plsrinsebackno1.cpp \
+proc/plsrinsebackrinse.cpp \
+proc/plsrinsebackrecirculate.cpp \
+proc/plsrinsebackreservoir.cpp \
+proc/plsrinsebackno2.cpp \
+proc/plsrinsebackpurge.cpp \
+proc/plsrinsebackevacuate.cpp \
+proc/disconnectprompt.cpp \
+proc/donordisconnect.cpp \
+proc/postrun.cpp \
+proc/postrundisplay.cpp \
+proc/recoveryman.cpp \
+proc/recoveryabs.cpp \
+proc/airblock.cpp \
+proc/centrifugeSpinTest.cpp \
+proc/clearline.cpp \
+proc/plasmavalvemotion.cpp \
+proc/pumpspause.cpp \
+proc/rbcchamberpurge.cpp \
+proc/rbcspillover.cpp \
+proc/salinebolus.cpp \
+proc/salinedrawrecovery.cpp \
+proc/salineprime.cpp \
+proc/settlechannel.cpp \
+proc/wbcchamberpurge.cpp \
+proc/meteredStorage.cpp  \
+proc/mssSetup.cpp  \
+proc/verifyClosure3.cpp  \
+proc/resSetup.cpp  \
+proc/resSetup2.cpp  \
+proc/resSetup3.cpp  \
+proc/mssConnect.cpp  \
+proc/mssPrime.cpp  \
+proc/mssPLTPrimeSalvage.cpp  \
+proc/mssPLTPrime1.cpp  \
+proc/mssPLTPrime2.cpp  \
+proc/mssPLT.cpp  \
+proc/vacPurge.cpp  \
+proc/vacPurgeFinal.cpp  \
+proc/mssPltAdditionPause.cpp \
+proc/mssPLTAddition.cpp  \
+proc/mssParallelProcessing.cpp \
+proc/mssAddition.cpp  \
+proc/mssPFR.cpp \
+proc/mssDisconnect.cpp \
+proc/mssRBCAddition.cpp  \
+proc/mssRBCPrime1.cpp  \
+proc/mssRBCPrimeSalvage.cpp \
+proc/verifyClosure.cpp \
+proc/disposableTest1.cpp \
+proc/disposableTest2.cpp \
+proc/inletDecayTest2.cpp \
+proc/pressInletLine2.cpp \
+proc/closeCrossoverClamp.cpp \
+proc/pressInletLine3.cpp \
+proc/checkSampleBag.cpp \
+proc/pasFinalFlowVerification.cpp \
+proc/salinerinseback.cpp \
+proc/salRecirc1.cpp  \
+proc/salEvac1.cpp  \
+proc/salineDraw.cpp \
+proc/salRecirc2.cpp  \
+proc/salEvac2.cpp  \
+proc/salineFlush.cpp \
+proc/salCheckConnect.cpp \
+proc/unlockdoor.cpp \
+proc/ptfcpshigh_recovery.cpp  \
+proc/PlsEvacFinished.cpp \
+proc/PltBagEvac.cpp \
+proc/air2Channel.cpp \
+proc/air2Channel2.cpp \
+proc/air2ChannelPrime.cpp \
+proc/air2ChannelPrime2.cpp \
+proc/PltBagEvacPressureRelief.cpp \
+proc/doorLockCheck.cpp \
+proc/negativepressrelief.cpp \
+proc/evacendsetvalvesAirMitigation.cpp \
+proc/evacendsetvalvesAirMitigationBlack.cpp \
+proc/showClampingForARM.cpp              \
+proc/centrifugeSpeedRecoveryAbs.cpp \
+proc/centrifugeRBCRecovery.cpp \
+proc/centrifugeslowscaled.cpp \
+proc/centrifugestopscaled.cpp \
+proc/clearlineabs.cpp \
+proc/clearlinescaled.cpp 
+
+
+#
+# Definitions required for building proc.out
+#
+APP_NAME := proc
+proc_dir = bin
+proc_map = proc.map
+proc_c_files =
+proc_cxx_files = $(PROC_CPP_FILES)
+proc_libs = $(addprefix $(LIBDIR)/lib, proc_alarm.a proc_quality.a proc_interface.a proc_algorithm.a proc_hal.a trima_common.a)
+proc_lib_list = 
+include $(MAINDIR)/makefile.process_app
+
+#
+#  Definitions required for building alarmhandler.out
+#
+APP_NAME := alarmhandler
+alarmhandler_dir = bin
+alarmhandler_map = alarmhandler.map
+alarmhandler_c_files =
+alarmhandler_cxx_files = alarm/alarm_h.cpp
+alarmhandler_libs = $(addprefix $(LIBDIR)/lib, proc_interface.a proc_algorithm.a proc_hal.a trima_common.a)
+alarmhandler_lib_list =
+include $(MAINDIR)/makefile.process_app
+
+#
+#  Definitions required for building retoccmon.out
+#
+APP_NAME := retoccmon
+retoccmon_dir = bin
+retoccmon_map = returnoccmon.map
+retoccmon_c_files =
+retoccmon_cxx_files = alarm/retoccmon.cpp
+retoccmon_libs = $(addprefix $(LIBDIR)/lib, proc_interface.a proc_algorithm.a proc_hal.a trima_common.a)
+retoccmon_lib_list =
+include $(MAINDIR)/makefile.process_app
+
+include $(MAINDIR)/makefile.build_apps
+
+apps: $(APP_LIST)
+
+#
+# Define the dependencies for parallel makes
+#
+$(proc_libs)         : $(DIR_LIST)
+$(alarmhandler_libs) : interface algorithm hal
+$(retoccmon_libs)    : interface algorithm hal
+
+#
+# caldat_default.h must be generated before processing calibverification.cpp
+#
+.dfile/calibverification.d : proc/caldat_default.h
+proc/caldat_default.h: $(MAINDIR)/trima_common/cal.dat
+	@echo Generating $@
+	@rm -f $@
+	@sed -n "s/^aps_raw_pos=/#define CAL_DAT_DEFAULT_APS_RAW_POS /p" < $< >> $@
+	@sed -n "s/^aps_raw_ref=/#define CAL_DAT_DEFAULT_APS_RAW_REF /p" < $< >> $@
+	@sed -n "s/^aps_raw_neg=/#define CAL_DAT_DEFAULT_APS_RAW_NEG /p" < $< >> $@
+	@sed -n "s/^cps_gain=/#define CAL_DAT_DEFAULT_CPS_GAIN /p" < $< >> $@
+	@sed -n "s/^cps_offset=/#define CAL_DAT_DEFAULT_CPS_OFFSET /p" < $< >> $@
+	@sed -n "s/^init_red_drive=/#define CAL_DAT_DEFAULT_RBC_INIT_RED_DRIVE /p" < $< >> $@
+	@sed -n "s/^init_green_drive=/#define CAL_DAT_DEFAULT_RBC_INIT_GREEN_DRIVE /p" < $< >> $@
+
+# the following endif is for the preceding ifeq ($(CPU),SIMNT)
+endif
+
+.PHONY: libs
+libs: local_libs
+	@cd ..\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+.PHONY: local_libs
+local_libs : $(DIR_LIST)
+
+predict : interface algorithm
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+	@$(MAKE) --directory $@ -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)

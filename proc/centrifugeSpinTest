@@ -1,0 +1,7 @@
+#
+# CentrifugeSpinTest is a simple state machine with no sub-states which
+# DisposableTest runs in parallel (it has a CentrifugeSpinTest member,
+# which it manages internally). However, this file is left as a stub should
+# the CentrifugeSpinTest ever need to have sub-states.
+#
+# [state]    CentrifugeSpinTest_SubState1 

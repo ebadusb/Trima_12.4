@@ -1,0 +1,13 @@
+# FILENAME: parser08.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/22/99 - dyes - initial version
+
+# verify error message if -test name not found
+
+SUITE parser08_suite
+
+
+TEST parser08_test
+RUN echo "parser08_test should not run"
+

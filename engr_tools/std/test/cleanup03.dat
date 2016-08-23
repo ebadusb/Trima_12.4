@@ -1,0 +1,15 @@
+# FILENAME: cleanup03.dat
+# PURPOSE: test's std's CLEANUP command can be backgrounded
+# CHANGELOG:
+#   11/24/99 - dyes - initial version
+
+
+SUITE cleanup03_suite
+
+
+TEST cleanup03_test
+RUN echo "setup03 run"
+CLEANUP echo "cleanup03 cleanup" &
+CLEANUP sleep 1
+
+

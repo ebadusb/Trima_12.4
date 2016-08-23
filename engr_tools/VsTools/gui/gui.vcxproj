@@ -1,0 +1,418 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="I80486|Win32">
+      <Configuration>I80486</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2474277E-2754-4645-AE77-F36446B04585}</ProjectGuid>
+    <RootNamespace>gui</RootNamespace>
+    <SccProjectName>Perforce Project</SccProjectName>
+    <SccLocalPath>..\..\..</SccLocalPath>
+    <SccProvider>MSSCCI:Perforce SCM</SccProvider>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug486|Win32'">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'">
+    <IncludePath>$(IncludePath);$(WIND_BASE)\target\h;$(COMDIR)\Include;..\..\..\trima_common;..\..\..\cds</IncludePath>
+    <NMakeBuildCommandLine>build.bat CPU=I80486 RMSGDIR=../.rmsg</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>build.bat CPU=I80486 BUILD_TYPE=CLEAN RMSGDIR=../.rsmg</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug486|Win32'">
+    <NMakeBuildCommandLine>..\build.bat trima_common CPU=I80486 RMSGDIR=../.rmsg</NMakeBuildCommandLine>
+    <IncludePath>$(COMDIR)\include;$(WIND_BASE)\target\h;..\..\..\trima_common;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\gui\aasAddition.cpp" />
+    <ClCompile Include="..\..\..\gui\aasChannelTest.cpp" />
+    <ClCompile Include="..\..\..\gui\aasClampChannel.cpp" />
+    <ClCompile Include="..\..\..\gui\aasConnectPas.cpp" />
+    <ClCompile Include="..\..\..\gui\aasConnectRas.cpp" />
+    <ClCompile Include="..\..\..\gui\aasPrime.cpp" />
+    <ClCompile Include="..\..\..\gui\aasRunInfo.cpp" />
+    <ClCompile Include="..\..\..\gui\aasRunSummary.cpp" />
+    <ClCompile Include="..\..\..\gui\aasTransitionDummy.cpp" />
+    <ClCompile Include="..\..\..\gui\abortcnf.cpp" />
+    <ClCompile Include="..\..\..\gui\acConnectConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\actiocol.cpp" />
+    <ClCompile Include="..\..\..\gui\alarm.cpp" />
+    <ClCompile Include="..\..\..\gui\alarmhdl.cpp" />
+    <ClCompile Include="..\..\..\gui\alarmtb.cpp" />
+    <ClCompile Include="..\..\..\gui\aphcalbk.cpp" />
+    <ClCompile Include="..\..\..\gui\aphwind.cpp" />
+    <ClCompile Include="..\..\..\gui\audiofb.cpp" />
+    <ClCompile Include="..\..\..\gui\barcode_cartouche.cpp" />
+    <ClCompile Include="..\..\..\gui\barcode_reader.cpp" />
+    <ClCompile Include="..\..\..\gui\barcode_repository.cpp" />
+    <ClCompile Include="..\..\..\gui\barcode_screen.cpp" />
+    <ClCompile Include="..\..\..\gui\bio_mgr.cpp" />
+    <ClCompile Include="..\..\..\gui\bitmap.cpp" />
+    <ClCompile Include="..\..\..\gui\bitmapTextBox.cpp" />
+    <ClCompile Include="..\..\..\gui\blinkCollection.cpp" />
+    <ClCompile Include="..\..\..\gui\btncanc.cpp" />
+    <ClCompile Include="..\..\..\gui\btncont.cpp" />
+    <ClCompile Include="..\..\..\gui\btngobk.cpp" />
+    <ClCompile Include="..\..\..\gui\btnlowl.cpp" />
+    <ClCompile Include="..\..\..\gui\button_bitmap.cpp" />
+    <ClCompile Include="..\..\..\gui\bwindow.cpp" />
+    <ClCompile Include="..\..\..\gui\cassetteDeleteConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\cassette_mgr.cpp" />
+    <ClCompile Include="..\..\..\gui\category_button.cpp" />
+    <ClCompile Include="..\..\..\gui\category_button_collection.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_butt.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_discrete_button.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_dono.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_kstr.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_lang.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_listener.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_look.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_mach.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_main.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_mss.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_plas.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_plat.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_plt_amap.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_priority.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_proc.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_rbc.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_repl.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_textabove_button.cpp" />
+    <ClCompile Include="..\..\..\gui\cfg_volume.cpp" />
+    <ClCompile Include="..\..\..\gui\cfr11_screen.cpp" />
+    <ClCompile Include="..\..\..\gui\cfr_list.cpp" />
+    <ClCompile Include="..\..\..\gui\cgui_pool_allocator.cpp" />
+    <ClCompile Include="..\..\..\gui\chldsele.cpp" />
+    <ClCompile Include="..\..\..\gui\chldstak.cpp" />
+    <ClCompile Include="..\..\..\gui\clampCrossover.cpp" />
+    <ClCompile Include="..\..\..\gui\config_keypad.cpp" />
+    <ClCompile Include="..\..\..\gui\config_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\confirmBoxBase.cpp" />
+    <ClCompile Include="..\..\..\gui\confirmDonInfo.cpp" />
+    <ClCompile Include="..\..\..\gui\confirm_box.cpp" />
+    <ClCompile Include="..\..\..\gui\contConfCyc.cpp" />
+    <ClCompile Include="..\..\..\gui\datfile_reader.cpp" />
+    <ClCompile Include="..\..\..\gui\defscrn.cpp" />
+    <ClCompile Include="..\..\..\gui\discmetr.cpp" />
+    <ClCompile Include="..\..\..\gui\disconn.cpp" />
+    <ClCompile Include="..\..\..\gui\discrete_button.cpp" />
+    <ClCompile Include="..\..\..\gui\display_text.cpp" />
+    <ClCompile Include="..\..\..\gui\donconn.cpp" />
+    <ClCompile Include="..\..\..\gui\doninfo.cpp" />
+    <ClCompile Include="..\..\..\gui\donordat.cpp" />
+    <ClCompile Include="..\..\..\gui\donorDataItems.cpp" />
+    <ClCompile Include="..\..\..\gui\donvital.cpp" />
+    <ClCompile Include="..\..\..\gui\drbcSplit.cpp" />
+    <ClCompile Include="..\..\..\gui\dynamicListbox.cpp" />
+    <ClCompile Include="..\..\..\gui\extended_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\fontdefs.cpp" />
+    <ClCompile Include="..\..\..\gui\frmtdate.cpp" />
+    <ClCompile Include="..\..\..\gui\frmtdec.cpp" />
+    <ClCompile Include="..\..\..\gui\frmtstr.cpp" />
+    <ClCompile Include="..\..\..\gui\gui.cpp" />
+    <ClCompile Include="..\..\..\gui\guiact.cpp" />
+    <ClCompile Include="..\..\..\gui\guiglobs.cpp" />
+    <ClCompile Include="..\..\..\gui\guiinit.cpp" />
+    <ClCompile Include="..\..\..\gui\guiMain.cpp" />
+    <ClCompile Include="..\..\..\gui\guipalette.cpp" />
+    <ClCompile Include="..\..\..\gui\guistart.cpp" />
+    <ClCompile Include="..\..\..\gui\guistate.cpp" />
+    <ClCompile Include="..\..\..\gui\guistring.cpp" />
+    <ClCompile Include="..\..\..\gui\jpClampBloodDiversion.cpp" />
+    <ClCompile Include="..\..\..\gui\keypad.cpp" />
+    <ClCompile Include="..\..\..\gui\keypadtb.cpp" />
+    <ClCompile Include="..\..\..\gui\labelprd.cpp" />
+    <ClCompile Include="..\..\..\gui\langListbox.cpp" />
+    <ClCompile Include="..\..\..\gui\language_loader.cpp" />
+    <ClCompile Include="..\..\..\gui\listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\list_get.cpp" />
+    <ClCompile Include="..\..\..\gui\metadirectory.cpp" />
+    <ClCompile Include="..\..\..\gui\mssEnd.cpp" />
+    <ClCompile Include="..\..\..\gui\oipAlarmBase.cpp" />
+    <ClCompile Include="..\..\..\gui\operator_config.cpp" />
+    <ClCompile Include="..\..\..\gui\osbitmap.cpp" />
+    <ClCompile Include="..\..\..\gui\osgraphics.cpp" />
+    <ClCompile Include="..\..\..\gui\osrectangle.cpp" />
+    <ClCompile Include="..\..\..\gui\ostext.cpp" />
+    <ClCompile Include="..\..\..\gui\ostext_base.cpp" />
+    <ClCompile Include="..\..\..\gui\oswindow.cpp" />
+    <ClCompile Include="..\..\..\gui\pasConnectConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\pasEmpty.cpp" />
+    <ClCompile Include="..\..\..\gui\pasInitialSplit.cpp" />
+    <ClCompile Include="..\..\..\gui\pasSplit.cpp" />
+    <ClCompile Include="..\..\..\gui\plas_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\plt_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\powerdown.cpp" />
+    <ClCompile Include="..\..\..\gui\powerup.cpp" />
+    <ClCompile Include="..\..\..\gui\predict.cpp" />
+    <ClCompile Include="..\..\..\gui\predictCompPlsConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\predictConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\procedure_status.cpp" />
+    <ClCompile Include="..\..\..\gui\ptfMount.cpp" />
+    <ClCompile Include="..\..\..\gui\rasConnectConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\rbcSplitInit.cpp" />
+    <ClCompile Include="..\..\..\gui\rbc_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\reasonToString.cpp" />
+    <ClCompile Include="..\..\..\gui\rebootConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\repfluid.cpp" />
+    <ClCompile Include="..\..\..\gui\runproc.cpp" />
+    <ClCompile Include="..\..\..\gui\runsumGlobs.cpp" />
+    <ClCompile Include="..\..\..\gui\runsumm1.cpp" />
+    <ClCompile Include="..\..\..\gui\runsumm2.cpp" />
+    <ClCompile Include="..\..\..\gui\runsum_plasma.cpp" />
+    <ClCompile Include="..\..\..\gui\runsum_plt.cpp" />
+    <ClCompile Include="..\..\..\gui\runsum_product.cpp" />
+    <ClCompile Include="..\..\..\gui\runsum_rbc.cpp" />
+    <ClCompile Include="..\..\..\gui\salineConnectConfirmBox.cpp" />
+    <ClCompile Include="..\..\..\gui\screentable.cpp" />
+    <ClCompile Include="..\..\..\gui\screen_config.cpp" />
+    <ClCompile Include="..\..\..\gui\scrncomm.cpp" />
+    <ClCompile Include="..\..\..\gui\scrnname.cpp" />
+    <ClCompile Include="..\..\..\gui\scrnstat.cpp" />
+    <ClCompile Include="..\..\..\gui\scrntran.cpp" />
+    <ClCompile Include="..\..\..\gui\sdaction.cpp" />
+    <ClCompile Include="..\..\..\gui\sdevrec.cpp" />
+    <ClCompile Include="..\..\..\gui\sdstate.cpp" />
+    <ClCompile Include="..\..\..\gui\sealAndDetach.cpp" />
+    <ClCompile Include="..\..\..\gui\setid.cpp" />
+    <ClCompile Include="..\..\..\gui\set_listbox.cpp" />
+    <ClCompile Include="..\..\..\gui\statBarBase.cpp" />
+    <ClCompile Include="..\..\..\gui\statBarNoSolution.cpp" />
+    <ClCompile Include="..\..\..\gui\statBarWithSolution.cpp" />
+    <ClCompile Include="..\..\..\gui\statecol.cpp" />
+    <ClCompile Include="..\..\..\gui\statline.cpp" />
+    <ClCompile Include="..\..\..\gui\statmgr.cpp" />
+    <ClCompile Include="..\..\..\gui\stringError.cpp" />
+    <ClCompile Include="..\..\..\gui\stringInfoCrc.cpp" />
+    <ClCompile Include="..\..\..\gui\string_screen_mapper.cpp" />
+    <ClCompile Include="..\..\..\gui\styling_record.cpp" />
+    <ClCompile Include="..\..\..\gui\sysacatt.cpp" />
+    <ClCompile Include="..\..\..\gui\syscassette.cpp" />
+    <ClCompile Include="..\..\..\gui\sysclamp.cpp" />
+    <ClCompile Include="..\..\..\gui\sysdisp.cpp" />
+    <ClCompile Include="..\..\..\gui\sysdonor.cpp" />
+    <ClCompile Include="..\..\..\gui\systest.cpp" />
+    <ClCompile Include="..\..\..\gui\textDataField.cpp" />
+    <ClCompile Include="..\..\..\gui\text_utils.cpp" />
+    <ClCompile Include="..\..\..\gui\timeDataField.cpp" />
+    <ClCompile Include="..\..\..\gui\toggleButton.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_data_item.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_palette.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_string_data.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_string_info.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_text_item.cpp" />
+    <ClCompile Include="..\..\..\gui\trima_variable_database.cpp" />
+    <ClCompile Include="..\..\..\gui\trouble.cpp" />
+    <ClCompile Include="..\..\..\gui\troublemeter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\gui\aasAddition.hpp" />
+    <ClInclude Include="..\..\..\gui\aasChannelTest.hpp" />
+    <ClInclude Include="..\..\..\gui\aasClampChannel.hpp" />
+    <ClInclude Include="..\..\..\gui\aasConnectPas.hpp" />
+    <ClInclude Include="..\..\..\gui\aasConnectRas.hpp" />
+    <ClInclude Include="..\..\..\gui\aasPrime.hpp" />
+    <ClInclude Include="..\..\..\gui\aasRunInfo.hpp" />
+    <ClInclude Include="..\..\..\gui\aasRunSummary.hpp" />
+    <ClInclude Include="..\..\..\gui\aasTransitionDummy.hpp" />
+    <ClInclude Include="..\..\..\gui\abortcnf.hpp" />
+    <ClInclude Include="..\..\..\gui\acConnectConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\actiocol.hpp" />
+    <ClInclude Include="..\..\..\gui\alarm.hpp" />
+    <ClInclude Include="..\..\..\gui\alarmhdl.hpp" />
+    <ClInclude Include="..\..\..\gui\alarmtb.h" />
+    <ClInclude Include="..\..\..\gui\aphcalbk.hpp" />
+    <ClInclude Include="..\..\..\gui\aphwind.hpp" />
+    <ClInclude Include="..\..\..\gui\audiofb.hpp" />
+    <ClInclude Include="..\..\..\gui\barcode_cartouche.hpp" />
+    <ClInclude Include="..\..\..\gui\barcode_object_list.h" />
+    <ClInclude Include="..\..\..\gui\barcode_repository.hpp" />
+    <ClInclude Include="..\..\..\gui\barcode_screen.hpp" />
+    <ClInclude Include="..\..\..\gui\bio_mgr.h" />
+    <ClInclude Include="..\..\..\gui\bitmap.h" />
+    <ClInclude Include="..\..\..\gui\bitmapTextBox.h" />
+    <ClInclude Include="..\..\..\gui\bitmap_info.h" />
+    <ClInclude Include="..\..\..\gui\blinkCollection.hpp" />
+    <ClInclude Include="..\..\..\gui\btncanc.hpp" />
+    <ClInclude Include="..\..\..\gui\btncont.hpp" />
+    <ClInclude Include="..\..\..\gui\btngobk.hpp" />
+    <ClInclude Include="..\..\..\gui\btnlowl.hpp" />
+    <ClInclude Include="..\..\..\gui\btnPtrStk.hpp" />
+    <ClInclude Include="..\..\..\gui\button_bitmap.h" />
+    <ClInclude Include="..\..\..\gui\bwindow.hpp" />
+    <ClInclude Include="..\..\..\gui\cassetteDeleteConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\cassette_mgr.hpp" />
+    <ClInclude Include="..\..\..\gui\category_button.hpp" />
+    <ClInclude Include="..\..\..\gui\category_button_collection.hpp" />
+    <ClInclude Include="..\..\..\gui\category_button_parms.h" />
+    <ClInclude Include="..\..\..\gui\cfg_butt.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_discrete_button.h" />
+    <ClInclude Include="..\..\..\gui\cfg_dono.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_kstr.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_lang.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_listener.h" />
+    <ClInclude Include="..\..\..\gui\cfg_look.h" />
+    <ClInclude Include="..\..\..\gui\cfg_mach.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_main.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_mss.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_plas.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_plat.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_plt_amap.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_priority.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_proc.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_rbc.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_repl.hpp" />
+    <ClInclude Include="..\..\..\gui\cfg_textabove_button.h" />
+    <ClInclude Include="..\..\..\gui\cfg_volume.hpp" />
+    <ClInclude Include="..\..\..\gui\cfr11_screen.hpp" />
+    <ClInclude Include="..\..\..\gui\cfr_list.h" />
+    <ClInclude Include="..\..\..\gui\cgui_pool_allocator.hpp" />
+    <ClInclude Include="..\..\..\gui\chldsele.hpp" />
+    <ClInclude Include="..\..\..\gui\chldstak.hpp" />
+    <ClInclude Include="..\..\..\gui\clampCrossover.hpp" />
+    <ClInclude Include="..\..\..\gui\config_keypad.hpp" />
+    <ClInclude Include="..\..\..\gui\config_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\confirmBoxBase.hpp" />
+    <ClInclude Include="..\..\..\gui\confirmDonInfo.hpp" />
+    <ClInclude Include="..\..\..\gui\confirm_box.hpp" />
+    <ClInclude Include="..\..\..\gui\contConfCyc.hpp" />
+    <ClInclude Include="..\..\..\gui\defscrn.hpp" />
+    <ClInclude Include="..\..\..\gui\discmetr.hpp" />
+    <ClInclude Include="..\..\..\gui\disconn.hpp" />
+    <ClInclude Include="..\..\..\gui\discrete_button.h" />
+    <ClInclude Include="..\..\..\gui\display_text.h" />
+    <ClInclude Include="..\..\..\gui\donconn.hpp" />
+    <ClInclude Include="..\..\..\gui\doninfo.hpp" />
+    <ClInclude Include="..\..\..\gui\donordat.hpp" />
+    <ClInclude Include="..\..\..\gui\donorDataItems.hpp" />
+    <ClInclude Include="..\..\..\gui\donvital.hpp" />
+    <ClInclude Include="..\..\..\gui\drbcSplit.hpp" />
+    <ClInclude Include="..\..\..\gui\dynamicListbox.hpp" />
+    <ClInclude Include="..\..\..\gui\dynamicListboxItem.hpp" />
+    <ClInclude Include="..\..\..\gui\extended_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\fontdefs.h" />
+    <ClInclude Include="..\..\..\gui\frmtdate.hpp" />
+    <ClInclude Include="..\..\..\gui\frmtdec.hpp" />
+    <ClInclude Include="..\..\..\gui\frmtstr.hpp" />
+    <ClInclude Include="..\..\..\gui\gui.h" />
+    <ClInclude Include="..\..\..\gui\guiact.hpp" />
+    <ClInclude Include="..\..\..\gui\guiglobs.hpp" />
+    <ClInclude Include="..\..\..\gui\guiMain.hpp" />
+    <ClInclude Include="..\..\..\gui\guipalette.h" />
+    <ClInclude Include="..\..\..\gui\guistate.hpp" />
+    <ClInclude Include="..\..\..\gui\guistring.h" />
+    <ClInclude Include="..\..\..\gui\gui_fifo.hpp" />
+    <ClInclude Include="..\..\..\gui\iguimsgs.h" />
+    <ClInclude Include="..\..\..\gui\jpClampBloodDiversion.hpp" />
+    <ClInclude Include="..\..\..\gui\keypad.h" />
+    <ClInclude Include="..\..\..\gui\keypad.hpp" />
+    <ClInclude Include="..\..\..\gui\labelprd.hpp" />
+    <ClInclude Include="..\..\..\gui\langListbox.hpp" />
+    <ClInclude Include="..\..\..\gui\language_loader.h" />
+    <ClInclude Include="..\..\..\gui\listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\list_get.hpp" />
+    <ClInclude Include="..\..\..\gui\metadirectory.hpp" />
+    <ClInclude Include="..\..\..\gui\mssEnd.hpp" />
+    <ClInclude Include="..\..\..\gui\obj_name_entry.hpp" />
+    <ClInclude Include="..\..\..\gui\oipAlarmBase.hpp" />
+    <ClInclude Include="..\..\..\gui\operator_config.h" />
+    <ClInclude Include="..\..\..\gui\osgraphics.h" />
+    <ClInclude Include="..\..\..\gui\ostext.h" />
+    <ClInclude Include="..\..\..\gui\ostext_base.h" />
+    <ClInclude Include="..\..\..\gui\pasConnectConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\pasEmpty.hpp" />
+    <ClInclude Include="..\..\..\gui\pasInitialSplit.hpp" />
+    <ClInclude Include="..\..\..\gui\pasSplit.hpp" />
+    <ClInclude Include="..\..\..\gui\plas_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\plt_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\powerdown.hpp" />
+    <ClInclude Include="..\..\..\gui\powerup.hpp" />
+    <ClInclude Include="..\..\..\gui\predict.hpp" />
+    <ClInclude Include="..\..\..\gui\predictCompPlsConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\predictConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\procedure_status.h" />
+    <ClInclude Include="..\..\..\gui\ptfMount.hpp" />
+    <ClInclude Include="..\..\..\gui\rasConnectConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\rbcSplitInit.hpp" />
+    <ClInclude Include="..\..\..\gui\rbc_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\rebootConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\repfluid.hpp" />
+    <ClInclude Include="..\..\..\gui\runproc.hpp" />
+    <ClInclude Include="..\..\..\gui\runsumGlobs.hpp" />
+    <ClInclude Include="..\..\..\gui\runsumm1.hpp" />
+    <ClInclude Include="..\..\..\gui\runsumm2.hpp" />
+    <ClInclude Include="..\..\..\gui\runsum_plasma.hpp" />
+    <ClInclude Include="..\..\..\gui\runsum_plt.hpp" />
+    <ClInclude Include="..\..\..\gui\runsum_product.hpp" />
+    <ClInclude Include="..\..\..\gui\runsum_rbc.hpp" />
+    <ClInclude Include="..\..\..\gui\salineConnectConfirmBox.hpp" />
+    <ClInclude Include="..\..\..\gui\screen_config.hpp" />
+    <ClInclude Include="..\..\..\gui\scrncomm.hpp" />
+    <ClInclude Include="..\..\..\gui\scrnname.hpp" />
+    <ClInclude Include="..\..\..\gui\scrnstat.hpp" />
+    <ClInclude Include="..\..\..\gui\scrntran.hpp" />
+    <ClInclude Include="..\..\..\gui\sdaction.hpp" />
+    <ClInclude Include="..\..\..\gui\sdevrec.hpp" />
+    <ClInclude Include="..\..\..\gui\sdstate.hpp" />
+    <ClInclude Include="..\..\..\gui\sealAndDetach.hpp" />
+    <ClInclude Include="..\..\..\gui\setid.hpp" />
+    <ClInclude Include="..\..\..\gui\set_listbox.hpp" />
+    <ClInclude Include="..\..\..\gui\statBarBase.hpp" />
+    <ClInclude Include="..\..\..\gui\statBarNoSolution.hpp" />
+    <ClInclude Include="..\..\..\gui\statBarWithSolution.hpp" />
+    <ClInclude Include="..\..\..\gui\statecol.hpp" />
+    <ClInclude Include="..\..\..\gui\statline.hpp" />
+    <ClInclude Include="..\..\..\gui\statmgr.hpp" />
+    <ClInclude Include="..\..\..\gui\stringError.h" />
+    <ClInclude Include="..\..\..\gui\string_info.h" />
+    <ClInclude Include="..\..\..\gui\string_screen_mapper.hpp" />
+    <ClInclude Include="..\..\..\gui\styling_record.h" />
+    <ClInclude Include="..\..\..\gui\sysacatt.hpp" />
+    <ClInclude Include="..\..\..\gui\syscassette.hpp" />
+    <ClInclude Include="..\..\..\gui\sysclamp.hpp" />
+    <ClInclude Include="..\..\..\gui\sysdisp.hpp" />
+    <ClInclude Include="..\..\..\gui\sysdninc.h" />
+    <ClInclude Include="..\..\..\gui\sysdonor.hpp" />
+    <ClInclude Include="..\..\..\gui\sysdstab.hpp" />
+    <ClInclude Include="..\..\..\gui\systest.hpp" />
+    <ClInclude Include="..\..\..\gui\tablecol.hpp" />
+    <ClInclude Include="..\..\..\gui\textDataField.hpp" />
+    <ClInclude Include="..\..\..\gui\text_utils.h" />
+    <ClInclude Include="..\..\..\gui\timeDataField.hpp" />
+    <ClInclude Include="..\..\..\gui\toggleButton.hpp" />
+    <ClInclude Include="..\..\..\gui\trima_data_item.h" />
+    <ClInclude Include="..\..\..\gui\trima_string_data.h" />
+    <ClInclude Include="..\..\..\gui\trima_string_info.h" />
+    <ClInclude Include="..\..\..\gui\trima_text_item.h" />
+    <ClInclude Include="..\..\..\gui\trima_variable_database.h" />
+    <ClInclude Include="..\..\..\gui\trouble.hpp" />
+    <ClInclude Include="..\..\..\gui\troublemeter.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

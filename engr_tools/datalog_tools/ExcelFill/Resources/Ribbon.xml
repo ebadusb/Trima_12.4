@@ -1,0 +1,12 @@
+﻿<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" xmlns:x="CaridianBCT" onLoad="RibbonLoaded" loadImage="GetImage">
+	<ribbon>
+		<tabs>
+			<tab idQ="x:Analysis" label="Analysis">
+				<group id="QuickFill" label="Quick Fill">
+					<button id="FillButton" label="Fill" image="fill-48x48.png" size="large" onAction="FillDefault" />
+					<button id="SettingsButton" label="Settings" image="settings-48x48.png" size="large" onAction="FillSettings" />
+				</group>
+			</tab>	
+		</tabs>
+	</ribbon>
+</customUI>

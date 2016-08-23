@@ -1,0 +1,354 @@
+﻿<UserControl x:Class="TrimaTestTool.Trima6_3TedVista"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900" Background="LightGray" UseLayoutRounding="False">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <!-- This is the first colum --> 
+        <DockPanel Grid.Column="0" >
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,0,0" BorderBrush="#FFAAA6A6" Header="General Information" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Trima Version" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="Version" Text="{Binding Version}" Grid.Column="1" Grid.Row="0" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock Text="IP Address" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="IPAddress" Text="{Binding IP}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock Text="Connection Mode" Visibility="Collapsed" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ConnectionMode" Visibility="Collapsed" Grid.Column="3" Grid.Row="0" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock Text="Serial Number" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SerialNumber" Text="{Binding SerialNumber}" Grid.Column="3" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,0,0" BorderBrush="#FFAAA6A6" Header="States" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="System State" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SystemState" Text="{Binding SystemState}" Grid.Column="1" Grid.Row="0" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock Text="Substate" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SubState" Text="{Binding Substate}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock Text="Recovery State" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RecoveryState" Text="{Binding RecoveryState}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+                
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,0,0" BorderBrush="#FFAAA6A6" Header="Collect Values" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Current" Grid.Column="1" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="Target" Grid.Column="2" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="Platelet Yield" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentPlateletYield" Text="{Binding CurrentPlateletYield}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetPlateletYield" Text="{Binding TargetPlateletYield}" Grid.Column="2" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Platelet Volume" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentPlateletVolume" Text="{Binding CurrentPlateletVolume}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetPlateletVolume" Text="{Binding TargetPlateletVolume}" Grid.Column="2" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Plasma Volume" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentPlasmaVolume" Text="{Binding CurrentPlasmaVolume}" Grid.Column="1" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetPlasmaVolume" Text="{Binding TargetPlasmaVolume}" Grid.Column="2" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RBC Volume" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentRBCVolume" Text="{Binding CurrentRBCVolume}" Grid.Column="1" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetRBCVolume" Text="{Binding TargetRBCVolume}" Grid.Column="2" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RBC Hematocrit" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentRBCCritVolume" Text="{Binding CurrentRBCHCT}" Grid.Column="1" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetRBCCritVolume" Text="{Binding TargetRBCHCT}" Grid.Column="2" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Procedure Time" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentProcedureTime" Text="{Binding CurrentProcedureTime}" Grid.Column="1" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetProcedureTime" Text="{Binding TargetProcedureTime}" Grid.Column="2" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="PAS Volume" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentPASVolume" Text="{Binding CurrentPASVolme}" Grid.Column="1" Grid.Row="7" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetPASVolume" Text="{Binding TargetPASVolume}" Grid.Column="2" Grid.Row="7" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RAS 1 Volume" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentRAS1Volume" Text="{Binding CurrentRAS1Volume}" Grid.Column="1" Grid.Row="8" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetRAS1Volume" Text="{Binding TargetRAS1Volume}" Grid.Column="2" Grid.Row="8" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RAS 2 Volume" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CurrentRAS2Volume" Text="{Binding CurrentRAS2Volume}" Grid.Column="1" Grid.Row="9" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="TargetRAS2Volume" Text="{Binding TargetRAS2Volume}" Grid.Column="2" Grid.Row="9" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Platelet AC" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="PlateletAC" Text="{Binding PlateletAC}" Grid.Column="4" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Plasma AC" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="PlasmaAC" Text="{Binding PlasmaAC}" Grid.Column="4" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RBC 1 AC" Grid.Column="3" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RBC1AC" Text="{Binding RBC1AC}" Grid.Column="4" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="RBC 2 AC" Grid.Column="3" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RBC2AC" Text="{Binding RBC2AC}" Grid.Column="4" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Total Blood Processed" Grid.Column="3" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TotalBloodProcessed" Text="{Binding TotalBloodProcessed}" Grid.Column="4" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Time Remaining" Grid.Column="3" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TimeRemaining" Text="{Binding TimeRemaining}" Grid.Column="4" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Donor TBV" Grid.Column="3" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="DonorTBV" Text="{Binding DonorTBV}" Grid.Column="4" Grid.Row="7" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,0,0" BorderBrush="#FFAAA6A6" Header="Pumps" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Commanded" Grid.Column="1" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="Actual" Grid.Column="2" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="Accumulated" Grid.Column="3" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="AC Pump" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedACPump" Text="{Binding CommandedACPump}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualACPump" Text="{Binding ActualACPump}" Grid.Column="2" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedACPump" Text="{Binding AccumulatedACPump}" Grid.Column="3" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Plasma Pump" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedPlasmaPump" Text="{Binding CommandedPlasmaPump}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualPlasmaPump" Text="{Binding ActualPlasmaPump}" Grid.Column="2" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedPlasmaPump" Text="{Binding AccumulatedPlasmaPump}" Grid.Column="3" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Platelet Pump" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedPlateletPump" Text="{Binding CommandedPlateletPump}" Grid.Column="1" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualPlateletPump" Text="{Binding ActualPlateletPump}" Grid.Column="2" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedPlateletPump" Text="{Binding AccumulatedPlateletPump}" Grid.Column="3" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Return Pump" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedReturnPump" Text="{Binding CommandedReturnPump}" Grid.Column="1" Grid.Row="4" Background="White" Margin="5,3,5,0" Height="20" VerticalAlignment="Top" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualReturnPump" Text="{Binding ActualReturnPump}" Grid.Column="2" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedReturnPump" Text="{Binding AccumulatedReturnPump}" Grid.Column="3" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Replacement Pump" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedReplacementPump" Text="{Binding CommandedReplacementPump}" Grid.Column="1" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualReplacementPump" Text="{Binding ActualReplacementPump}" Grid.Column="2" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedReplacementPump" Text="{Binding AccumulatedReplacementPump}" Grid.Column="3" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Inlet Pump" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CommandedInletPump" Text="{Binding CommandedInletPump}" Grid.Column="1" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="ActualInletPump" Text="{Binding ActualInletPump}" Grid.Column="2" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="AccumulatedInletPump" Text="{Binding AccumulatedInletPump}" Grid.Column="3" Grid.Row="6" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            <Button Content="Stop" Height="30" Width="150" Margin="10,2" DockPanel.Dock="Top" HorizontalAlignment="Left" >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="StoppingConnection"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <!-- Last empty entry -->
+            <GroupBox />
+        </DockPanel>
+        
+        <DockPanel Grid.Column="1" >
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,10,0" BorderBrush="#FFAAA6A6" Header="Referenced Values" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Cassette Type" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CassetteType" Text="{Binding CassetteType}" Grid.Column="1" Grid.Row="0" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Cassette Position" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CassettePosition" Text="{Binding CassettePosition}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Catalog Ref No." Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="CatalogRefNum" Text="{Binding CatalogRefNumber}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Selected Procedure" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SelectedProcedure" Text="{Binding SelectedProcedure}" Grid.Column="1" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Sequence Number" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SequenceNumber" Text="{Binding SequenceNumber}" Grid.Column="1" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Message Time" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="MessageTime" Text="{Binding MessageTime}" Grid.Column="1" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            
+            <!--Valves-->
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,10,0" BorderBrush="#FFAAA6A6" Header="Valves" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Control" Grid.Column="1" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="Safety" Grid.Column="2" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="RBC" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ControlRBCValve" Text="{Binding ControlRBCValve}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="SafetyRBCValve" Text="{Binding SafetyRBCValve}" Grid.Column="2" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Plasma" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ControlPlasmaValve" Text="{Binding ControlPlasmaValve}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="SafetyPlasmaValve" Grid.Column="2" Text="{Binding SafetyPlasmaValve}" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Platelet" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ControlPlateletValve" Text="{Binding ControlPlateletValve}" Grid.Column="1" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="SafetyPlateletValve" Text="{Binding SafetyPlateletValve}" Grid.Column="2" Grid.Row="3" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            
+            <!---Pressure Sensors-->
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,10,0" BorderBrush="#FFAAA6A6" Header="Pressure Sensors" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="mmHg" Grid.Column="1" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="Raw" Grid.Column="2" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="Access" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="mmHgAccessPressureSensor" Text="{Binding mmHgAccessPressure}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="RawValueAccessPressureSensor" Text="{Binding RawAccessPressure}" Grid.Column="2" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Centrifuge" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="mmHgCentrifugePressureSensor" Text="{Binding mmHgCentrifugePressure}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    <TextBlock x:Name="RawValueCentrifugePressureSensor" Text="{Binding RawCentrifugePressure}" Grid.Column="2" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>                
+            </GroupBox>
+            
+            <!--Reservoir-->
+            <GroupBox DockPanel.Dock="Top" Margin="10,10,10,0" BorderBrush="#FFAAA6A6" Header="Reservoir" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Level" Grid.Column="1" Grid.Row="0" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="Control" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="LevelControlReservoir" Text="{Binding ControlReservoirLevel}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                    
+                    <TextBlock Text="Safety" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="LevelSafetyReservoir" Text="{Binding SafetyReservoirLevel}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Volts" Grid.Column="1" Grid.Row="3" Margin="5,3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <TextBlock Text="AGC High" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="AGCHigh" Text="{Binding AGCHigh}" Grid.Column="1" Grid.Row="4" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="AGC Low" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="AGCLow" Text="{Binding AGCLow}" Grid.Column="1" Grid.Row="5" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            
+            <!---RBC Detectors-->
+            <GroupBox  DockPanel.Dock="Top" Margin="10,10,10,0" BorderBrush="#FFAAA6A6" Header="RBC Detector" BorderThickness="2" UseLayoutRounding="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Red" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RedDetector" Text="{Binding RedDetector}" Grid.Column="1" Grid.Row="0" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="Green" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="GreenDetector" Text="{Binding GreenDetector}" Grid.Column="1" Grid.Row="1" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+
+                    <TextBlock Text="R/G Ratio" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="RedGreenRatio" Text="{Binding RedGreenRatio}" Grid.Column="1" Grid.Row="2" Background="White" Margin="5,3" Style="{DynamicResource TextBlockStyle}" />
+                </Grid>
+            </GroupBox>
+            <!-- Last empty entry -->
+            <GroupBox />
+        </DockPanel>
+     </Grid>
+</UserControl>

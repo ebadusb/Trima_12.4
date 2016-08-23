@@ -1,0 +1,17 @@
+Focussed GUI Prototype
+
+Naming conventions for common buttons:
+
+
+BTN_ABCD.bmp
+    ||||
+    |||+ d=down image; u=up image
+    ||+ color: g=green; b=blue
+    |+ screen location: t=top; b=bottom; m=mid-screen
+    + size: s=small; b=big; d=big data button 
+
+
+Example:
+
+   BTN_STGU.BMP - this is a small, green button on the status bar in the
+                   up position.

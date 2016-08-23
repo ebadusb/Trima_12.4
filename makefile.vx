@@ -1,0 +1,517 @@
+################################################################################
+#
+# The main Trima makefile
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : dirs rmbdf clean
+else
+.PHONY: all
+all : check_opt_change dirs apps
+endif
+
+MAINDIR = $(shell cmd /c cd)
+include $(MAINDIR)/makefile.vxc
+
+# List of string files to include
+include $(MAINDIR)/gui/stringFiles.vx
+
+# If set true on command line, then engr_tools is omitted
+NO_TOOLS =? false
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := trima_common trima_common_reentrant datalog config cds gui proc
+ifeq ($(CPU),SIMNT)
+  DIR_LIST += unit_test
+else
+  DIR_LIST += safety service tcpip update unit_test
+  ifneq ($(NO_TOOLS),true)
+    DIR_LIST += engr_tools
+  endif
+endif
+
+ifeq ($(BUILD_TYPE),CLEAN)
+  DIR_LIST += bootrom low_level vxworks_target vxworks_sim
+else
+  ifeq ($(CPU),I80486)
+    DIR_LIST += bootrom low_level vxworks_target
+  endif
+  ifeq ($(CPU),PENTIUM)
+    DIR_LIST += bootrom low_level vxworks_target
+  endif
+  ifeq ($(CPU),SIMNT)
+    DIR_LIST += vxworks_sim
+  endif
+endif
+
+.PHONY: dirs
+dirs : $(DIR_LIST)
+
+.PHONY: rmbdf
+rmbdf:
+	@echo Cleaning Parsoft BDF files
+	@rm -f *.bdf
+
+.PHONY: force
+force: ;
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+	@cd $@ && $(MAKE) -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR) LANGDIR=$(LANGDIR)
+
+#
+# The following should define the location of the resulting application.  Note
+# that APP_DIR is used in DOS shell commands, and must use \ directory
+# separators.
+#
+APP_NAME := control_lib
+control_lib_dir = $(MAINDIR)\lib
+control_lib_libs =
+control_lib_lib_list = .opt/control_lib_objs
+include $(MAINDIR)/makefile.process_app
+
+APP_NAME := safety_lib
+safety_lib_dir = $(MAINDIR)\lib
+safety_lib_libs =
+safety_lib_lib_list = .opt/safety_lib_objs
+include $(MAINDIR)/makefile.process_app
+
+
+CONTROL_COMMON_LIBS = $(COMDIR)\socket++\lib\libsocket++.a $(COMDIR)\router\lib\librouter.a \
+                      $(COMDIR)\softcrc\lib\libsoftcrc.a $(COMDIR)\clocks\lib\libclocks.a \
+                      $(COMDIR)\cds\lib\libcds.a $(COMDIR)\cmdline\lib\libcmdline.a \
+                      $(COMDIR)\statemachine\lib\libstatemachine.a \
+                      $(MAINDIR)\lib\libtrima_common_sys.a \
+                      $(MAINDIR)\lib\libcontrol_reentrant.a
+
+SAFETY_COMMON_LIBS  = $(COMDIR)\router\lib\librouter.a $(COMDIR)\softcrc\lib\libsoftcrc.a \
+                      $(COMDIR)\clocks\lib\libclocks.a $(COMDIR)\cmdline\lib\libcmdline.a \
+                      $(MAINDIR)\lib\libsafety_reentrant.a
+
+.opt/control_lib_objs: $(CONTROL_COMMON_LIBS) | .opt $(CPU)
+  ifeq ($(TERSE),true)
+	@echo x Extracting CONTROL_COMMON_LIBS objs in $(BASEDIR)
+  endif
+	$(Q)cd $(CPU) && for %l in ($(CONTROL_COMMON_LIBS)) do @$(AR) x %l 
+	$(Q)rm -f $(@).tmp 
+	$(Q)for %l in ($(CONTROL_COMMON_LIBS)) do @$(AR) t %l >> $(@).tmp
+	$(Q)sed "s@^@$(CPU)/@" < $(@).tmp > $@
+	$(Q)rm -f $(@).tmp 
+
+.opt/safety_lib_objs: $(SAFETY_COMMON_LIBS) | .opt $(CPU)
+  ifeq ($(TERSE),true)
+	@echo x Extracting SAFETY_COMMON_LIBS objs in $(BASEDIR)
+  endif
+	$(Q)cd $(CPU) && for %l in ($(SAFETY_COMMON_LIBS)) do @$(AR) x %l 
+	$(Q)rm -f $(@).tmp 
+	$(Q)for %l in ($(SAFETY_COMMON_LIBS)) do @$(AR) t %l >> $(@).tmp
+	$(Q)sed "s@^@$(CPU)/@" < $(@).tmp > $@
+	$(Q)rm -f $(@).tmp 
+
+apps : dirs $(APP_LIST)
+
+BUILD_DATE := $(shell cmd /c 'date /t > build_info')
+BUILD_TIME := $(shell cmd /c 'time /t >> build_info') 
+BUILD_DIR := $(shell cmd /c '@echo %BUILD_INFO_NETWORKDIR%>> build_info' )
+BUILD_MACHINE := $(shell cmd /c 'net config workstation | grep "Full Computer name" >> build_info')
+BUILD_USER := $(shell cmd /c 'net config workstation | grep "User name" >> build_info')
+SIMDIR_SWAP = sed 's/__SIMDIR__/$(subst \,\\\,$(SIMDIR))/g'
+
+#
+# This is the standard makefile for applications
+#
+include $(MAINDIR)/makefile.build_apps
+
+ifeq ($(TERSE),true)
+ TAR   := tar
+ GZIP  := gzip
+ XCOPY := xcopy /Q
+else
+ TAR   := tar -v
+ GZIP  := gzip -v
+ XCOPY := xcopy /F
+endif
+
+ifneq ($(CPU),SIMNT)
+#
+#
+#================================= Make archive for I80486, PENTIUM ===========================
+#
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: archive
+archive : structure_dir_clean
+else
+.PHONY: archive
+archive: trima_archive
+endif
+
+
+structure_dir_list := \
+ current_build \
+ current_build\trima \
+ current_build\trima\gui \
+ current_build\trima\gui\fonts \
+ current_build\trima\common \
+ current_build\trima\cds \
+ current_build\trima\config \
+ current_build\trima\config\templates \
+ current_build\trima\drivers \
+ current_build\trima\init \
+ current_build\trima\low_level \
+ current_build\trima\proc \
+ current_build\trima\safety \
+ current_build\trima\safety\boot \
+ current_build\trima\service \
+ current_build\trima\softcrc \
+ current_build\trima\softcrc\filelists \
+ current_build\trima\xif \
+ current_build\trima_ftp \
+ current_build\tools \
+ current_build\tools\bin \
+ current_build\vxboot \
+ current_build\upgrade \
+ current_build\strings \
+ current_build\fonts \
+ current_build\data \
+ current_build\graphics
+
+.PHONY: structure
+structure: structure_dir_clean $(structure_dir_list)
+
+.PHONY: structure_dir_clean
+structure_dir_clean: force
+	@echo x Cleaning build area
+	@rm -r -f current_build
+	@rm -r -f I80486
+	@rm -r -f PENTIUM
+	@rm -r -f SIMNT
+
+$(structure_dir_list) : force
+	$(Q)mkdir $@
+
+.PHONY: vxboot_files
+vxboot_files: force structure
+	@echo   - Copying bootrom output files ...
+	@$(XCOPY) /Y /R vxworks_target\control_versalogic\vxWorks_versalogic         current_build\vxboot
+	@$(XCOPY) /Y /R bootrom\control_versalogic\bootrom_versalogic.sys            current_build\vxboot
+	@$(XCOPY) /Y /R vxworks_target\safety_versalogic\vxWorks_versalogic          current_build\trima\safety\boot
+	@$(XCOPY) /Y /R bootrom\safety_versalogic\bootrom_versa_bootp.sys            current_build\trima\safety\boot
+	@$(XCOPY) /Y /R vxworks_target\safety_versalogic_pxe\vxWorks_versalogic_pxe  current_build\trima\safety\boot
+	@$(XCOPY) /Y /R bootrom\safety_pxe\bootrom_versa_pxe.sys                     current_build\trima\safety\boot
+
+.PHONY: out_files
+out_files: force structure
+	@echo   - Copying output files from top-level bin ...
+	@objcopypentium --discard-all bin\ted.out                    current_build\trima\xif\ted.out
+	@objcopypentium --discard-all bin\trap_client.out            current_build\trima\xif\trap_client.out
+	@objcopypentium --discard-all bin\trima_broadcast.out        current_build\trima\xif\trima_broadcast.out
+	@objcopypentium --discard-all bin\vip_cmd.out                current_build\trima\xif\vip_cmd.out
+	@objcopypentium --discard-all bin\vip_sts.out                current_build\trima\xif\vip_sts.out
+	@echo   - Copying output files from top-level lib ...
+	@objcopypentium --discard-all lib\control_lib.out            current_build\trima\common\control_lib.out
+	@objcopypentium --discard-all lib\safety_lib.out             current_build\trima\common\safety_lib.out
+	@objcopypentium --discard-all lib\cds.out                    current_build\trima\cds\cds.out
+	@echo   - Copying config output files ...
+	@objcopypentium --discard-all config\bin\sysinit_control.out current_build\trima\init\sysinit_control.out
+	@objcopypentium --discard-all config\bin\sysinit_safety.out  current_build\trima\init\sysinit_safety.out
+	@echo   - Copying gui output files ...
+	@objcopypentium --discard-all gui\bin\gui.out                current_build\trima\gui\gui.out
+	@objcopypentium --discard-all gui\bin\barcode_reader.out     current_build\trima\gui\barcode_reader.out
+	@objcopypentium --discard-all gui\bin\datfile_reader.out     current_build\trima\gui\datfile_reader.out
+	@objcopypentium --discard-all gui\bin\language_loader.out    current_build\trima\gui\language_loader.out
+	@objcopypentium --discard-all gui\$(CPU)\fontdefs.o          current_build\trima\gui\fontdefs.o
+	@objcopypentium --discard-all gui\amd_geodelx_ugl\bin\amd_geodelx.o      current_build\trima\gui\ugl_20811022.o
+	@objcopypentium --discard-all gui\pentium_ct655fp_ugl\bin\ugl_CT655xx.o  current_build\trima\gui\ugl_00E0102C.o
+	@objcopypentium --discard-all gui\486_ct655fp_ugl\bin\ugl_CT65545.o      current_build\trima\gui\ugl_CT65545.o
+	@echo   - Copying low-level output files ...
+	@objcopypentium --discard-all low_level\bin\ctl_drv.out      current_build\trima\low_level\ctl_drv.out
+	@objcopypentium --discard-all low_level\bin\ctl_hw.out       current_build\trima\low_level\ctl_hw.out
+	@objcopypentium --discard-all low_level\bin\safe_drv.out     current_build\trima\low_level\safe_drv.out
+	@objcopypentium --discard-all low_level\bin\safe_hw.out      current_build\trima\low_level\safe_hw.out
+	@objcopypentium --discard-all low_level\bin\safe_msg.out     current_build\trima\low_level\safe_msg.out
+	@objcopypentium --discard-all low_level\bin\sfastmsg.out     current_build\trima\low_level\sfastmsg.out
+	@objcopypentium --discard-all low_level\bin\sysidlog.out     current_build\trima\low_level\sysidlog.out
+	@echo   - Copying proc output files ...
+	@objcopypentium --discard-all proc\bin\alarmhandler.out      current_build\trima\proc\alarmhandler.out
+	@objcopypentium --discard-all proc\bin\predict.out           current_build\trima\proc\predict.out
+	@objcopypentium --discard-all proc\bin\proc.out              current_build\trima\proc\proc.out
+	@objcopypentium --discard-all proc\bin\retoccmon.out         current_build\trima\proc\retoccmon.out
+	@echo   - Copying safety output files for safety ...
+	@objcopypentium --discard-all safety\bin\saf_exec.out        current_build\trima\safety\saf_exec.out
+	@echo   - Copying service output files ...
+	@objcopypentium --discard-all bin\gooddog.out                current_build\trima\service\gooddog.out
+	@objcopypentium --discard-all service\bin\service.out        current_build\trima\service\service.out
+	@objcopypentium --discard-all service\bin\meter.out          current_build\trima\service\meter.out
+	@objcopypentium --discard-all service\bin\sumo.out           current_build\trima\service\sumo.out
+	@echo   - Copying graphics packages ...
+	@objcopypentium --discard-all bin\graphics_package.out          current_build\graphics\graphics_package.out
+	@objcopypentium --discard-all bin\service_graphics_package.out  current_build\graphics\service_graphics_package.out
+
+.PHONY: engr_tools_files
+engr_tools_files: force structure
+	@echo   - Creating Engineering Tools archive zip file ...
+	@$(XCOPY) /Y /R engr_tools\bin\spoof_\*.out     current_build\tools\bin
+	@cd current_build/tools/bin && $(TAR) -cf ../engr_tools.tar *
+	@cd current_build/tools && $(GZIP) -9fc engr_tools.tar > engr_tools.taz
+	@rm -f current_build/tools/engr_tools.tar
+
+.PHONY: gui_support
+gui_support: force structure
+	@echo   - Copying GUI support files ...
+	@$(XCOPY) /Y /R /E focgui\fonts\default\\*   current_build\trima\gui\fonts
+	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\*    current_build\fonts
+	@$(XCOPY) /Y /R focgui\data\\*               current_build\data
+
+.PHONY: string_info_files
+string_info_files: $(addprefix current_build/strings/, $(LANGS))
+	@echo   - Done copying string files.
+
+current_build/strings/%.info: $(LANGDIR)/%.info
+	@echo   - Copying language file: $(@F)
+	@$(XCOPY) /Y /R $(subst /,\,$^) $(subst /,\,$(@D))
+
+.PHONY: dat_files
+dat_files: force structure
+	@echo   - Copying data and support files ...
+	@$(XCOPY) /Y /R proc\states                     current_build\trima\proc
+	@$(XCOPY) /Y /R proc\mssPltStates               current_build\trima\proc
+	@$(XCOPY) /Y /R proc\mssRbcStates               current_build\trima\proc
+	@$(XCOPY) /Y /R proc\centrifugeSpinTest         current_build\trima\proc
+	@$(XCOPY) /Y /R proc\centrifugetests            current_build\trima\proc
+	@$(XCOPY) /Y /R proc\cobe_config.dat            current_build\trima\config
+	@$(XCOPY) /Y /R tcpip\trap_default.dat          current_build\trima\config
+	@$(XCOPY) /Y /R config\globvars.default         current_build\trima\config
+	@$(XCOPY) /Y /R trima_common\config.dat         current_build\trima\config\templates
+    ## Configure machine to use Japanese sounds
+	@$(XCOPY) /Y /R low_level\ctl_drv\sounds_j.dat  current_build\trima\config\templates
+	@rename current_build\trima\config\templates\sounds_j.dat sounds.dat
+	@$(XCOPY) /Y /R trima_common\cassette.dat       current_build\trima\config\templates
+	@$(XCOPY) /Y /R trima_common\setconfig.dat      current_build\trima\config\templates
+	@$(XCOPY) /Y /R trima_common\cal.dat            current_build\trima\config\templates
+	@$(XCOPY) /Y /R trima_common\touch_screen.dat   current_build\trima\config\templates
+	@$(XCOPY) /Y /R config\hw.dat                   current_build\trima\config\templates
+	@$(XCOPY) /Y /R proc\rbc.dat                    current_build\trima\config\templates
+	@$(XCOPY) /Y /R tcpip\trap_default.dat          current_build\trima\config\templates
+	@$(XCOPY) /Y /R tcpip\trap_override.dat         current_build\trima\config\templates
+	@$(XCOPY) /Y /R service\meter.dat               current_build\trima\config\templates
+	@$(GZIP) -1fc   config\features.txt           > config\features.bin
+	@$(XCOPY) /Y /R config\features.bin             current_build\trima\config\templates
+	@$(XCOPY) /Y /R "config\machine_ids\machine.id - default" current_build\trima\config\templates
+	@rename "current_build\trima\config\templates\machine.id - default" machine.id
+	@$(XCOPY) /Y /R proc\predict\predict_version    current_build\trima
+	@$(XCOPY) /Y /R projectrevision                 current_build\trima
+	@$(XCOPY) /Y /R projectrevision                 current_build\trima_ftp
+	@$(XCOPY) /Y /R build_info                      current_build\trima
+	@$(XCOPY) /Y /R /E softcrc\filelists\\*.files   current_build\trima\softcrc\filelists
+
+archive_list := vxboot_files out_files dat_files gui_support string_info_files
+ifneq ($(NO_TOOLS),true)
+ archive_list += engr_tools_files
+endif
+
+.PHONY: trima_archive
+trima_archive: force $(archive_list)
+	@echo   - Generating CRC values ...
+	$(Q)$(COMDIR)\softcrc\Release\softcrc_win -filelist softcrc/filelists/trima.files -chroot current_build -update current_build/trima/trima.crc
+	$(Q)$(COMDIR)\softcrc\Release\softcrc_win -filelist softcrc/filelists/safety.files -chroot current_build -update current_build/trima/safety.crc
+	@echo x Creating and zipping Trima archives ...
+	@$(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR) trima_ftp
+	@echo x Trima archive created successfully.
+
+my_ftp_dir   := current_build/trima_ftp
+my_taz_dirs  := vxboot trima strings fonts data graphics  
+my_taz_files := $(addsuffix .taz, $(my_taz_dirs)) 
+
+$(my_ftp_dir)/%.taz: current_build/%
+	@echo   - Creating zipped archive for: $(*F)
+	@cd $(^)  && $(TAR) -cf ../$(notdir $(@D))/$(*F).tar *
+	@cd $(@D) && $(GZIP) -9fc $(*F).tar > $(*F).taz
+	@rm -f $(@:.taz=.tar)
+
+.PHONY: trima_ftp
+trima_ftp: $(addprefix $(my_ftp_dir)/, $(my_taz_files)) 
+	@echo x Finalizing Update Trima archive ...
+	@cd $(my_ftp_dir) && $(TAR) -cf updateTrima.tar projectrevision $(my_taz_files)
+	@cd $(my_ftp_dir) && $(GZIP) -1fc updateTrima.tar > updateTrima.taz
+	@cd $(my_ftp_dir) && rm -f updateTrima.tar projectrevision $(my_taz_files)
+	@$(XCOPY) /Y /R update\bin\update.out $(subst /,\,$(my_ftp_dir))
+	@cd $(my_ftp_dir) && mv -f update.out updateTrima
+
+
+else
+ifneq ($(SIMDIR),)
+#
+#
+#
+#================================= Make archive for SIMNT ===========================
+#
+# If compiling with CPU==SIMNT, and we've defined SIMDIR, go ahead
+# and copy current string files and cobeconfig over to the appropriate
+# place in SIMDIR
+#
+.PHONY: archive
+archive: graphics_files string_files font_files data_files configuration_files trima_common_files sim_binaries gui_sim_scripts
+
+SIMDIR_DOS  := $(subst /,\,$(SIMDIR))
+SIMDIR_UNIX := $(subst \,/,$(SIMDIR))
+
+structure_dir_list := \
+ $(SIMDIR_DOS)\trima                      \
+ $(SIMDIR_DOS)\trima\config               \
+ $(SIMDIR_DOS)\trima\softcrc              \
+ $(SIMDIR_DOS)\trima\softcrc\filelists    \
+ $(SIMDIR_DOS)\config                     \
+ $(SIMDIR_DOS)\config\crc                 \
+ $(SIMDIR_DOS)\config\data                \
+ $(SIMDIR_DOS)\config\fonts               \
+ $(SIMDIR_DOS)\config\graphics            \
+ $(SIMDIR_DOS)\config\strings             \
+ $(SIMDIR_DOS)\config\log                 \
+ $(SIMDIR_DOS)\config\snap                \
+ $(SIMDIR_DOS)\machine                    \
+ $(SIMDIR_DOS)\machine\snap               \
+ $(SIMDIR_DOS)\machine\snap\ww            \
+ $(SIMDIR_DOS)\machine\snap\us            \
+ $(SIMDIR_DOS)\machine\snap\jp            \
+ $(SIMDIR_DOS)\source                     \
+ $(SIMDIR_DOS)\source\bin                 \
+ $(SIMDIR_DOS)\source\vxworks_sim         \
+ $(SIMDIR_DOS)\source\engr_tools          \
+ $(SIMDIR_DOS)\source\engr_tools\startsim \
+ $(SIMDIR_DOS)\source\config              \
+ $(SIMDIR_DOS)\source\config\bin          \
+ $(SIMDIR_DOS)\source\lib                 \
+ $(SIMDIR_DOS)\source\gui                 \
+ $(SIMDIR_DOS)\source\gui\guitest         \
+ $(SIMDIR_DOS)\source\gui\bin             \
+ $(SIMDIR_DOS)\source\gui\simnt_ugl       \
+ $(SIMDIR_DOS)\source\gui\simnt_ugl\bin   \
+ $(SIMDIR_DOS)\source\proc                \
+ $(SIMDIR_DOS)\source\proc\bin            \
+ $(SIMDIR_DOS)\source\unit_test           \
+ $(SIMDIR_DOS)\source\unit_test\bin       \
+ $(SIMDIR_DOS)\source\trima_common        \
+ $(SIMDIR_DOS)\source\trima_common\SIMNT
+
+.PHONY: structure
+structure: structure_dir_clean $(structure_dir_list)
+
+.PHONY: structure_dir_clean
+structure_dir_clean: force
+	@echo Cleaning sim
+	@rm -f $(SIMDIR_UNIX)/config/strings/*
+	@rm -f $(SIMDIR_UNIX)/config/data/*
+	@rm -f $(SIMDIR_UNIX)/config/fonts/*
+	@rm -f -r $(SIMDIR_UNIX)/source
+
+$(structure_dir_list) : force
+	$(Q)if not exist $@ mkdir $@
+
+.PHONY: graphics_files
+graphics_files: force structure
+	@echo   - Copying graphics files into sim area...
+	@$(XCOPY) /Y /R /I bin\graphics_package.out $(SIMDIR_DOS)\config\graphics
+
+.PHONY: string_files
+string_files: force structure
+	@echo   - Copying string files into sim area...
+	@$(XCOPY) /Y /R /I $(subst /,\,$(LANGDIR))\string*.info $(SIMDIR)\config\strings
+
+.PHONY: data_files
+data_files: force structure
+	@echo   - Copying data files into sim area...
+	@$(XCOPY) /Y /R /I focgui\data\\* $(SIMDIR_DOS)\config\data
+
+.PHONY: font_files
+font_files: force structure
+	@echo   - Copying font files into sim area...
+	@$(XCOPY) /Y /R /I focgui\fonts\default\\* $(SIMDIR_DOS)\trima\gui\fonts
+	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\* $(SIMDIR_DOS)\config\fonts
+	@$(XCOPY) /Y /R /I gui\SIMNT\fontdefs.o $(SIMDIR_DOS)\source\gui\bin
+
+.PHONY: gui_sim_scripts
+gui_sim_scripts: force structure
+	@echo   - Copying GUI sim scripts into sim area...
+	$(SIMDIR_SWAP) gui\guitest\simguiTelnet > $(subst /,\,$(SIMDIR))\source\gui\guitest\simguiTelnet
+	$(SIMDIR_SWAP) gui\guitest\startSim.bat > $(subst /,\,$(SIMDIR))\source\gui\guitest\startSim.bat
+
+.PHONY: configuration_files
+configuration_files: force structure
+	@echo   - Copying cobe_config.dat into sim area...
+	@$(XCOPY) /Y /R /I proc\cobe_config.dat $(SIMDIR_DOS)\trima\config
+	@$(XCOPY) /Y /R /I proc\cobe_config.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I trima_common\config.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I config\hw.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I low_level\ctl_drv\sounds.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I low_level\ctl_drv\sounds_j.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I proc\rbc.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I service\meter.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I tcpip\trap_default.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I tcpip\trap_override.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I trima_common\cal.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I trima_common\touch_screen.dat $(SIMDIR_DOS)\config
+	@$(GZIP) -1fc   config\features.txt           > config\features.bin
+	@$(XCOPY) /Y /R /I config\features.bin $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I softcrc\filelists\\* $(SIMDIR_DOS)\trima\softcrc\filelists
+	@$(XCOPY) /Y /R engr_tools\simulator\ignored_strings.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R engr_tools\simulator\auto $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\FullRoutine.bat $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\simguitelnet $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\simulatorStarter.exe $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\startSim.bat $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\startSimNoTelnet.bat $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\PreProcess.bat $(SIMDIR_DOS)
+	@$(XCOPY) /Y /R engr_tools\simulator\machine.id $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R projectrevision $(SIMDIR_DOS)\trima
+	@$(XCOPY) /Y /R engr_tools\simulator\crc $(SIMDIR_DOS)\config\crc
+	@$(XCOPY) /Y /R /I engr_tools\simulator\crc\cassette.dat $(SIMDIR_DOS)\config
+	@$(XCOPY) /Y /R /I engr_tools\simulator\crc\setconfig.dat $(SIMDIR_DOS)\config
+
+.PHONY: trima_common_files
+trima_common_files: force structure
+	@echo   - Copying trima_common files into sim area...
+	@$(XCOPY) /Y /R /I trima_common\SIMNT\filehelp.o $(SIMDIR_DOS)\source\trima_common\SIMNT
+	@$(XCOPY) /Y /R /I trima_common\SIMNT\datfile.o $(SIMDIR_DOS)\source\trima_common\SIMNT
+
+.PHONY: sim_binaries
+sim_binaries: force structure
+	@echo   - Copying simulator binaries into sim area...
+	@$(XCOPY) /Y /R /I vxworks_sim\vxWorks.exe $(SIMDIR_DOS)\source\vxworks_sim
+	@$(XCOPY) /Y /R /I config\bin\sysinit_control.out $(SIMDIR_DOS)\source\config\bin
+	@$(XCOPY) /Y /R /I lib\\* $(SIMDIR_DOS)\source\lib
+	@$(XCOPY) /Y /R /I gui\bin\\* $(SIMDIR_DOS)\source\gui\bin
+	@$(XCOPY) /Y /R /I proc\bin\predict.out $(SIMDIR_DOS)\source\proc\bin
+	@$(XCOPY) /Y /R /I unit_test\bin\\* $(SIMDIR_DOS)\source\unit_test\bin
+	@$(XCOPY) /Y /R /I bin\graphics_package.out $(SIMDIR_DOS)\source\bin
+	@$(XCOPY) /Y /R /I gui\simnt_ugl\bin\ugl_SIMNT.o $(SIMDIR_DOS)\source\gui\simnt_ugl\bin
+
+#
+#
+#================================= Make archive for SIMNT without SIMDIR ===========================
+#
+#ifneq ($(SIMDIR),)
+else
+.PHONY: archive
+archive:
+
+#
+#ifneq ($(SIMDIR),) ... else
+endif
+
+#ifneq ($(CPU),SIMNT) ... else
+endif
+
+
+#
+#
+#================================= Make latest_trima_build_dir.mk ===================================
+#
+TRIMA_BUILD_DIR := $(strip $(subst \,/, $(shell cmd /c 'cd')))
+
+latest_trima_build_dir.mk: force
+	@if exist ../$@ echo $(addprefix .\, $(notdir $(TRIMA_BUILD_DIR))) > ../$@
+

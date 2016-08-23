@@ -1,0 +1,74 @@
+# @(#) $Header: I:/BCT_Development/vxWorks/Trima/engr_tools/corrupt/rcs/makefile.vx 1.2 2002/08/15 21:07:59Z jl11312 Exp td07711 $
+#
+# Makefile - makefile for corrupt executable
+#
+# $Log: makefile.vx $
+# Revision 1.2  2002/08/15 21:07:59Z  jl11312
+# - updated for new makefile templates
+# Revision 1.1  2002/05/01 21:18:18  js70375
+# Initial revision
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I $(MAINDIR)\engr_tools\libtools \
+	-I $(MAINDIR)\trima_common
+
+include $(MAINDIR)/makefile.vxc
+
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME := corrupt_main
+corrupt_main_dir = ..\bin
+corrupt_main_map = $(APP_NAME).map
+corrupt_main_libs = $(LTLIBDIR)\libtools.a \
+	$(LIBDIR)\libtrima_common.a
+corrupt_main_c_files =
+corrupt_main_cxx_files = corrupt.cpp
+include $(COMDIR)/makefile.process_app
+
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+
+include $(COMDIR)/makefile.build_apps
+

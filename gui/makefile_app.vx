@@ -1,0 +1,99 @@
+################################################################################
+#
+# makefile_app.vx - makefile for gui app module
+#
+# This is the GUI makefile that generates the main GUI module, gui.out.
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change apps
+endif
+
+#
+# Define location for unicode stuff
+#
+UNICODEDIR    = unicode_string
+UNICODELIBDIR = $(UNICODEDIR)/lib
+DLMLIBDIR     = $(COMDIR)/dlm/lib
+
+ADDN_INCDIR  = -I $(MAINDIR)/trima_common -I $(MAINDIR)/cds -I $(UNICODEDIR)
+ifeq ($(CPU),SIMNT)
+ADDN_LDFLAGS = -u _guimain__Fv -split-by-reloc=65000
+else
+ADDN_LDFLAGS = -u guimain
+endif
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+ADDN_ASFLAGS  = -Os
+ADDN_CPPFLAGS = -Os
+ADDN_CCFLAGS  = -Os
+ADDN_CXXFLAGS = -Os
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+ADDN_CLEAN = bin/*.o
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+
+#
+# GUI
+#
+APP_NAME := gui
+gui_dir = bin
+gui_c_files =
+gui_cxx_files = metadirectory.cpp trima_palette.cpp listbox.cpp extended_listbox.cpp \
+		plt_listbox.cpp plas_listbox.cpp rbc_listbox.cpp  set_listbox.cpp \
+		screen_config.cpp config_keypad.cpp config_listbox.cpp cfg_look.cpp \
+		cfg_butt.cpp scrnname.cpp screentable.cpp defscrn.cpp sysacatt.cpp \
+		discrete_button.cpp cfg_rbc.cpp cfg_plt_amap.cpp cfg_proc.cpp cfg_priority.cpp \
+		cfg_repl.cpp cfg_volume.cpp cfg_main.cpp cfg_textabove_button.cpp \
+		cfg_kstr.cpp cfg_dono.cpp cfg_lang.cpp  toggleButton.cpp \
+		cfg_mach.cpp cfg_plas.cpp cfg_plat.cpp cfg_mss.cpp aasClampChannel.cpp \
+		abortcnf.cpp disconn.cpp donconn.cpp doninfo.cpp donvital.cpp \
+		powerup.cpp predict_manager.cpp predict_screen.cpp predict_screen_display.cpp \
+		runproc.cpp runsumm1.cpp runsum_plasma.cpp \
+		syscassette.cpp sysclamp.cpp sysdisp.cpp sysdonor.cpp systest.cpp \
+		manager_base.cpp adjust_manager.cpp trouble.cpp \
+		list_get.cpp confirmDonInfo.cpp sdevrec.cpp \
+		statmgr.cpp sdaction.cpp repfluid.cpp setid.cpp runsum_rbc.cpp \
+		statecol.cpp runsum_plt.cpp discmetr.cpp runsumm2.cpp troublemeter.cpp \
+		category_button.cpp category_button_collection.cpp barcode_cartouche.cpp \
+		barcode_screen.cpp  barcode_repository.cpp guiact.cpp actiocol.cpp guiinit.cpp \
+		cfr11_screen.cpp runsum_product.cpp confirmBoxBase.cpp cassetteDeleteConfirmBox.cpp \
+		aasRunSummary.cpp mssEnd.cpp aasChannelTest.cpp aasConnectPas.cpp aasConnectRas.cpp \
+		aasPrime.cpp pasSplit.cpp aasAddition.cpp clampCrossover.cpp pasInitialSplit.cpp \
+		contConfCyc.cpp oipAlarmBase.cpp drbcSplit.cpp aasTransitionDummy.cpp \
+		rasConnectConfirmBox.cpp ptfMount.cpp rebootConfirmBox.cpp dynamicListbox.cpp \
+		string_screen_mapper.cpp pasConnectConfirmBox.cpp textDataField.cpp timeDataField.cpp \
+		predictConfirmBox.cpp salineConnectConfirmBox.cpp acConnectConfirmBox.cpp \
+		pasEmpty.cpp langListbox.cpp rbcSplitInit.cpp reasonToString.cpp sealAndDetach.cpp \
+		jpClampBloodDiversion.cpp predictCompPlsConfirmBox.cpp cfg_softOpt.cpp SoftOptUtility.cpp \
+		ScreenKeyboard.cpp listview.cpp jpClampPlasmaAirBag.cpp pasBarcodeConfirmBox.cpp
+
+gui_libs = $(LIBDIR)\libgui.a $(LIBDIR)\libtrima_common.a $(UNICODELIBDIR)\libtrima_unicode_string.a $(DLMLIBDIR)\libdlm.a
+gui_lib_list =
+include $(MAINDIR)/makefile.process_app
+
+apps : $(APP_LIST)
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps

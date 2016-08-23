@@ -1,0 +1,37 @@
+#
+# All Trima files not subject to change after installation
+#
+# $Header: K:/BCT_Development/vxWorks/Trima/softcrc/filelists/rcs/trima.files 1.14 2003/05/13 15:54:41Z jl11312 Exp jl11312 $
+# $Log: trima.files $
+# Revision 1.14  2003/05/13 15:54:41Z  jl11312
+# - updated for vxWorks
+#
+#  
+
+IGNORE /trima/trima.crc
+IGNORE /trima/safety.crc
+
+IGNORE /trima/build_info
+IGNORE /trima/projectrevision
+
+IGNORE /trima/config/templates
+
+# These files are covered by the safety CRC
+IGNORE /trima/safety
+IGNORE /trima/common/safety_lib.out
+IGNORE /trima/low_level/safe_drv.out
+IGNORE /trima/low_level/safe_hw.out
+IGNORE /trima/low_level/safe_msg.out
+IGNORE /trima/low_level/sfastmsg.out
+IGNORE /trima/low_level/sysidlog.out
+IGNORE /trima/init/sysinit_safety.out
+
+# Kernel files are machine specific
+IGNORE /vxboot/bootrom.sys
+IGNORE /vxboot/bootrom_ampro.sys
+IGNORE /vxboot/bootrom_versalogic.sys
+IGNORE /vxboot/vxWorks
+IGNORE /vxboot/vxWorks_ampro
+IGNORE /vxboot/vxWorks_versalogic
+
+/trima

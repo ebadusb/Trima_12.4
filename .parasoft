@@ -1,0 +1,35 @@
+#Wed Dec 19 16:52:52 MST 2012
+/TrimaMain//com.parasoft.eclipse.excludedfiles=engr_tools;unit_test;gui%2Fguitest;vxworks_sim;**%2FI80486%2F**;vxworks_target%2Fcontrol_*%2F**;vxworks_target%2Fsafety_*%2F**
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.advanced.options=
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.cdt.configuration=CPPTEST_USE_ACTIVE_CONFIG
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.compiler.command.c.win32.x86=ccpentium
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.compiler.command.cpp.win32.x86=ccpentium
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.compiler.family.win32.x86=wrgcc_2_9
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.compiler.options.win32.x86=${cpptest\:original_options} -DPARASOFT_CPPTEST
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.connected.6x.projects=
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.dependency.files.paths=${project_loc}/makefile.vx
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.dsp.env.var.mode=ENV_PATCH_PREPEND_MODE
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.edg.multibyte.chars.is.source.handling=AUTO
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.evc.env.var.mode=ENV_PATCH_PREPEND_MODE
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.extractor.id=options_dir_extractor_id
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.linker.command.win32.x86=ldpentium
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.linker.options.win32.x86=${cpptest\:original_options}
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.make.command.line=make -i -f makefile.vx CXX\=${CPPTEST_SCAN} CC\=${CPPTEST_SCAN} LD\=${CPPTEST_SCAN}
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.make.scan.hash.code.validation=true
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.make.working.dir=${project_loc}
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.make_always_build=false
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.ode_auto_scan_mode=on_changes
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.ode_delete_bdf_postaction=false
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.ode_incremental_build=false
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.ode_options_dir=${project_loc}/ctscan.bdf
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.run_orig_cmd_for_parallel_proj_bdf=true
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.runtime.location=${cpptest\:engine_loc}/runtime
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.synchronize_with_project_settings=true
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.test.case.location.patterns=*
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.test.ware.location=${workspace_loc}/.cpptest/${project_name}
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.vc71.configuration=CPPTEST_USE_ACTIVE_CONFIG
+/TrimaMain//com.parasoft.xtest.checkers.api.cpp.options.working.dir=${project_loc}
+/TrimaMain//grs.logging.attributes=<?xml version\="1.0" encoding\="utf-8"?><properties document_version\="1.0"/>
+/TrimaMain//grs.use.general.project=true
+project.path=/TrimaMain
+version=1

@@ -1,0 +1,3 @@
+[state]         CentrifugeTests
+   [state]         SafetyPowerTest64       CentrifugeTests
+   [state]         CentShutdownTest        CentrifugeTests

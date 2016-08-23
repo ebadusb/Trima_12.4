@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<SearcherSerialize xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<SearcherSettings>
+		<DefaultSheetName>Search Results</DefaultSheetName>
+		<HistoryCountMax>10</HistoryCountMax>
+		<SwitchSheet>true</SwitchSheet>
+		<RememberSearch>true</RememberSearch>
+		<ShowLog>false</ShowLog>
+	</SearcherSettings>
+	<SearchInfoList>
+		<SearchInfo>
+			<Name>Optia Raised Alarms</Name>
+			<SearchString>RAISED_ALARM</SearchString>
+			<SearchArea />
+			<ResultSheet>Raised Alarms</ResultSheet>
+			<RowColor>#FF9797</RowColor>
+			<CellColor>#FF8000</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>true</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>System Debug Dump</Name>
+			<SearchString>debug_dump</SearchString>
+			<SearchArea />
+			<ResultSheet>Debug Dump</ResultSheet>
+			<RowColor>#FF9797</RowColor>
+			<CellColor>#FF8000</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>true</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>System Page Fault</Name>
+			<SearchString>page fault</SearchString>
+			<SearchArea />
+			<ResultSheet>Page Fault</ResultSheet>
+			<RowColor>#FF9797</RowColor>
+			<CellColor>#FF8000</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>true</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>System Spoof Activate</Name>
+			<SearchString>spoofActivate</SearchString>
+			<SearchArea />
+			<ResultSheet>Spoof Activate</ResultSheet>
+			<RowColor>#FF9797</RowColor>
+			<CellColor>#FF8000</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>true</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>System Loaded Modules</Name>
+			<SearchString>.out</SearchString>
+			<SearchArea>Datalog_Message</SearchArea>
+			<ResultSheet>Loaded Modules</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>Yellow</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>false</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>Trima Reports Status</Name>
+			<SearchString>reports status</SearchString>
+			<SearchArea />
+			<ResultSheet>Predict Status</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>Yellow</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>false</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>Trima Created Products</Name>
+			<SearchString>created product</SearchString>
+			<SearchArea />
+			<ResultSheet>Predict Status</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>#6CFF6C</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>false</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>Trima GUI Button Pushed</Name>
+			<SearchString>GUI button pushed</SearchString>
+			<SearchArea />
+			<ResultSheet>GUI Button Pushed</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>Yellow</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>false</HighlightSrcCell>
+			<HighlightDstCell>false</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>true</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>Trima Selected Product</Name>
+			<SearchString>selected product</SearchString>
+			<SearchArea />
+			<ResultSheet>Predict Status</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>Aqua</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>false</ClearPrevious>
+		</SearchInfo>
+		<SearchInfo>
+			<Name>Trima Predict ProcData</Name>
+			<SearchString>Predict: ProcData</SearchString>
+			<SearchArea />
+			<ResultSheet>Predict Status</ResultSheet>
+			<RowColor>#E0E0E0</RowColor>
+			<CellColor>#FF80C0</CellColor>
+			<IsExpressions>false</IsExpressions>
+			<MatchLetterCase>false</MatchLetterCase>
+			<MatchWholeWord>false</MatchWholeWord>
+			<LinkRangeRows>false</LinkRangeRows>
+			<HighlightSrcCell>true</HighlightSrcCell>
+			<HighlightDstCell>true</HighlightDstCell>
+			<HighlightSrcRow>true</HighlightSrcRow>
+			<HighlightDstRow>true</HighlightDstRow>
+			<InsertSrcHyperlink>false</InsertSrcHyperlink>
+			<InsertDstHyperlink>true</InsertDstHyperlink>
+			<InsertRowNum>true</InsertRowNum>
+			<SortByRowNum>true</SortByRowNum>
+			<ResizeColumn>true</ResizeColumn>
+			<ClearPrevious>false</ClearPrevious>
+		</SearchInfo>
+	</SearchInfoList>
+	<BatchInfoList>
+		<AssetBatchOfSearchInfo>
+			<Name>System Run Information</Name>
+			<Comment>Provides information about the run including page faults, loaded modules, spoof activation, and debug dumps.</Comment>
+			<List>
+				<string>System Debug Dump</string>
+				<string>System Page Fault</string>
+				<string>System Spoof Activate</string>
+				<string>System Loaded Modules</string>
+			</List>
+		</AssetBatchOfSearchInfo>
+		<AssetBatchOfSearchInfo>
+			<Name>Trima Predict Information</Name>
+			<Comment>Provides predict information about the run.</Comment>
+			<List>
+				<string>Trima Reports Status</string>
+				<string>Trima Created Products</string>
+				<string>Trima Selected Product</string>
+				<string>Trima Predict ProcData</string>
+			</List>
+		</AssetBatchOfSearchInfo>
+	</BatchInfoList>
+</SearcherSerialize>

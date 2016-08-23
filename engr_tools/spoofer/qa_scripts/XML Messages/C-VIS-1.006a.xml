@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GenericMsg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <Header>
+  <StartOfMessage>3405691582</StartOfMessage> 
+  <MessageType>VIP_DOWNLOAD_CATALOG_INFO</MessageType> 
+  <SequenceNumber>5</SequenceNumber> 
+  <Status>SENDER</Status> 
+  <BodyLength>0</BodyLength> 
+  <TimeStamp>0</TimeStamp> 
+  <BodyCRC>0</BodyCRC> 
+  <HeaderCRC>0</HeaderCRC> 
+ </Header>
+ <Body>
+  <Item Type="Integer" Size="4" Name="Permanent">0</Item> 
+  <Item Type="Integer" Size="4" Name="NumberOfItems">5</Item> 
+  <Item Type="Integer" Size="4" Name="Catalog0">80337</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode0">9185147</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode0">010502058380337</Item> 
+  <Item Type="Integer" Size="4" Name="Catalog1">80537</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode1">2370507</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode1">010502058380537</Item> 
+  <Item Type="Integer" Size="4" Name="Catalog2">800400</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode2">9339283</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode2">h4137778004001E</Item> 
+  <Item Type="Integer" Size="4" Name="Catalog3">80350</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode3">13503573</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode3">010502058380350</Item> 
+  <Item Type="Integer" Size="4" Name="Catalog4">80440</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode4">9315755</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode4">010502058380440</Item>
+  <Item Type="Integer" Size="4" Name="Catalog5">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode5">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode5" /> 
+  <Item Type="Integer" Size="4" Name="Catalog6">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode6">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode6" /> 
+  <Item Type="Integer" Size="4" Name="Catalog7">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode7">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode7" /> 
+  <Item Type="Integer" Size="4" Name="Catalog8">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode8">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode8" /> 
+  <Item Type="Integer" Size="4" Name="Catalog9">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode9">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode9" /> 
+  <Item Type="Integer" Size="4" Name="Catalog10">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode10">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode10" /> 
+  <Item Type="Integer" Size="4" Name="Catalog11">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode11">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode11" /> 
+  <Item Type="Integer" Size="4" Name="Catalog12">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode12">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode12" /> 
+  <Item Type="Integer" Size="4" Name="Catalog13">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode13">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode13" /> 
+  <Item Type="Integer" Size="4" Name="Catalog14">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode14">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode14" /> 
+  <Item Type="Integer" Size="4" Name="Catalog15">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode15">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode15" /> 
+  <Item Type="Integer" Size="4" Name="Catalog16">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode16">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode16" /> 
+  <Item Type="Integer" Size="4" Name="Catalog17">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode17">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode17" /> 
+  <Item Type="Integer" Size="4" Name="Catalog18">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode18">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode18" /> 
+  <Item Type="Integer" Size="4" Name="Catalog19">0</Item> 
+  <Item Type="Integer" Size="4" Name="TubingSetCode19">0</Item> 
+  <Item Type="UTF8_Fixed" Size="80" Name="Barcode19" /> 
+ </Body>
+</GenericMsg>

@@ -1,0 +1,69 @@
+# $Header: $ 
+#
+# FILENAME:  makefile.vx
+# PURPOSE: builds spoof_server_control.out for an automated procedure 
+# testing of Trima.
+
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = \
+	-I $(MAINDIR)\trima_common \
+	-I $(MAINDIR)\cds \
+	-I $(MAINDIR)\gui \
+	-I $(MAINDIR)\gui\unicode_string \
+	-I $(MAINDIR)\engr_tools\spoofer \
+	-I $(MAINDIR)\proc\interface \
+	-I $(MAINDIR)\proc\algorithm \
+
+#
+# VPATH must include the relative pathnames (from the directory containing this
+# makefile) to any directories containing source files used for the applications.
+#
+vpath %.cpp
+
+include $(MAINDIR)/makefile.vxc
+
+
+#
+# Definitions required for building smokeTest.out
+#
+APP_NAME := smokeTest
+smokeTest_dir = ./bin
+smokeTest_libs = \
+		..\lib\libspoofer.a
+smokeTest_c_files =
+smokeTest_cxx_files = \
+		..\smokeTest.cpp \
+		..\delay.cpp \
+		..\screenTouch.cpp \
+
+include $(COMDIR)/makefile.process_app
+
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: $(APP_LIST)
+
+include $(COMDIR)/makefile.build_apps
+

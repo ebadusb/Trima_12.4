@@ -1,0 +1,44 @@
+#
+# $Header: E:/BCT_Development/Trima5.R/Trima/focgui/data/rcs/data_item.info 1.1 2009/07/28 17:44:24Z dslausb Exp dslausb $
+# $Log: data_item.info $
+# Revision 1.1  2009/07/28 17:44:24Z  dslausb
+# Initial revision
+#
+# This file contains information for data items used by the layers for the Taos 
+# software. The data_item.info file is a run time only file and is renamed and copied
+# into the correct directory at build time.  All the data items used in the string.info
+# file must be contained in the data_item.info file with the correct type.
+#
+# One section is present in this file:
+#   DATA_ITEM_FILE_TABLE - a list containing each unique data item string id and
+#      the associated information.
+#     
+#
+DATA_ITEM_FILE_TABLE_START
+#
+# Each entry in this file must include the following:
+#   ID - DataItem name, how it is referenced by software.
+#   Data Item Type - is it a TextItem, Double, Integer?
+#   Initial Value - 0 for doubles and integers, 
+#                     and StringData id for textItems (currently same as ID) maybe StringDataId.
+#   Precision - only needed for Doubles
+#
+#
+# ID                                         DATA ITEM TYPE      Initial Value      Precision
+#--------------------------------------------------------------------------------------------
+currentlySelectedRef                           Text                 0
+dataItemTbv                                   Integer               0
+dataItemHeightFeet                            Integer               0
+dataItemHeightInches                          Integer               0
+dataItemHeightCm                              Integer               0
+dataItemWeightLb                              Integer               0
+dataItemWeightKg                              Integer               0
+dataItemRbcHct                                Integer               0
+dataItemRbcHgb                                Integer               0
+dataItemPltPrecount                           Integer               0
+dataItemBloodType                              Text                 0
+dataItemDob                                    Text                 0
+dataItemName                                   Text                 0
+dataItemNumPasBagsNeeded                      Integer               0
+dataItemNumRasBagsNeeded                      Integer               0
+DATA_ITEM_FILE_TABLE_END

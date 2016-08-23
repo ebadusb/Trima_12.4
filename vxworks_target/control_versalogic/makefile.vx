@@ -1,0 +1,113 @@
+################################################################################
+#
+# Makefile for Trima Control OS image
+#
+################################################################################
+
+OUTPUT = vxWorks_versalogic
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change $(OUTPUT)
+endif
+
+
+# MAINDIR should be set to the relative path from this makefile directory
+# to the root taos project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+ADDN_INCDIR = -I$(MAINDIR)/trima_common -I$(MAINDIR) -I$(WIND_BASE)/target/config/all \
+    -I$(WIND_BASE)/target/src/drv -I$(WIND_BASE)/target/src/config -I$(MAINDIR)/config \
+    -I$(MAINDIR)/os -I$(MAINDIR)/regex -I$(MAINDIR)/vxworks_target
+ADDN_CPPFLAGS = -DCONTROL_BUILD
+ADDN_CCFLAGS = -DCONTROL_BUILD
+ADDN_CXXFLAGS = -DCONTROL_BUILD
+
+# -I$(WIND_BASE)/target/config/comps/src
+
+# Some files needed for build are in the Tornado installation tree
+#
+CONFIG_ALL_PATH = $(WIND_BASE)/target/config/all
+CONFIG_COMPS_PATH = $(WIND_BASE)/target/config/comps/src
+vpath %.c .. $(CONFIG_ALL_PATH) $(CONFIG_COMPS_PATH)
+vpath %.cpp ..
+
+#
+# Include build rules and find common project.  The common project
+# location is used to generate additional include paths.
+#
+include $(MAINDIR)/makefile.vxc
+
+SYS_S_FILES = sysALib.s
+SYS_C_FILES = usrConfig.c sysLib.c \
+              esmcEnd.c nfsTable.c \
+              envfile.c rtc.c pxe_server.c \
+              node_init.c platform_init.c \
+              ftpdLib.c version.c \
+              node_data_local.c telnetdLib.c
+SYS_CXX_FILES = 
+
+#
+# Need to build dependency file list for all source files
+#
+SYS_DEPEND := $(addprefix .dfile/, $(notdir $(SYS_S_FILES:.s=.d))) \
+              $(addprefix .dfile/, $(notdir $(SYS_C_FILES:.c=.d))) \
+              $(addprefix .dfile/, $(notdir $(SYS_CXX_FILES:.cpp=.d)))
+
+PRIMARY_OBJS = $(addprefix $(CPU)/, $(notdir $(SYS_S_FILES:.s=.o))) \
+               $(addprefix $(CPU)/, $(notdir $(SYS_C_FILES:.c=.o))) \
+               $(addprefix $(CPU)/, $(notdir $(SYS_CXX_FILES:.cpp=.o)))
+
+LIB_DIRS =   -L$(WIND_BASE)/target/lib/pentium/$(CPU)/gnu -L$(WIND_BASE)/target/lib/pentium/$(CPU)/common
+
+LIB_LIST =   -lcplus -lgnucplus -larch -lcommoncc -ldrv \
+             -lgcc -lnet -los -lrpc -ltffs -lusb -lvxvmi \
+             -lwdb  -lwind  -lwindview -lwndml
+
+$(SYS_DEPEND)   : | .dfile
+$(PRIMARY_OBJS) : | $(CPU)
+
+$(CPU)/.partialImage.o : $(PRIMARY_OBJS)
+	$(Q)$(LD) $(LDFLAGS) $(PRIMARY_OBJS) $(LIB_DIRS) --start-group $(LIB_LIST) --end-group -o $(CPU)/.partialImage.o
+
+#
+#  Note MUNCH overridden here to always use pentium - arch=386 appends an underscore to the symbols which prevents proper linking
+#
+$(CPU)/.ctdt.o : $(CPU)/.partialImage.o
+	$(Q)$(NM) $(CPU)/.partialImage.o | wtxtcl $(WIND_BASE)/host/src/hutils/munch.tcl -asm pentium > $(CPU)/.ctdt.c 
+	$(Q)$(CC) -fdollars-in-identifiers $(CCFLAGS) $(CPU)/.ctdt.c -o $(CPU)/.ctdt.o
+
+$(CPU)/.symTbl.o : $(CPU)/.partialImage.o
+	$(Q)makeSymTbl pentium $(CPU)/.partialImage.o $(CPU)/.symTbl.c
+	$(Q)$(CC) -fdollars-in-identifiers $(CCFLAGS) $(CPU)/.symTbl.c -o $(CPU)/.symTbl.o
+
+$(OUTPUT) : $(SYS_DEPEND) $(CPU)/.partialImage.o $(CPU)/.ctdt.o $(CPU)/.symTbl.o
+  ifeq ($(TERSE),true)
+	@echo x Linking: $(BASEDIR)/$@
+  endif
+	$(Q)$(LD) -X -N -T $(WIND_BASE)/target/h/tool/gnu/ldscripts/link.RAM -e _sysInit -Ttext 00108000 \
+        $(CPU)/.partialImage.o $(CPU)/.ctdt.o $(CPU)/.symTbl.o -o $(OUTPUT)
+
+.PHONY: clean
+clean:
+	rm -r -f I80486 PENTIUM .dfile
+	rm -f $(OUTPUT)
+
+ifneq ($(BUILD_TYPE),CLEAN)
+  ifndef FORCE_REBUILD
+    ifneq ($(strip $(SYS_C_FILES)),)
+      -include $(addprefix .dfile/, $(notdir $(SYS_C_FILES:.c=.d)))
+    endif
+
+    ifneq ($(strip $(SYS_CXX_FILES)),)
+      -include $(addprefix .dfile/, $(notdir $(SYS_CXX_FILES:.cpp=.d)))
+    endif
+  else
+    include $(MAINDIR)/makefile.rules
+  endif
+endif
+

@@ -1,0 +1,9 @@
+# @(#) $Header$
+#
+# stringFiles - Include this file in a makefile for a list of string files
+#
+# $Log: stringFiles $
+#
+#################################################
+
+LANGS=string.info

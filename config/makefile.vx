@@ -1,0 +1,21 @@
+################################################################################
+#
+# Makefile.vx - main Trima config makefile
+#
+################################################################################
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := cfg_init
+
+.PHONY: all
+all : $(DIR_LIST)
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+	@cd $@ && $(MAKE) -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+ 

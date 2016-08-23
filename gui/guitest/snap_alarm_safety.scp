@@ -1,0 +1,11 @@
+#*newTime = 2
+
+set_screen_name(1)
+add_lang_suffix(" EN")
+
+systemState(9)
+
+safety(1,32769)
+control(1,1)
+
+snagOperatorAttentionAlarms()

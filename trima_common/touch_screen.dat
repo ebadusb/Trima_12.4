@@ -1,0 +1,46 @@
+# Touchscreen template for Trima 6.0 and up. 
+#
+
+[Version]
+FormatVersion=1.0
+TrimaVersion=6.0
+
+[FileInfo]
+ReadOnly=false
+FileName="/config/touch_screen.dat"
+ServiceChangeable=true
+
+[TOUCHSCREEN]
+# Calibration data for touchscreen.
+#
+# The touchscreen converts from raw coordinates to screen coordinates
+# using the equations:
+#
+#  screen_x = a*raw_x + b*raw_y + c
+#  screen_y = d*raw_x + e*raw_y + f
+#
+#
+a=0.842105263
+b=0.0
+c=-75.7894737
+d=0.0
+e=0.685714286
+f=-89.1428571
+
+#
+# Touch screen calibration values
+#
+# These values specify the logical screen size in pixels.
+#
+screen_horizontal_size=640
+screen_vertical_size=480
+
+#
+# These values correspond to the raw touchscreen readings for the specified
+# screen edges.  They are used along with the screen size specified above
+# to convert raw touch screen readings to pixel based coordinates.
+#
+tsraw_left_edge=90
+tsraw_right_edge=850
+tsraw_top_edge=130
+tsraw_bottom_edge=830

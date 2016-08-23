@@ -1,0 +1,59 @@
+# FILENAME:  makefile.vx
+#
+# PURPOSE: builds hangman utility for suspending tasks.
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR =
+
+include $(MAINDIR)/makefile.vxc
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+#
+# Definitions required for building $(APP_NAME).out
+#
+APP_NAME         := hangman
+hangman_dir       = ..\bin
+hangman_map       = 
+hangman_libs      = 
+hangman_c_files   = hangman.c
+hangman_cxx_files = 
+include $(COMDIR)/makefile.process_app
+ 
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: $(APP_LIST)
+
+# If any hangman_libs get defined, add them to 'libs' action below,
+# and and add 'libs' to the 'local_build' target above.
+#
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+include $(COMDIR)/makefile.build_apps

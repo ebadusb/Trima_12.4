@@ -1,0 +1,38 @@
+################################################################################
+#
+# Makefile that builds spoofer/unit_test stuff
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : dirs
+else
+.PHONY: all
+all : check_opt_change dirs
+endif
+
+# 
+# NOTE: be sure to use backslashes (not slashes) in pathname defs
+#
+MAINDIR = ..\..\..
+include $(MAINDIR)/makefile.vxc
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := sm_test ss_test getdata senddata
+
+.PHONY: dirs
+dirs : $(DIR_LIST)
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+	@cd $@ && $(MAKE) -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	
+
+#
+# This is the standard makefile for applications
+#
+include $(MAINDIR)/makefile.build_apps
+

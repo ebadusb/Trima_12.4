@@ -1,0 +1,16 @@
+# FILENAME: cleanup04.dat
+# PURPOSE: SETUP fails, but CLEANUP commands should still run
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE cleanup04_suite
+
+
+TEST cleanup04_test
+SETUP ls bogusfile
+RUN echo run
+CLEANUP echo foobar
+
+
+

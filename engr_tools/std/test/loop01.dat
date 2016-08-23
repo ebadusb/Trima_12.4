@@ -1,0 +1,11 @@
+# FILENAME: loop01.dat
+# PURPOSE: tests -loop 2 runs this suite twice
+# CHANGELOG:
+#   01/24/2000 - dyes - initial version
+
+
+SUITE loop01_suite
+TEST loop01_test
+RUN echo foobar
+
+

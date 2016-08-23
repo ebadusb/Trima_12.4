@@ -1,0 +1,122 @@
+#
+# 1.) This file must have lines that are less then 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) NO SPACES ARE ALLOWED BETWEEN name=value!
+#
+# 3.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+# NO SPACES ARE ALLOWED BETWEEN name=value
+
+[OPTIONS]
+#
+# The following version number must be changed if the format of this
+# file changes, allowing install or downgrade scripts to determine
+# when file conversion is necessary.
+#
+# - 5.10  : original vxWorks version
+# - 5.10a : added support for dynamic driver loading
+# - 5.10b : corrected hardware check for older safety CPU boards
+#
+file_version=12.0.0.0
+
+# bit significant option word
+# bit0 == 1 => seal safe installed
+# bit1 == 1 => basin temperature sensor installed
+# bit2:31 reserved
+#       For example: option_word=2 indicates basin
+#       temperature sensor is installed but not seal safe
+#option_word=0
+
+[FileInfo]
+ReadOnly=false
+FileName="/config/hw.dat"
+ServiceChangeable=true
+
+[DRIVERS]
+#
+# The following specify the hardware drivers for the Trima
+# specific devices on control and safety.
+#
+control_hardware_driver=/trima/low_level/ctl_hw.out,72cef47d
+safety_hardware_driver=/trima/low_level/safe_hw.out,c056fea7
+
+# 
+# To enable power fail ridethru, uncomment the following line.  Note
+# that this requires proper hardware support.  If power fail ridethru
+# is enabled on a system without this hardware support, it may cause a
+# system test failure (a timing error will be reported in the safety
+# trace log), or it may simply cause power fail recovery to function
+# incorrectly (only end run will be available, even if the run should
+# have been recoverable).  Note that the system test failure would be
+# reported soon after that splash screen is displayed, and so is easy
+# to check for.  The only consequence of not enabling power fail
+# ridethru on a system with hardware support is that the system will
+# not be able to continue running with quite as long an AC power
+# glitch (about 40-60 msec shorter than with ridethru enabled).
+#
+#pfw_ridethru=-R,439c9d97
+#
+
+#
+# The following specify the serial port I/O addresses and interrupts
+# These may be left blank to use the default settings.
+#
+# The Versalogic VSBC-6 CPU board requires custom serial port
+# interrupts.  The serial_driver command line should be specified as:
+#   control_serial_driver=3f8:4 2f8:3 3e8:11 2e8:7,7b30c9d1
+#
+control_serial_driver=3f8:4 2f8:3 3e8:11 2e8:7,7b30c9d1
+
+#
+# The following specify the various network drivers.  These may be
+# left blank to use the default settings.
+#
+# Note that with the upgrade to VxWorks 5.5, these three settings
+# are no longer necessary.  However, they remain here so that
+# when downgrading back to Trima 5.2 or 5.1, you still have
+# connectivity.
+#
+control_internal_net_driver=/trima/drivers/net_ene.out :0 800 37 5:,9aef03b2
+control_external_net_driver=/trima/drivers/net_esmc.out :1 864 42 10 0 1:,0104704d
+safety_internal_net_driver=/trima/drivers/net_ene.out :0 800 41 9:,6d6e1d0a
+
+#
+# crt_driver must be set to file name for the appropriate graphics
+# driver (this includes the touchscreen driver).  Currently, the
+# CT 65545 on the Ampro CPU is supported using:
+#
+#  crt_driver=/trima/gui/ugl_CT65545.o,2ef802f0
+#
+# The CT 65550 on the Versalogic CPU is supported using:
+#
+#  crt_driver=/trima/gui/ugl_CT655xx.o,8778fbe6
+#
+crt_driver=/trima/gui/ugl_CT655xx.o,8778fbe6
+
+[TEMPERATURE]
+maximum_basin_temperature=42.0
+
+[HW_CRC]
+#
+# The following CRC values specify the control and safety CPU boards which have been validated
+# for use on the Trima system.  If the Trima software is loaded on a system not listed here,
+# an alarm will be generated during startup test and the operator will not be allowed to run
+# procedures on the machine.  The SQA department controls the values which may be entered
+# in this list.
+#
+control=9ea9399f  - Ampro LB 486/i R1.04 or R1.06 (CPU speed=0x7D1, AMD processor)
+control=047f9665	- Versalogic VSBC-6 (CPU speed=0x1fe7, Intel processor)
+
+safety=1286c1bc   - Ampro BCM/486-IIA R1.02b (CPU speed = 0x3a3, no processor ID)
+safety=38bfac37   - Ampro CM/4DXi CM/4DXe R1.06 (CPU speed = 0x5b3, Intel processor)
+safety=828f9aef   - Versalogic EPM-CPU-3 (CPU speed=0x1756, AMD processor)

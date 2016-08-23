@@ -1,0 +1,15 @@
+# FILENAME: precondition01.dat
+# PURPOSE: verify multiple PRECONDITION command execute
+# CHANGELOG:
+#   01/12/99 - dyes - initial version
+
+
+SUITE precondition01_suite
+
+TEST precondition01_test
+PRECONDITION echo pre1
+PRECONDITION echo pre2
+PRECONDITION echo pre3
+RUN echo foobar
+
+

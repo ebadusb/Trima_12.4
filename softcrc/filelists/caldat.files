@@ -1,0 +1,10 @@
+#
+# Files included in calibration CRC
+#
+# $Header$
+# $Log$
+#
+#  
+
+/config/cal.dat
+/config/touch_screen.dat

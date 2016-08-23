@@ -1,0 +1,159 @@
+
+
+Usage: spoof_main - runs a Trima spoof
+
+spoof_main [options]
+
+Options:
+
+  -id <string> - specifies which spoof to run, def=NULL
+
+  -object <string> - object name, def=NULL
+
+  -data <string> - data name, def=NULL
+
+  -value <string> - value to spoof data to, def=NULL
+
+  -mult <float> - spoof multiplier (-1000000.000000-1000000.000000), def=0.000000
+
+  -offset <float> - spoof offset (-1000000.000000-1000000.000000), def=0.000000
+
+  -enable - enables spoofing
+
+  -disable - disables spoofing
+
+  -end - ends spoofing
+
+  -unspoof - unspoofs given object and data
+
+  -sd - show data that can be spoofed
+
+  -se - show enums supported
+
+  -so - show objects that can be spoofed
+
+  -ss - show spoofs that can be run
+
+  -trace - trace spoofs as they occur
+
+  -send <string> - send specified int message, def=NULL
+
+  -int <int> - int data to send (-2000000000-2000000000), def=1
+
+  -debug - enable debug messages
+
+  -serverDebug - enable server debug messages
+
+  -timeout <int> - new timeout for this spoof (1-36000), def=0
+
+  -servers <int> - number of spoofer server tasks (1-10), def=2
+
+  -help - prints help on specified spoof
+
+  -priority <int> - sets task priority (0-255), def=30
+
+  -traffic <int> - set msg traffic multiple, -1 = no change (-1-100), def=-1
+
+  -suspendControl <string> - task to suspend on control computer, def=NULL
+
+  -suspendSafety <string> - task to suspend on safety computer, def=NULL
+
+  -removeFile <string> - looks for file and removes it when found, def=NULL
+
+  -logBurst <int> - burst n logmsgs each second (0-1000), def=0
+
+  -var1 <string> - generic value 1, def=NULL
+
+  -var2 <string> - generic value 2, def=NULL
+
+  -beginSubstate <string> - substate transition at which to activate the spoof, def=NULL
+
+  -timeFromActive <int> - start duration timer when spoof is activated by triggering message or substate transition (1-36000), def=0
+
+  -endSubstate <string> - substate transition at which to stop spoofing, def=NULL
+
+  -delta <int> - duration in seconds after triggering substate transition or message to start spoofing (1-36000), def=0
+
+  -beginMsg <string> - message to wait for before activating the spoof, def=NULL
+
+  -endMsg <string> - message trigger to stop spoofing, def=NULL
+
+
+  
+  
+
+
+  
+  
+  
+  
+State_names:
+	"FIRST_STATE", FIRST_STATE
+	"SELF_TEST", SELF_TEST
+	"STARTUP_TESTS", STARTUP_TESTS
+	"DISPOSABLE_TEST", DISPOSABLE_TEST
+	"AC_CONNECTED", AC_CONNECTED
+	"AC_PRIME", AC_PRIME
+	"DONOR_CONNECTED", DONOR_CONNECTED
+	"BLOOD_PRIME", BLOOD_PRIME
+	"BLOOD_RUN", BLOOD_RUN
+	"BLOOD_RINSEBACK", BLOOD_RINSEBACK
+	"DONOR_DISCONNECT", DONOR_DISCONNECT
+	"POST_RUN", POST_RUN
+	"METERED_STORAGE", METERED_STORAGE
+	"METERED_STORAGE_DISCONNECT", METERED_STORAGE_DISCONNECT
+	"SERVICE_MODE", SERVICE_MODE
+	"DEFAULT_STATE", DEFAULT_STATE
+
+    // Note these may be subject to change is there anyway to check against states.h?
+Substate_names:
+	"CHANNELSETUP", SS_CHANNEL_SETUP
+	"PREPLATELETPLASMA", SS_PREPLATELET_PLASMA
+	"PREPLATELETNOPLASMA", SS_PREPLATELET_NOPLASMA
+	"PLATELETPLASMA", SS_PLATELET_PLASMA
+	"PCA", SS_PCA
+	"MIDRUN", SS_MIDRUN
+	"PIRPLASMA", SS_PIR_PLASMA
+	"PIRNOPLASMA", SS_PIR_NOPLASMA
+	"EXTENDEDPCA", SS_EXTENDED_PCA
+	"EXTENDEDPLASMA", SS_EXTENDED_PLASMA
+	"RBCSETUP1", SS_RBC_PTF_SETUP_1
+	"RBCSETUP2", SS_RBC_PTF_SETUP_2
+	"RBCPTFPRIME", SS_RBC_PTF_PRIME
+	"RBCCOLLECTION", SS_RBC
+	"RPCHANNELSETUP", SS_RP_CHANNEL_SETUP
+	"PLASMAONLY", SS_RP_PLASMA_ONLY      
+	"RBCRPSETUP1", SS_RP_RBC_PTF_SETUP_1
+	"RBCRPSETUP2", SS_RP_RBC_PTF_SETUP_2
+	"RBCRPCOLLECTION", SS_RP_RBC
+	"RBCSETUP1DOUBLE", SS_RP_RBC_PTF_SETUP_1_DOUBLE
+	"REBSETUP2DOUBLE", SS_RP_RBC_PTF_SETUP_2_DOUBLE
+	"RBCCOLLECTIONDOUBLE", SS_RP_RBC_DOUBLE
+	"MSSSETUP", SS_MSSSETUP  
+	"MSSPFR", SS_MSSPFR   
+	"RESSETUP", SS_RESSETUP 
+	"RESSETUP2", SS_RESSETUP2              
+	"RESSETUP3", SS_RESSETUP3             
+	"VERIFYCLOSURE", SS_VERIFYCLOSURE       
+	"VERIFYCLOSURE3", SS_VERIFYCLOSURE3      
+	"MSSCONNECT", SS_MSSCONNECT         
+	"MSSPRIME", SS_MSSPRIME 
+	"MSSRBCPRIME1", SS_MSSRBCPRIME1       
+	"MSSPLTPRIMESALVAGE", SS_MSSPLTPRIMESALVAGE             
+	"MSSPLTPRIME1", SS_MSSPLTPRIME1          
+	"MSSPLTPRIME2", SS_MSSPLTPRIME2
+	"MSSPARALLEL", SS_MSSPARALLELPROC
+	"VACPURGE", SS_MSSVACPURGE
+	"PASFINALFLOWVERIFICATION", SS_PASFINALFLOWVERIFICATION
+	"PASVACPURGEFINAL", SS_MSSVACPURGEFINAL       
+	"MSSPLTADDPAUSE", SS_MSSPLTADDITIONPAUSE  
+	"MSSADDITION", SS_MSSADDITION  
+	"MSSRBCADDITION", SS_MSSRBCADDITION
+	"MSSPLTADDITION", SS_MSSPLTADDITION  
+
+	
+	
+	
+	#commands = ["RED_GREEN","PLO_EPCA_1"]
+    #commands = ["RED_GREEN -var1 650 -var2 625 -timeout 10 -delta 10 -beginSubstate SS_CHANNEL_SETUP","PLO_EPCA_26 -timeout 10"]
+	#commands = ["RED_GREEN -var1 650 -var2 625 -delta 840 -beginSubstate MIDRUN -timeout 420","PLO_EPCA_26"]

@@ -1,0 +1,67 @@
+# 1.) This file must have lines that are less then 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) NO SPACES ARE ALLOWED BETWEEN name=value!
+#
+# 3.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+# NO SPACES ARE ALLOWED BETWEEN name=value
+#
+# 4.) For verification that the machine has been calibrated, the aps_raw_? values,
+#     the cps_? values, and the init_?_drive values must all be initialized to
+#     settings with 7 digit precision (e.g. 3000.123 or 0.6500123).  See the proc
+#     state CalibVerification for details.
+#
+
+# STS header
+[FileInfo]
+ReadOnly=false
+FileName="/config/cal.dat"
+ServiceChangeable=true
+
+
+[APS]
+aps_raw_pos=3000.123
+aps_mmHg_pos=330
+aps_raw_ref=2030.123
+aps_mmHg_ref=0.0
+aps_raw_neg=1250.123
+aps_mmHg_neg=-250.0
+
+[CPS]
+cps_gain=0.6500123
+cps_offset=-590.0123
+
+[RBC_DETECTOR]
+#
+#  RBC detector calibration values
+#
+init_red_drive=64.00123
+init_green_drive=128.0123
+
+[TOUCHSCREEN]
+# Calibration data for touchscreen.
+#
+# The touchscreen converts from raw coordinates to screen coordinates
+# using the equations:
+#
+#  screen_x = a*raw_x + b*raw_y + c
+#  screen_y = d*raw_x + e*raw_y + f
+#
+#
+a=0.842105263
+b=0.0
+c=-75.7894737
+d=0.0
+e=0.685714286
+f=-89.1428571
+

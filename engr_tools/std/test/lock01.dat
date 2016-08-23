@@ -1,0 +1,13 @@
+# FILENAME: lock01.dat
+# PURPOSE: verify -nolock ignores workdir locking
+# CHANGELOG:
+#   12/09/99 - dyes - initial version
+
+
+SUITE lock01_suite
+TEST lock01_test
+# test should pass without hanging with warning message to stderr
+RUN echo "running lock01_test"
+
+
+

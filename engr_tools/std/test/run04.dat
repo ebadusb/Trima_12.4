@@ -1,0 +1,21 @@
+# FILENAME: run04.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/22/99 - dyes - initial version
+
+# verify -test option runs the specified test
+
+SUITE run04_suite
+
+
+TEST run04_test1
+RUN echo "run04_test1 should run"
+
+
+TEST run04_test2
+RUN echo "run04_test2 should not run"
+
+
+TEST run04_test3
+RUN echo "run04_test3 should not run"
+

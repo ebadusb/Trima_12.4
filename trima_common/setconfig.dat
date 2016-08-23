@@ -1,0 +1,26 @@
+#
+#	This file lists the cassettes configured by the
+#	administrator.  It is not a comprehensive list.
+#	Rather, it represents the subset of REF numbers
+#	that will come up in the listbox on the REF
+#	number entry screen.
+#
+#	Each cassette has a 5 or 6 digit REF number and
+#	an 8-digit admin code that encrypts the
+#	functionality of the cassette. Also, a barcode
+#	string is available so that those customers who
+#	have a barcode reader available can scan a
+#	barcode instead of manually selecting a REF
+#	number.
+#
+#	Cassettes can be added or removed through the
+#	machine config screen.  If a REF number exists in
+#	both this file and cassette.dat, but with
+#	different functionality or barcode listed, this
+#	file overrides the other one.
+#
+# ID	ADMIN CODE   	BARCODE
+80337	9185147		010502058380337
+80537	2370507		010502058380537
+
+file_version=11.0.0.0

@@ -1,0 +1,53 @@
+# @(#) $Header: K:/BCT_Development/vxWorks/Trima/datalog/rcs/makefile.vx 1.2 2002/08/15 21:07:17 jl11312 Exp jl11312 $
+#
+# Makefile - makefile for trima datalog software
+#
+# $Log: makefile.vx $
+# Revision 1.2  2002/08/15 21:07:17  jl11312
+# - updated for new makefile templates
+# Revision 1.1  2002/07/18 21:23:05  jl11312
+# Initial revision
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change lib
+endif
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I ../trima_common
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+LIB_C_FILES   = 
+LIB_CXX_FILES = trima_datalog.cpp trima_network.cpp trima_output.cpp trima_periodic.cpp
+LIB_S_FILES =
+
+#
+# The following should define the location of the resulting library.  Note
+# that ARCHIVE_DIR is used in DOS shell commands, and must use \ directory
+# separators.
+#
+ARCHIVE_NAME = libtrima_datalog.a
+ARCHIVE_DIR = $(MAINDIR)\lib
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.lib
+

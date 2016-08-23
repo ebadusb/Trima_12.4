@@ -1,0 +1,425 @@
+#! /bin/sh
+#
+#
+#
+#
+#######################################################################################
+#                                                                                     #
+#   use ifdef option                                                                  #
+#                                                                                     #
+#######################################################################################
+#
+#ifdef __USAGE
+#
+#usage:
+#%C -d <path> -v <version> [-i <filename>] [-o <filename>] [-s <path>]
+#
+#where:
+# -d <path> the directory where the sandbox is located
+# -v <version> Trima version number (example: 4.0)
+# -i <path/filename> the input file for gui test autorun
+# -o <path/filename> the output file for test capture and subsequent gui test autorun
+# -s <path> the directory in which the gui snapshots will be placed
+#
+#endif
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   definition of standard routines for processing user request                       #
+#                                                                                     #
+#######################################################################################
+
+#
+#   usage message routine
+#
+
+print_usage ()
+{
+
+   echo " "
+   echo "usage:"
+   echo "$current_executible -d <path> -v <version> [-i <filename>] [-o <filename>] [-s <path>]"
+   echo " "
+   echo "where:"
+   echo " -d <path> the directory where the sandbox is located"
+   echo " -v <version> the Trima software version (e.g. 4.0)"
+   echo " -i <path/filename> the input file for gui test autorun"
+   echo " -o <path/filename> the output file for test capture and subsequent gui autorun"
+   echo " -s <path> the directory in which the gui snapshots will be placed"
+   echo " "
+
+   exit 1
+
+ }
+
+
+#
+#   capture current executable name for display
+#
+
+   current_executable=${0##*/}
+
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   establish parameters to customize gui launcher                                    #
+#                                                                                     #
+#######################################################################################
+
+#
+#   node numbers for parameter list
+#
+
+node1="1"
+node2="2"
+
+
+#
+#   parameter list for all exe's
+#
+
+parameters="$LOGNAME$node1 1 $LOGNAME$node2"
+
+
+
+#######################################################################################
+#                                                                                     #
+#   set snapshot directory location                                                   #
+#                                                                                     #
+#######################################################################################
+
+#
+#  must match SNAPSHOT_TEMP_DIR value in xcommmsg.hpp
+#
+
+temp_snapshot_dir="/home1/tempsnap"
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   process all user defined options and initialize all common variables to run trima #
+#   gui as requested by user                                                          #
+#                                                                                     #
+#######################################################################################
+
+#
+#   initialize option flags and then get options
+#
+
+typeset -i dflag=0 vflag=0 iflag=0 oflag=0 sflag=0
+
+while getopts d:v:i:o:s: opt $*
+do
+   case $opt in
+      d) sandbox_dir="$OPTARG" ; dflag=1 ;;
+      v) version="$OPTARG" ; vflag=1 ;;
+      i) input_file="$OPTARG" ; iflag=1 ;;
+      o) output_file="$OPTARG" ; oflag=1 ;;
+      s) snapshot_dir="$OPTARG" ; echo " " ; sflag=1 ;;
+   esac
+done
+
+
+#
+#   ensure required parameters
+#
+if test $dflag -eq 0
+then
+   echo "sandbox location (-d) must be provided"
+   exit 0
+fi
+
+if test $vflag -eq 0
+then
+   echo "trima version (-v) must be provided"
+   exit 0
+fi
+
+
+#
+#   check for superuser privelages before checking for processes and opening pterms
+#
+if test $PS1 != "#"
+then
+   echo " "
+   echo "operation not permitted!"
+   echo "error: superuser privelages required to execute $current_executable"
+   echo " "
+   echo "*bye*"
+   echo " "
+   exit 1
+fi
+
+#
+#   echo the sandbox location and parameter list
+#
+echo " "
+echo "task parameter list is defined as : $LOGNAME$node1 1 $LOGNAME$node2"
+echo " "
+echo "gui sandbox directory defined as : $sandbox_dir"
+echo "Trima version defined as : $version"
+
+#
+#
+#   attempt to fix up trima directory for run
+#
+if test -f /trima
+then
+   echo "/trima is not a directory"
+   exit 0
+fi
+
+/bin/rm -f /trima
+if test -d /trima
+then
+   echo "unable to unlink /trima directory"
+   exit 0
+fi
+if test -f /trima
+then
+   echo "unable to unlink /trima directory"
+   exit 0
+fi
+/bin/rm -f /focus/focgui
+if test -d /focus/focgui
+then
+   echo "unable to unlink /focus/focgui directory"
+   exit 0
+fi
+if test -f /focus/focgui
+then
+   echo "unable to unlink /focus/focgui directory"
+   exit 0
+fi
+ln -s $sandbox_dir /trima
+ln -s $sandbox_dir/focgui /focus/focgui
+
+#
+#
+#   Copy over proper config.dat file
+#
+if [ ! -f /d/machine/config.dat.$version ]; then
+   echo "configuration file /d/machine/config.dat.$version is not supported"
+   exit 1
+fi
+/bin/cp /d/machine/config.dat.$version /d/machine/config.dat
+if [ $? -ne 0 ] ; then
+   echo "unable to update /d/machine/config.dat file"
+   exit 0
+fi
+chmod a+rw /d/machine/config.dat
+
+#
+#   define parameter list for xcommmsg
+#
+
+if test $iflag -eq 1
+then
+   echo " "
+   echo "gui autorun input file defined as : $input_file"
+   input_parameter="-infile $input_file"
+fi
+
+if test $oflag -eq 1
+then
+   echo " "
+   echo "gui autocapture output file defined as : $output_file"
+   output_parameter="-outfile $output_file"
+fi
+
+if test $sflag -eq 1
+then
+   echo " "
+   echo "gui snapshot directory defined as : $snapshot_dir"
+   snapshot_parameter="-snapshot $snapshot_dir"
+   export GUI_SNAPSHOT=$temp_snapshot_dir
+else
+   unset GUI_SNAPSHOT
+fi
+
+if test $iflag -eq 1 -a $oflag -eq 1 -a $sflag -eq 1
+then
+
+  test_parameters="$input_parameter $output_parameter $snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 0 -a $sflag -eq 0
+then
+
+  test_parameters="$input_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 1 -a $sflag -eq 0
+then
+
+  test_parameters="$output_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 0 -a $sflag -eq 1
+then
+
+  test_parameters="$snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 1 -a $sflag -eq 0
+then
+
+  test_parameters="$input_parameter $output_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 1 -a $sflag -eq 1
+then
+
+  test_parameters="$output_parameter $snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 0 -a $sflag -eq 1
+then
+
+  test_parameters="$input_parameter $snapshot_parameter"
+
+else
+
+  test_parameters=" "
+
+fi
+
+
+#
+#   process list for testing
+#
+
+processes="router gui xcommmsg"
+
+
+
+#
+#   check for processes and parameters
+#
+
+   echo " "
+   echo " "
+   echo "checking for existing gui and components ..."
+
+for process in $processes
+do
+
+   /bin/sin -h -P $process format a | grep -q -e "$process $parameters"
+
+   if test 0 -eq $?
+   then
+
+      echo " "
+      echo "error : process $process $parameters already exists"
+      echo " "
+      echo "would you like to quit or continue?"
+      echo -n "press [x] to exit or press [enter] to kill process and continue -> "
+      read continue
+      echo " "
+
+      if [ "$continue" = "x" -o "$continue" = "X" ]
+      then
+         echo " "
+         echo "*bye*"
+         echo " "
+         exit 1
+      fi
+
+      /bin/sin -P $process format ia | grep -e "$process $parameters"
+
+      processid=`sin -h -P $process format ia | grep -e "$process $parameters" | awk /[0-9]/'{print $1}'`
+
+      echo " "
+      echo "attempting to kill $processid ..."
+      kill -SIGKILL $processid
+
+      if test 0 -eq $?
+      then
+         echo " "
+         echo "... $process($processid) is dead!"
+
+         if [ "$process" = "router" ]
+         then
+            /bin/rm -r /dev/mqueue/$node1*
+         else
+            /bin/rm -r /dev/mqueue/$process$processid
+         fi
+      else
+         echo " "
+         echo "... unable to kill PID $processid"
+         echo " "
+         echo "*bye*"
+         echo " "
+         exit 1
+      fi
+
+   fi
+
+done
+
+
+#
+#   check for existing mqueue entry
+#
+
+echo " "
+echo "checking for existing mqueue entry ..."
+
+/bin/rm -f /dev/mqueue/$node1*
+
+
+#
+#   start gui and all necessary components
+#   and capture router and gui PIDs
+#
+
+echo " "
+echo "launching gui and all necessary components ..."
+ls -o /trima
+
+cd $sandbox_dir/router
+pterm -x 532 -g 4x60  -t "GUI Router Window" -F 1 $sandbox_dir/router/router $parameters &
+sleep 6
+routerpid=`sin -h -P $sandbox_dir/router/router format i | awk /[0-9]/'{print $1}'`
+echo "routerpid = $routerpid"
+cd $sandbox_dir/gui
+pterm -y 482 -g 15x100  -t "GUI Executable Window" -F 1 $sandbox_dir/gui/gui $parameters &
+sleep 6
+guipid=`sin -h -P $sandbox_dir/gui/gui format i | awk /[0-9]/'{print $1}'`
+echo "guipid = $guipid"
+cd $sandbox_dir/gui/guitest
+pterm -x 532 -y 72 -g 40x60 -t "GUI Messaging Window" -F 1 xcommmsg $parameters $test_parameters
+
+
+#
+#   clean mqueues
+#
+
+echo " "
+echo "checking for and removing residual mqueue entries ..."
+
+/bin/rm -f /dev/mqueue/$node1*
+/bin/rm -f /dev/mqueue/gui$guipid
+
+
+#
+#   kill router and gui
+#
+
+echo " "
+echo "killing router and gui ..."
+
+echo " "
+echo "... killing router PID# $routerpid"
+kill -SIGKILL $routerpid
+
+echo " "
+echo "... killing gui PID# $guipid"
+kill -SIGKILL $guipid
+
+echo " "
+echo "*bye*"
+echo " "
+

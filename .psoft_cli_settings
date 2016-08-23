@@ -1,0 +1,60 @@
+################################################################################
+# Parasoft settings for a local command-line invocation in a sandbox
+################################################################################
+#
+# -------------------- CONCERTO, TEAM SERVER, and LICENSING
+#
+concerto.enabled=false
+concerto.reporting=false
+
+tcm.server.accountLogin=true
+tcm.server.enabled=true
+tcm.server.name=cid
+tcm.server.username=dev
+tcm.server.password=6561fd
+tcm.server.port=18888
+
+license.network.host=cid
+license.network.port=2002
+license_custom_edition_feature\ -\ C++Test\ Coding\ Standards=true
+
+cpptest.license.network.edition=server_edition
+cpptest.license.use_network=true
+#
+# -------------------- REPORT SETTINGS
+#
+report.active_rules=false
+report.associations=false
+report.authors_details=true
+report.contexts_details=true
+report.custom.extension=html
+report.developer_errors=true
+report.developer_reports=false
+report.failed_tests_only=false
+report.format=html
+report.generate_htmls=true
+report.location_details=false
+report.mail.enabled=false
+
+# The session tag is used in report title
+#
+general.project=My Static Analysis
+## session.tag=${general_project}-${project_name}-${config_name}
+## session.tag=${general_project}-Jenkins
+session.tag=${general_project}-PendingChangeList
+
+# Scoping/authorship that uses an XML map file instead of source control,
+# (use -include option to specify the list of files to test)
+#
+# Precendence of authorship: 1) sourcecontrol, 2) xmlmap, 3) local
+# Put xmlmap.file in directory from which cpptestcli is invoked
+#
+scope.sourcecontrol=false
+scope.xmlmap=false
+scope.xmlmap.file=authorship.xml
+scope.local=true
+#
+# -------------------- Other/Temporary overrides
+#
+# level=low|normal|high
+console.verbosity.level=low

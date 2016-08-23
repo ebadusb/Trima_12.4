@@ -1,0 +1,111 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCT.Common", "BCT.Common\BCT.Common.csproj", "{EC509F28-7215-40D6-B783-13651FC8730F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCT.Device", "BCT.Device\BCT.Device.csproj", "{06394E52-57CA-433A-BA98-48001B7B1444}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCT.Device.Trima", "BCT.Device.Trima\BCT.Device.Trima.csproj", "{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCT.Device.UnitTest", "BCT.Device.UnitTest\BCT.Device.UnitTest.csproj", "{050D9B4F-958A-413E-A34B-998629CE5DAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimaTestTool", "TrimaTestTool\TrimaTestTool.csproj", "{25C71C59-52E3-4B3E-A211-8091106B4F58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{51012617-BD17-4C53-9F2C-3BA5EDD42787}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+		TrimaTestTool.vsmdi = TrimaTestTool.vsmdi
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalReference", "ExternalReference", "{B1922FEC-CBF5-46B3-A0D2-B81680DE5DB8}"
+	ProjectSection(SolutionItems) = preProject
+		ExternalReference\Microsoft.Expression.Interactions.dll = ExternalReference\Microsoft.Expression.Interactions.dll
+		ExternalReference\System.Windows.Interactivity.dll = ExternalReference\System.Windows.Interactivity.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnterpriseLibrary5", "EnterpriseLibrary5", "{D931D455-2D5B-4EE6-8A8E-0CC51AEE4A0E}"
+	ProjectSection(SolutionItems) = preProject
+		ExternalReference\Microsoft.Practices.EnterpriseLibrary.Caching.dll = ExternalReference\Microsoft.Practices.EnterpriseLibrary.Caching.dll
+		ExternalReference\Microsoft.Practices.EnterpriseLibrary.Common.dll = ExternalReference\Microsoft.Practices.EnterpriseLibrary.Common.dll
+		ExternalReference\Microsoft.Practices.EnterpriseLibrary.Data.dll = ExternalReference\Microsoft.Practices.EnterpriseLibrary.Data.dll
+		ExternalReference\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll = ExternalReference\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll
+		ExternalReference\Microsoft.Practices.EnterpriseLibrary.Logging.dll = ExternalReference\Microsoft.Practices.EnterpriseLibrary.Logging.dll
+		ExternalReference\Microsoft.Practices.ServiceLocation.dll = ExternalReference\Microsoft.Practices.ServiceLocation.dll
+		ExternalReference\Microsoft.Practices.Unity.Configuration.dll = ExternalReference\Microsoft.Practices.Unity.Configuration.dll
+		ExternalReference\Microsoft.Practices.Unity.dll = ExternalReference\Microsoft.Practices.Unity.dll
+		ExternalReference\Microsoft.Practices.Unity.Interception.Configuration.dll = ExternalReference\Microsoft.Practices.Unity.Interception.Configuration.dll
+		ExternalReference\Microsoft.Practices.Unity.Interception.dll = ExternalReference\Microsoft.Practices.Unity.Interception.dll
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = TrimaTestTool.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EC509F28-7215-40D6-B783-13651FC8730F}.Release|x86.ActiveCfg = Release|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{06394E52-57CA-433A-BA98-48001B7B1444}.Release|x86.ActiveCfg = Release|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F91E7B1B-33FD-4C06-85B5-95A8A5670DB7}.Release|x86.ActiveCfg = Release|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{050D9B4F-958A-413E-A34B-998629CE5DAD}.Release|x86.ActiveCfg = Release|Any CPU
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Debug|x86.ActiveCfg = Debug|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Debug|x86.Build.0 = Debug|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Release|Any CPU.ActiveCfg = Release|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Release|Mixed Platforms.Build.0 = Release|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Release|x86.ActiveCfg = Release|x86
+		{25C71C59-52E3-4B3E-A211-8091106B4F58}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D931D455-2D5B-4EE6-8A8E-0CC51AEE4A0E} = {B1922FEC-CBF5-46B3-A0D2-B81680DE5DB8}
+	EndGlobalSection
+EndGlobal

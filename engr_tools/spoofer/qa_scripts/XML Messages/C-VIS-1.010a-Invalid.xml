@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BarcodeFeedbackMsg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Header>
+    <StartOfMessage>3405691582</StartOfMessage>
+    <MessageType>VIP_BARCODE_RESPONSE</MessageType>
+    <SequenceNumber>5</SequenceNumber>
+    <Status>SENDER</Status>
+    <BodyLength>0</BodyLength>
+    <TimeStamp>0</TimeStamp>
+    <BodyCRC>0</BodyCRC>
+    <HeaderCRC>0</HeaderCRC>
+  </Header>
+  <Body>
+    <Category>VIP_SCAN_CATEGORY_OPERATOR</Category>
+    <ScanSequence>0</ScanSequence>
+    <ReasonCode>VIP_BARCODE_INVALID</ReasonCode>
+    <ReasonLength>18</ReasonLength>
+    <ReasonString>Barcode is invalid</ReasonString>
+  </Body>
+</BarcodeFeedbackMsg>

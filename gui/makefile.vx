@@ -1,0 +1,89 @@
+################################################################################
+#
+# Top-level GUI makefile
+#
+# This makefile's sole purpose is to execute the various other GUI makefiles.
+# Each makefile has a specific function, and must be called in a particular
+# order to satisfy dependencies.
+#
+# The reason it's structured this way is because the dependencies here can
+# be a little delicate, and this is an easy way to guarantee things build
+# in the correct order.
+#
+# Most of the functionality you know and love from versions prior to 1.68 is
+# now located in makefile_app.vx.
+#
+################################################################################
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all : unicode info other graphics lib app
+else
+all : unicode info other graphics lib app ugl
+endif
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+#
+# INFO builds the auto-generated source from the string.info file and the
+# bitmap.info file.  It also takes care of fontdefs.o.
+#
+.PHONY: info
+info:
+	@echo x Making: GUI info
+	$(Q)$(MAKE) -f makefile_info.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# GRAPHICS builds the graphics module, graphics_package.out.
+#
+.PHONY: graphics
+graphics: info
+	@echo x Making: GUI graphics
+	$(Q)$(MAKE) -f makefile_graphics.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# LIB builds the GUI library module.  Anything needed by both standard GUI and
+# service mode GUI should go into this module.
+#
+.PHONY: lib
+lib: info
+	@echo x Making: GUI lib
+	$(Q)$(MAKE) -f makefile_lib.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# APP builds the main gui app, gui.out.  This is the functionality that used to be in
+# this makefile.
+#
+.PHONY: app
+app: unicode graphics lib
+	@echo x Making: GUI app
+	$(Q)$(MAKE) -f makefile_app.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# Other builds the non-gui apps.  This is the functionality that used to be in
+# this makefile.
+#
+.PHONY: other
+other: unicode info
+	@echo x Making: GUI other
+	$(Q)$(MAKE) -f makefile_other.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# UGL builds the necessary UGL modules.  This only occurs if those binaries are manually
+# deleted.
+#
+.PHONY: ugl
+ugl:
+	@echo x Making: GUI ugl
+	$(Q)$(MAKE) -f makefile_ugl.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# Unicode builds the necessary unicode modules.
+#
+.PHONY: unicode
+unicode:
+	@echo x Making: GUI unicode
+	$(Q)$(MAKE) --directory unicode_string -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+

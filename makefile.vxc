@@ -1,0 +1,99 @@
+################################################################################
+#
+# makefile.vxc - common makefile for Trima/vxWorks
+#
+################################################################################
+
+# To do parallel (multi-threaded) makes, set JOBS=-jN on the command line,
+# where N is the number of threads to use. Otherwise, if not defined,
+# it's single-threaded (equivalent to -j1). When running parallel, the output 
+# is hard to follow, so we set the default for TERSE=true to abbreviate the
+# output stream.
+#
+ifneq ($(strip $(JOBS)),)
+  TERSE ?= true
+endif
+
+#
+# After execution of these assignments, COMDIR_STATUS will hold
+# a status message indicating the common directory locationk
+# (either that the default was used or that a local override
+# was used).  COMDIR will hold the path of the common directory
+# to be used.
+#
+ifndef COMDIR
+  COMDIR_STATUS := $(shell cmd /c 'cd $(MAINDIR) && $(MAKE) -f makefile.fc find_common')
+  COMDIR := $(strip $(shell cat $(MAINDIR)/.common/latest_common_build_dir.mk))
+  CHECK_COMDIR_STATUS := $(shell cmd /c 'cd $(MAINDIR) && $(MAKE) --no-print-directory -f makefile.fc COMDIR=$(COMDIR) verify_common')
+else
+  CHECK_COMDIR_STATUS := OK
+endif
+
+ifneq ($(strip $(CHECK_COMDIR_STATUS)),OK)
+
+.PHONY: check_opt_change
+check_opt_change:
+	@echo Invalid common directory: $(COMDIR)
+	@echo $(CHECK_COMDIR_STATUS)
+	@echo Check that the common directory has been built properly.  Note that the
+	@echo file latest_common_build_dir.mk can be used to override the location of
+	@echo the common directory.
+	@exit 1
+  
+else
+
+#
+# After execution of these assignments, RMSGDIR_STATUS will hold
+# a status message indicating the reserved messages directory location
+# (either that the default was used or that a local override
+# was used).  RMSGDIR will hold the path of the reserved messages directory
+# to be used.
+#
+ifndef RMSGDIR
+  RMSGDIR_STATUS := $(shell cmd /c 'cd $(MAINDIR) && $(MAKE) -f makefile.frm find_rmsg')
+  RMSGDIR := $(strip $(shell cat $(MAINDIR)/.rmsg/latest_rmsg_build_dir.mk))
+  CHECK_RMSGDIR_STATUS := $(shell cmd /c '$(MAKE) --no-print-directory -f $(MAINDIR)\makefile.frm COMDIR=$(COMDIR) RMSGDIR=$(RMSGDIR) verify_rmsg')
+else
+  CHECK_RMSGDIR_STATUS := OK
+endif
+
+ifneq ($(strip $(CHECK_RMSGDIR_STATUS)),OK)
+
+.PHONY: check_opt_change
+check_opt_change:
+	@echo Invalid reserved messages directory: $(RMSGDIR)
+	@echo $(CHECK_RMSGDIR_STATUS)
+	@echo Check that the reserved messages directory has been built properly. 
+	@echo Note that the file latest_rmsg_build_dir.mk can be used to override
+	@echo the location of the reserved messages directory.
+	@exit 1
+
+else
+
+#
+#  Language directory check.  Note there is no default available, one must be specified
+#  (either by environment variable or latest_lang_build_dir.mk)
+#
+ifndef LANGDIR
+  LANGDIR := $(strip $(shell cat $(MAINDIR)/latest_lang_build_dir.mk))
+endif
+
+ifndef LANGDIR
+.PHONY: check_opt_change
+check_opt_change:
+	@echo Invalid language directory: $(LANGDIR)
+	@echo Note that the file latest_lang_build_dir.mk can be used to specify
+	@echo the location of the language directory.
+	@exit 1
+
+
+else
+
+  ADDN_OPT_TEST := $(subst \,/,$(COMDIR))
+  ADDN_INCDIR += -I$(COMDIR)/cgui -I$(COMDIR)
+  ADDN_INCDIR := $(subst \,/,$(ADDN_INCDIR))
+  include $(COMDIR)/makefile.vxc
+
+endif
+endif
+endif

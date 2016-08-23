@@ -1,0 +1,32 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/rcs/genAll 1.3 2009/05/27 16:43:14Z dslausb Exp $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   genAll
+#
+#     Description:
+#
+#	This is a makefile that will generate CRCs for all the string.info files.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: genAll $
+#
+#*******************************************************************************
+
+vpath %.info $(LANGDIR)
+
+.PHONY: all
+.PHONY: crcGen
+all: crcGen
+
+include ../../../gui/stringFiles.vx
+
+crcGen: $(LANGS)
+	./Release/stringCrcGen $^

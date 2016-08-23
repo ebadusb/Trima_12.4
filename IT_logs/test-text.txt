@@ -1,0 +1,10 @@
+This is some sample test used to test the functioning of the project checkin script.  And some newly modified text.
+Perforce validation 3.4 text.
+
+more text to test
+
+more and more
+,,,z 
+more
+  werwerw3r3
+mmmmmmmy8o8yoly8sfdaf

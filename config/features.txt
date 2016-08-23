@@ -1,0 +1,169 @@
+# features.bin - software options for Trima
+#
+# 1.) This file must have lines that are less then 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) NO SPACES ARE ALLOWED BETWEEN name=value!
+#
+# 3.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+# NO SPACES ARE ALLOWED BETWEEN name=value
+
+##################   VERSION NUMBER  #################################
+[OPTIONS]
+#
+# The following version number must be changed if the format of this
+# file changes, allowing install or downgrade scripts to determine
+# when file conversion is necessary.
+#
+#
+# Japan Default:
+#
+file_version=0.0.0.0
+#######################################################################
+
+[FileInfo]
+ReadOnly=true
+FileName="/config/features.bin"
+ServiceChangeable=false
+
+[FEATURES]
+#
+#
+#  Each feature is described by the format:
+#     feature=enable,CRC
+#
+#
+#  Each line in this section is individually CRCd.  The CRC generated from the
+#  feature line must match the given CRC or an error will be given and the
+#  Trima machine will generate safe state.  Note that the CRC is based on the
+#  actual string used in the setting, not the numeric value.  Thus, the
+#  following two sample lines would have different CRC values, although they
+#  would result in the same software option selection.  The CRC must be entered
+#  as a hex value.
+#
+#    setting=1
+#    setting=001
+#
+
+#
+# Asia enabled features
+#
+select_screen_display_platelet_volume=0,658a694c
+
+#
+# Japan Only features
+#
+japan_features=0,25f0edfc 
+allow_adjust_flow_rates_on_procedure_select=0,bdc63c96
+allow_extra_wbc_messages=0,3306924a
+confirm_ac_connection=0,3ce9087
+special_black_stamp_needle=0,c247be0f
+
+#
+# Country specific options
+#
+display_residual_volumes=1,ec987140
+
+
+#
+# Features Under Evaluation
+#
+postcount_platelet_mobilization_algorithm=1,bf8c4f87
+
+
+#
+# periodic logging in service mode
+#
+service_mode_periodic_log=0,5826596d 
+
+
+#
+# PLO Monitoring
+#
+plo_flag=1,e713af2d
+plopca_flag=1,79a04d3d  
+
+
+#
+# Enable Air To Donor Mitigation
+#
+airout_mitigation=1,3725ee48
+
+
+#
+# AMAP PLATELETS
+#
+amap_platelets_available=0,bc8f020c
+
+
+#
+# COMPLEMENTARY PLASMA
+#
+complementary_plasma_available=0,cb143c23
+
+
+#
+# R&D only options.  Should always be set to 0 in the field.
+#
+
+enable_screenshot_button=0,efa60ced
+
+cfr11_pin_logging=0,29ea10a7
+
+
+#
+# Enable APS and CPS high speed logging
+# WARNING: turn these on for versalogic only -- ampro will crash!
+#
+aps_high_speed_log_enable=0,adf9c8ed
+cps_high_speed_log_enable=0,70e1fe6f
+
+show_plasma_volume=0,ab881436
+extra_plasma_no_ac=0,1ed5caea
+allow_auto_conf_plasma_procs=0,9f0a5d70
+procedure_confirmation_popup=0,2ae0aeb
+confirm_pas_bag_barcode_scan=0,757aa1e0
+pir_preferred=0,af1fac0e
+triple_ppc_flag=1,a4efc457
+
+[GUI]
+#
+# The following GUI settings are used for string substitutions in displayed text.
+# In general, the are limited to numeric values since there is no provision
+# for translation, and they are in ASCII rather than Unicode.
+#
+# The GUI string tables should contain sub-strings such as #!{low_platelet_conc}
+# These sub-strings will be replaced by the corresponding values from this
+# configuration file.
+#
+#
+#
+# Platelet concentration storage limits
+#
+ppc_conc_low=700,99e6e73a
+ppc_conc_high=2100,a33dd107
+standard_conc_low=700,8c7bab5f
+standard_conc_high=2100,c4dd56c3
+
+plasma_ladder_max=600,87c6a412
+plasma_ladder_min=300,82fe86b6
+
+vista_ip_address=2887057409,107a60fd
+vista_port=7002,ea818110
+
+
+
+
+
+
+

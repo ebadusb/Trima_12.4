@@ -1,0 +1,11 @@
+#
+# Files included in graphics package CRC
+#
+# $Header: E:/BCT_Development/Trima5.R/Trima/softcrc/filelists/rcs/graphics.files 1.1 2006/04/19 19:22:49Z dslausb Exp dslausb $
+# $Log: graphics.files $
+#
+#  
+
+/config/graphics/graphics_package.out
+/config/graphics/service_graphics_package.out
+

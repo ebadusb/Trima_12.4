@@ -1,0 +1,21 @@
+# FILENAME: export01.dat
+# PURPOSE: verify EXPORT can set multiple env variables
+# and can remove an env variable
+# CHANGELOG:
+#   01/12/99 - dyes - initial version
+
+
+SUITE export01_suite
+
+TEST export01_test
+SETUP export > export.out  # std will run SETUP after EXPORTs
+# SETUP env > export.out  # for NT version
+EXPORT FOO1=foo1
+EXPORT FOO2=foo2
+EXPORT FOO3=foo3
+EXPORT FOO1=
+RUN grep FOO1 export.out
+EXIT 1    # FOO1 should not be in export.out
+
+
+

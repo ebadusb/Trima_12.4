@@ -1,0 +1,16 @@
+# FILENAME: setup01.dat
+# PURPOSE: test's std's SETUP keyword
+# CHANGELOG:
+#   11/24/99 - dyes - initial version
+
+
+SUITE setup01_suite
+
+
+TEST setup01_test
+SETUP touch foo
+SETUP touch bar
+SETUP echo "setup01 setup"
+RUN echo "setup01 run"
+
+

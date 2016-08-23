@@ -1,0 +1,101 @@
+# FILENAME: std.dat
+# PURPOSE: tests the spoofer
+# NOTE: must be run as root
+# CHANGELOG:
+#   07/26/2000 - dyes - use PRECONDITION instead of SETUP where needed
+#   01/05/2000 - dyes - initial version
+
+
+SUITE spoofer
+# this suite verifies operation of spoofer
+
+
+TEST co01
+# SPEC verify spoof of all control order fields modifies the message as expected
+COPY co01 e_co01.out
+# verify router and spoofer is not currently active
+PRECONDITION sin -P router 2>&1 | grep "no process" > grep.out
+PRECONDITION sin -P spoof 2>&1 | grep "no process" > grep.out
+# determine node we're running on
+SETUP sin | grep Dev32.ser | awk '{ split($3,a,"/"); print a[3] }' > node.dat
+# start router and spoofer
+SETUP ../../../../router/router ctest `cat node.dat` stest > router.out 2>&1 &
+SETUP ../../spoof co_test_all -snode `cat node.dat` > spoof.out 2>&1 &
+RUN ./co01 ctest `cat node.dat` stest
+VERIFY diff test.out e_co01.out
+# stop router and spoofer
+CLEANUP slay -f -s SIGHUP spoof
+CLEANUP slay -f -s SIGKILL router  # must KILL router to avoid proc shutdown
+# remove leftover queue files
+CLEANUP rm -f /dev/mqueue/co01*
+CLEANUP rm -f /dev/mqueue/spoof*
+CLEANUP rm -f /dev/mqueue/ctest /dev/mqueue/stest
+
+
+TEST cs01
+# SPEC verify spoof of all control status fields modifies messages as expected
+COPY cs01 e_cs01.out
+# verify router and spoofer is not currently active
+PRECONDITION sin -P router 2>&1 | grep "no process" > grep.out
+PRECONDITION sin -P spoof 2>&1 | grep "no process" > grep.out
+# determine node we're running on
+SETUP sin | grep Dev32.ser | awk '{ split($3,a,"/"); print a[3] }' > node.dat
+# start router and spoofer
+SETUP ../../../../router/router ctest `cat node.dat` stest > router.out 2>&1 &
+SETUP ../../spoof cs_test_all -snode `cat node.dat` > spoof.out 2>&1 &
+RUN ./cs01 ctest `cat node.dat` stest
+VERIFY diff test.out e_cs01.out
+# stop router and spoofer
+CLEANUP slay -f -s SIGHUP spoof
+CLEANUP slay -f -s SIGKILL router  # must KILL router to avoid proc shutdown
+# remove leftover queue files
+CLEANUP rm -f /dev/mqueue/cs01*
+CLEANUP rm -f /dev/mqueue/spoof*
+CLEANUP rm -f /dev/mqueue/ctest /dev/mqueue/stest
+
+
+TEST so01
+# SPEC verify spoof of all control order fields modifies the message as expected
+COPY so01 e_so01.out
+# verify router and spoofer is not currently active
+PRECONDITION sin -P router 2>&1 | grep "no process" > grep.out
+PRECONDITION sin -P spoof 2>&1 | grep "no process" > grep.out
+# determine node we're running on
+SETUP sin | grep Dev32.ser | awk '{ split($3,a,"/"); print a[3] }' > node.dat
+# start router and spoofer
+SETUP ../../../../router/router ctest `cat node.dat` stest > router.out 2>&1 &
+SETUP ../../spoof so_test_all -snode `cat node.dat` > spoof.out 2>&1 &
+RUN ./so01 ctest `cat node.dat` stest
+VERIFY diff test.out e_so01.out
+# stop router and spoofer
+CLEANUP slay -f -s SIGHUP spoof
+CLEANUP slay -f -s SIGKILL router  # must KILL router to avoid proc shutdown
+# remove leftover queue files
+CLEANUP rm -f /dev/mqueue/so01*
+CLEANUP rm -f /dev/mqueue/spoof*
+CLEANUP rm -f /dev/mqueue/ctest /dev/mqueue/stest
+
+
+TEST ss01
+# SPEC verify spoof of all safety status fields modifies messages as expected
+COPY ss01 e_ss01.out
+# verify router and spoofer is not currently active
+PRECONDITION sin -P router 2>&1 | grep "no process" > grep.out
+PRECONDITION sin -P spoof 2>&1 | grep "no process" > grep.out
+# determine node we're running on
+SETUP sin | grep Dev32.ser | awk '{ split($3,a,"/"); print a[3] }' > node.dat
+# start router and spoofer
+SETUP ../../../../router/router ctest `cat node.dat` stest > router.out 2>&1 &
+SETUP ../../spoof ss_test_all -snode `cat node.dat` > spoof.out 2>&1 &
+RUN ./ss01 ctest `cat node.dat` stest
+VERIFY diff test.out e_ss01.out
+# stop router and spoofer
+CLEANUP slay -f -s SIGHUP spoof
+CLEANUP slay -f -s SIGKILL router  # must KILL router to avoid proc shutdown
+# remove leftover queue files
+CLEANUP rm -f /dev/mqueue/ss01*
+CLEANUP rm -f /dev/mqueue/spoof*
+CLEANUP rm -f /dev/mqueue/ctest /dev/mqueue/stest
+
+
+

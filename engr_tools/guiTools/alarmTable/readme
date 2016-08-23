@@ -1,0 +1,41 @@
+The purpose of the code in this folder is to generate a table
+containing vital information about the Trima alarms.  It relates
+their Alarm IDs to their names and text, etc.  If everything is
+properly configured, the makefile will generate this table each
+time a build is done and the relevant source code has changed.
+
+This is implemented by creating a Cygwin executable that
+incorporates the source code for the alarms along with a program
+that iterates through the alarm table, looks up relevant text
+and info, and puts it all into a CSV-formatted file.
+
+Because the program is compiled in with Trima source code, we
+can't just drop in a static executable and have it suck out
+the data. The executable must be both compiled and executed
+at Trima compile time in order to incorporate the newest
+source code.
+
+Thus, there is a need for an external compiler.  I chose g++
+since it's free and it's pretty common for other developers
+and engineers to have cygwin on their computer.  The makefile
+is set up so that if g++ is not in the path, it will fail,
+but the build will ignore the failure and continue.
+
+If g++ is in the path, the build will run, and on completion
+an alarm table will be generated for each language file.
+
+Thus, in order for this all to work, it is necessary to have
+Cygwin (or some other Windows implementation of g++) installed,
+and in your path.  In order to work correctly, it's a good idea
+to have Tornado first in your path, and cygwin last, so that if
+there is any overlap, the Tornado utilities are drawn from first.
+
+For example, the path in my build environment looks like this:
+PATH=D:\Tornado\host\x86-win32\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;D:\cygwin\bin;
+
+For questions, contact
+
+Dan Slauson
+x4664
+daniel.slauson@gambro.com
+

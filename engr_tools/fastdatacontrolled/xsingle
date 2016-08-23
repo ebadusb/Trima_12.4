@@ -1,0 +1,11 @@
+# Check args
+case "$#" in
+        0) echo "Insufficient arguments.  Syntax:"
+           echo "     xsingle <file_collected_on_trima>"
+           echo "       where <file_collected_on_trima> is the name of a file containing"
+           echo "            data collected by /d/tools/fastdatacontrolled tool."
+           exit ;;
+        1) echo "Changing $1 to single file..." ;;
+esac 
+
+awk '{printf $1 "\n" $2 "\n" $3 "\n" $4 "\n" $5 "\n" $6 "\n" $7 "\n" $8 "\n" $9 "\n" $10 "\n"}' $1 |sed -e "s/,//" -e "s/^$//" -e "s/^ $//" |sed -e "1s/^/$1/" >$1.out

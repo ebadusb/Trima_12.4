@@ -1,0 +1,49 @@
+# $Header: $
+#
+# Makefile - makefile for safety executive apps
+#
+# $Log: $
+#
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = 
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = 
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ../../..
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change apps
+endif
+
+include $(MAINDIR)/makefile.vxc
+
+#
+# Definitions required for building saf_exec.out
+#
+APP_NAME := log_network_stats
+log_network_stats_dir = bin
+log_network_stats_map = 
+log_network_stats_libs = 
+log_network_stats_c_files =
+log_network_stats_cxx_files = log_network_stats.cpp
+include $(MAINDIR)/makefile.process_app
+
+
+apps: $(APP_LIST)
+include $(MAINDIR)/makefile.build_apps
+

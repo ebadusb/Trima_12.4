@@ -1,0 +1,109 @@
+################################################################################
+#
+# makefile_ugl.vx - UGL makefile
+#
+# Description: If the UGL binaries are not present, then build them.
+#              If they are present, don't bother, regardless of the timestamp.
+#
+################################################################################
+
+####################################
+######### Rule for all #############
+####################################
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+ifeq ($(CPU),SIMNT)
+all: makeSimBinary
+else
+all: makeCt65545Binary makeCt655xxBinary makeAmdGeodeBinary
+endif
+endif
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+####################################
+######## CT655xx rule ##############
+####################################
+
+.PHONY: makeCt65545Binary
+
+ifeq ($(strip $(wildcard 486_ct655fp_ugl/bin/ugl_CT65545.o)),)
+
+makeCt65545Binary: force
+	@echo Making CT65545 UGL binary
+	cd 486_ct655fp_ugl && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+else
+
+makeCt65545Binary: force
+	@echo CT65545 UGL binary is already present
+
+endif
+
+####################################
+######## CT655xx rule ##############
+####################################
+
+.PHONY: makeCt655xxBinary
+
+ifeq ($(strip $(wildcard pentium_ct655fp_ugl/bin/ugl_CT655xx.o)),)
+
+makeCt655xxBinary: force
+	@echo Making CT655xx UGL binary
+	cd pentium_ct655fp_ugl && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+else
+
+makeCt655xxBinary: force
+	@echo CT655XX UGL binary is already present
+
+endif
+
+####################################
+######## AMD Geode rule ############
+####################################
+
+.PHONY: makeAmdGeodeBinary
+
+ifeq ($(strip $(wildcard amd_geodelx_ugl/bin/amd_geodelx.o)),)
+
+makeAmdGeodeBinary: force
+	@echo Making AMD GeodeLX UGL binary
+	cd amd_geodelx_ugl && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+else
+
+makeAmdGeodeBinary: force
+	@echo AMD GeodeLX UGL binary is already present
+
+endif
+
+####################################
+######## ugl_SIMNT rule ############
+####################################
+
+.PHONY: makeSimBinary
+
+ifeq ($(strip $(wildcard simnt_ugl/bin/ugl_SIMNT.o)),)
+
+makeSimBinary: force
+	@echo Making SIMNT UGL binary
+	cd simnt_ugl && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+else
+
+makeSimBinary: force
+	@echo SIMNT UGL binary is already present
+
+endif
+
+################ Force ###################
+.PHONY: force
+force: ;
+
+

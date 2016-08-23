@@ -1,0 +1,89 @@
+################################################################################
+#
+# makefile_other.vx - makefile for any additional GUI objects
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change apps
+endif
+
+ADDN_INCDIR = -I $(MAINDIR)/trima_common -I $(MAINDIR)/cds -I $(MAINDIR)/gui/unicode_string
+
+ifeq ($(CPU),SIMNT)
+ADDN_LDFLAGS =
+else
+ADDN_LDFLAGS =
+endif
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+ADDN_ASFLAGS= -Os
+ADDN_CPPFLAGS= -Os
+ADDN_CCFLAGS= -Os
+ADDN_CXXFLAGS= -Os
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+
+#
+# Define location for unicode stuff
+#
+UNICODEDIR = unicode_string
+UNICODELIBDIR = $(UNICODEDIR)/lib
+DLMLIBDIR = $(COMDIR)/dlm/lib
+
+#
+# Barcode Reader
+#
+APP_NAME := barcode_reader
+barcode_reader_dir       = bin
+barcode_reader_c_files   =
+barcode_reader_cxx_files = barcode_reader.cpp
+include $(MAINDIR)/makefile.process_app
+
+
+#
+# Language Loader
+#
+APP_NAME := language_loader
+language_loader_dir       = bin
+language_loader_c_files   =
+language_loader_cxx_files = \
+  language_loader.cpp guipalette.cpp trima_palette.cpp trima_string_data.cpp \
+  trima_string_info.cpp trima_text_item.cpp ostext_base.cpp string_data.cpp \
+  styling_record.cpp cgui_pool_allocator.cpp trima_variable_database.cpp \
+  trima_data_item.cpp stringInfoCrc.cpp
+language_loader_libs      = $(UNICODELIBDIR)\libtrima_unicode_string.a $(LIBDIR)\libtrima_common.a $(DLMLIBDIR)\libdlm.a
+include $(MAINDIR)/makefile.process_app
+
+
+#
+# Definitions required for building Dat Reader
+#
+APP_NAME := datfile_reader
+datfile_reader_dir  = bin
+datfile_reader_map  = datfile_reader.map
+datfile_reader_libs = $(addprefix $(LIBDIR)/lib, trima_common.a)
+datfile_reader_c_files =
+datfile_reader_cxx_files = datfile_reader.cpp
+include $(MAINDIR)/makefile.process_app
+
+apps : $(APP_LIST)
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps

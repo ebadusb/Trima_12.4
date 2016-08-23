@@ -1,0 +1,11 @@
+﻿<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" xmlns:x="CaridianBCT" onLoad="RibbonLoaded" loadImage="GetImage">
+	<ribbon>
+		<tabs>
+			<tab idMso="TabExternalData">
+				<group id="DatalogImporter" label="Datalogs">
+					<button id="ImportDatalog" label="Import" image="import-48x48.png" size="large" onAction="ImportDatalog" />
+				</group>
+			</tab>	
+		</tabs>
+	</ribbon>
+</customUI>

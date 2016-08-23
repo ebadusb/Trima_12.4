@@ -1,0 +1,72 @@
+# $Header: $ 
+#
+# FILENAME:  makefile.vx
+# PURPOSE: builds sm_test.out - for testing SpooferClient
+#
+# $Log: makefile.vx $
+
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..\..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I $(MAINDIR)\engr_tools\libtools \
+	-I $(MAINDIR)\trima_common \
+	-I $(MAINDIR)\engr_tools\spoofer \
+	-I $(MAINDIR)\cds \
+	-I $(MAINDIR)\proc\algorithm
+
+include $(MAINDIR)/makefile.vxc
+
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+
+#
+# Definitions required for building spoof_server.out
+#
+APP_NAME := sm_test
+sm_test_dir = ..\bin
+sm_test_map = $(APP_NAME).map
+sm_test_libs = $(LTLIBDIR)\libtools.a \
+                  $(LIBDIR)\libtrima_common.a \
+                  $(LTLIBDIR)\libspoofer.a
+sm_test_c_files =
+sm_test_cxx_files = sm_test.cpp 
+include $(COMDIR)/makefile.process_app
+
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+.PHONY: libs
+libs:
+        @cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\spoofer && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+include $(COMDIR)/makefile.build_apps
+

@@ -1,0 +1,48 @@
+# @(#) $Header: E:/BCT_Development/vxWorks/Common/unicode_string/rcs/makefile.vx 1.2 2007/08/28 12:14:15Z jl11312 Exp $
+#
+# Makefile
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change lib
+endif
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR =
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base common project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ../..
+COMDIR = $(MAINDIR)
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the library
+#
+LIB_C_FILES   = trima_ucs_string.c
+LIB_CXX_FILES = trima_unicode_string.cpp trima_unicode_conversion.cpp
+LIB_S_FILES =
+
+#
+# The following should define the location of the resulting library.  Note
+# that ARCHIVE_DIR is used in DOS shell commands, and must use \ directory
+# separators.
+#
+ARCHIVE_NAME = libtrima_unicode_string.a
+ARCHIVE_DIR = lib
+
+#
+# This is the standard makefile for vxWorks libraries
+#
+include $(MAINDIR)/makefile.lib
+

@@ -1,0 +1,29 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/stringLib/rcs/makefile_inc.vx 1.1 2009/05/20 18:40:44Z dslausb Exp dslausb $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   makefile_inc.vx
+#
+#     Description:
+#
+#	Include this makefile if you want to know what languages are
+#	available.  This way it only has to be changed in one place
+#	when new languages are added.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: makefile_inc.vx $
+# Revision 1.1  2009/05/20 18:40:44Z  dslausb
+# Initial revision
+#
+#*******************************************************************************
+
+LANGS=string.info string_de-de.info string_es-es.info \
+	string_fr-fr.info string_it-it.info string_ja-jp.info \
+	string_nl-nl.info

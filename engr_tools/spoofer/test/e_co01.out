@@ -1,0 +1,48 @@
+co01: TestMessage setup
+co01: TestMessage printing
+co01: cassettePosition = 1
+co01: centrifugeRPM = 10
+co01: centrifugeRampUpRate = 11
+co01: centrifugeRampDownRate = 12
+co01: alarmLight = 0
+co01: doorLatches = 1
+co01: doorDirection = 1
+co01: inletRPM = 20
+co01: plateletRPM = 21
+co01: plasmaRPM = 22
+co01: acRPM = 23
+co01: returnRPM = 24
+co01: rbcValve = 1
+co01: plasmaValve = 2
+co01: plateletValve = 3
+co01: redDrive = 30
+co01: greenDrive = 31
+co01: pauseValves = 0
+co01: soundLevel = 3
+co01: test1 = 0
+co01: highAPSLimit = 40
+co01: lowAPSLimit = 41
+co01: TestMessage notify
+co01: diff: cassettePosition out=1 in=2
+co01: diff: centrifugeRPM out=10 in=25
+co01: diff: centrifugeRampUpRate out=11 in=5
+co01: diff: centrifugeRampDownRate out=12 in=100
+co01: diff: alarmLight out=0 in=1
+co01: diff: doorLatches out=1 in=0
+co01: diff: doorDirection out=1 in=0
+co01: diff: inletRPM out=20 in=25
+co01: diff: returnRPM out=24 in=42
+co01: diff: acRPM out=23 in=37
+co01: diff: plateletRPM out=21 in=29
+co01: diff: plasmaRPM out=22 in=33
+co01: diff: rbcValve out=1 in=2
+co01: diff: plasmaValve out=2 in=3
+co01: diff: plateletValve out=3 in=1
+co01: diff: redDrive out=30 in=32
+co01: diff: greenDrive out=31 in=33
+co01: diff: pauseValves out=0 in=1
+co01: diff: soundLevel out=3 in=0
+co01: diff: test1 out=0 in=1234567
+co01: diff: highAPSLimit out=40 in=16
+co01: diff: lowAPSLimit out=41 in=21
+co01: exiting

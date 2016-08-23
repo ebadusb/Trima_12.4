@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<TrimaSpoofWizard>
+  <ProcessData>
+    <Data dataname="Red/Green" active="True" />
+  </ProcessData>
+  <TemplatesFiles>
+    <File filename="D:\Source\Trima\engr_tools\datalog_tools\Products\TrimaSpoofWizard\TrimaSpoofWizardTemplate.cpp" purpose="SpoofConfig" />
+  </TemplatesFiles>
+  <ExternalScripts>
+    <Script command="D:\Source\Trima\engr_tools\datalog_tools\Products\TrimaSpoofWizard\create_spoof &lt;Filename&gt; &lt;Pathname&gt;" execute="Post-Export" />
+  </ExternalScripts>
+</TrimaSpoofWizard>

@@ -1,0 +1,63 @@
+# @(#) $Header: K:/BCT_Development/vxWorks/Trima/engr_tools/libtools/test_libtools/rcs/makefile.vx 1.1 2002/05/01 23:11:53 ms10234 Exp jl11312 $
+#
+# Makefile - makefile for test_libtools executable
+#
+# $Log: makefile.vx $
+# Revision 1.1  2002/05/01 23:11:53  ms10234
+# Initial revision
+# Revision 1.1  2002/05/01 20:01:08  td07711
+# Initial revision
+# Revision 1.1  2002/05/01 18:33:24  td07711
+# Initial revision
+# Initial revision
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change app
+endif
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I..
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..\..
+include $(MAINDIR)/makefile.vxc
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = ..\..\lib
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME := test_libtools.out
+test_libtools_dir = ..\bin
+test_libtools_c_files   = 
+test_libtools_cxx_files = main.cpp
+test_libtools_libs = $(LIBDIR)\libtools.a
+test_libtools_lib_list = 
+include $(MAINDIR)/makefile.process_app
+
+app : $(APP_LIST)
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps
+

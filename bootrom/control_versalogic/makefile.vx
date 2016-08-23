@@ -1,0 +1,27 @@
+################################################################################
+#
+# Makefile for Control's Versalogic boot image
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: bootrom_versalogic.sys
+endif
+
+.PHONY: clean
+clean:
+	$(MAKE) -f Makefile clean
+
+bootrom_versalogic.sys : bootrom_uncmp 
+	$(Q)objcopypentium -O binary --gap-fill=0 bootrom_uncmp $@
+ 
+bootrom_uncmp:
+  ifeq ($(TERSE),true)
+	$(MAKE) --silent -f Makefile bootrom_uncmp
+  else
+	$(MAKE) -f Makefile bootrom_uncmp
+  endif

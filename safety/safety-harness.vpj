@@ -1,0 +1,272 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir="."
+	BuildSystem="vsbuild">
+	<Config
+		Name="Debug"
+		Type="gnuc"
+		DebugCallbackName="gdb"
+		Version="1"
+		OutputFile="%bdsafety-harness.exe"
+		CompilerConfigName="Default Compiler"
+		Defines='"/D__WIN32__" "/DWIN32" "/DCPU=SIMNT" "/D_NONTRIMA" "/D__HALLSTEST__" "/D__CYGWIN__"'>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				OutputExts="*.o"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine='g++-3 -c %xup %defd -g -o "%bd%n%oe" %i "%f" %~other'
+					OtherOptions="-fpermissive"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				ShowOnMenu="Never"
+				Dialog="_gnuc_options_form Link"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='g++-3 %xup -g -o "%o" %objs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				Dialog="_gnuc_options_form Run/Debug"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				Dialog="_gnuc_options_form Run/Debug"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+			<Target
+				Name="dash"
+				MenuCaption="-"
+				Deletable="0">
+				<Exec/>
+			</Target>
+			<Target
+				Name="GNU C Options"
+				MenuCaption="GNU C &amp;Options..."
+				ShowOnMenu="HideIfNoCmdLine"
+				Deletable="0"
+				SaveOption="SaveNone">
+				<Exec
+					CmdLine="gnucoptions"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<Includes>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/engr_tools/datalog_tools/TrimaSource/include/common/"/>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/engr_tools/datalog_tools/TrimaSource/include/vxworks/"/>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/trima_common/"/>
+		</Includes>
+		<Libs PreObjects="0"/>
+	</Config>
+	<Config
+		Name="Release"
+		Type="gnuc"
+		DebugCallbackName="gdb"
+		Version="1"
+		OutputFile="%bdsafety-harness.exe"
+		CompilerConfigName="Default Compiler"
+		Defines='"/D__WIN32__" "/DWIN32" "/DCPU=SIMNT" "/D_NONTRIMA" "/D__HALLSTEST__" "/D__CYGWIN__"'>
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				OutputExts="*.o"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec
+					CmdLine='g++-3 -c %xup %defd -o "%bd%n%oe" %i "%f" %~other'
+					OtherOptions="-fpermissive"/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link"
+				ShowOnMenu="Never"
+				Dialog="_gnuc_options_form Link"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='g++-3 %xup -o "%o" %objs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t build'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				Dialog="_gnuc_options_form Compile"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" "%w" "%r" -t rebuild'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				Dialog="_gnuc_options_form Run/Debug"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveNone"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				Dialog="_gnuc_options_form Run/Debug"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				Deletable="0"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+			<Target
+				Name="dash"
+				MenuCaption="-"
+				Deletable="0">
+				<Exec/>
+			</Target>
+			<Target
+				Name="GNU C Options"
+				MenuCaption="GNU C &amp;Options..."
+				ShowOnMenu="HideIfNoCmdLine"
+				Deletable="0"
+				SaveOption="SaveNone">
+				<Exec
+					CmdLine="gnucoptions"
+					Type="Slick-C"/>
+			</Target>
+		</Menu>
+		<Includes>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/engr_tools/datalog_tools/TrimaSource/include/common/"/>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/engr_tools/datalog_tools/TrimaSource/include/vxworks/"/>
+			<Include Dir="d:/p4trima/Trima/Trima_6.0SP3.7/trima_common/"/>
+		</Includes>
+		<Libs PreObjects="0"/>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl">
+			<F N="acinfusa.cpp"/>
+			<F N="acinfusc.cpp"/>
+			<F N="acinfusr.cpp"/>
+			<F N="acratioa.cpp"/>
+			<F N="acratioi.cpp"/>
+			<F N="acratiop.cpp"/>
+			<F N="../trima_common_reentrant/alarmcontainer.cpp"/>
+			<F N="cassette_monitor.cpp"/>
+			<F N="compdepl.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/crcgen.cpp"/>
+			<F N="dat_fnof.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/datalog.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/datastore.cpp"/>
+			<F N="delta_vol_calc.cpp"/>
+			<F N="hypovolc.cpp"/>
+			<F N="hypovold.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/init_log_levels.cpp"/>
+			<F N="main_pump.cpp"/>
+			<F N="needle.cpp"/>
+			<F N="pump_monitor.cpp"/>
+			<F N="pwr_test.cpp"/>
+			<F N="s_bag.cpp"/>
+			<F N="s_cntac.cpp"/>
+			<F N="s_cntdefault.cpp"/>
+			<F N="s_cntinl.cpp"/>
+			<F N="s_cntpls.cpp"/>
+			<F N="s_cntplt.cpp"/>
+			<F N="s_cntrbc.cpp"/>
+			<F N="s_cntrtn.cpp"/>
+			<F N="s_disc.cpp"/>
+			<F N="s_donor.cpp"/>
+			<F N="s_door.cpp"/>
+			<F N="s_exec.cpp"/>
+			<F N="s_glob.cpp"/>
+			<F N="s_main.cpp"/>
+			<F N="s_module.cpp"/>
+			<F N="s_monitor.cpp"/>
+			<F N="s_monitor_group.cpp"/>
+			<F N="s_pfr.cpp"/>
+			<F N="s_power.cpp"/>
+			<F N="s_proc_group.cpp"/>
+			<F N="s_res.cpp"/>
+			<F N="s_set.cpp"/>
+			<F N="s_state.cpp"/>
+			<F N="s_valve.cpp"/>
+			<F N="stroke_calc.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/stubs.cpp"/>
+			<F N="../trima_common/trima_assert.cpp"/>
+			<F N="../engr_tools/datalog_tools/TrimaSource/source/vxworks.cpp"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.inc;*.sh;*.cpy;*.if"/>
+		<Folder
+			Name="Resource Files"
+			Filters="*.ico;*.cur;*.dlg"/>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</Files>
+</Project>

@@ -1,0 +1,27 @@
+#
+# Files specifically used by safety processor
+#
+# $Header: K:/BCT_Development/vxWorks/Trima/softcrc/filelists/rcs/safety.files 1.10 2003/06/19 20:04:33Z jl11312 Exp jl11312 $
+# $Log: safety.files $
+# Revision 1.10  2003/06/19 20:04:33Z  jl11312
+# - added safe_hw.out
+# Revision 1.9  2003/06/13 19:32:47Z  rm70006
+# IT 6134.
+# Change lib name.
+# Revision 1.8  2003/05/30 15:33:34Z  jl11312
+# - included sysidlog.out in list of safety files
+# Revision 1.7  2003/05/13 15:54:37Z  jl11312
+# - updated for vxWorks
+#
+#  
+
+IGNORE /trima/safety/boot
+
+/trima/common/safety_lib.out
+/trima/low_level/safe_drv.out
+/trima/low_level/safe_hw.out
+/trima/low_level/safe_msg.out
+/trima/low_level/sfastmsg.out
+/trima/low_level/sysidlog.out
+/trima/init/sysinit_safety.out
+/trima/safety/saf_exec.out

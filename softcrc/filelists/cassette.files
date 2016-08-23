@@ -1,0 +1,10 @@
+#
+# Files included in user configuration CRC
+#
+# $Header: E:/BCT_Development/Trima5.1x/Trima/softcrc/filelists/rcs/cassette.files 1.2 2003/05/13 15:54:22Z jl11312 Exp $
+# $Log: cassette.files $
+#
+#  
+
+/config/cassette.dat
+

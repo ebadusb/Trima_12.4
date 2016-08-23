@@ -1,0 +1,33 @@
+################################################################################
+#
+# makefile.vx - top-level makefile for engr_tools
+#
+################################################################################
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := libtools cobe_config_install genAlarmList fatalerror rm_machine_id  
+DIR_LIST += socket spoofer hog corrupt loggingtest makebigfile
+DIR_LIST += datalog_tools/TrimaNetAnalysis
+
+# guiTools -> Taken out until we can get the build stuff figured out.
+
+.PHONY: all $(DIR_LIST)
+all : $(DIR_LIST)
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+$(DIR_LIST) : | bin lib
+  ifneq ($(JOBS),)
+	@echo x Sub-Make of: $(BASEDIR)/$@ with JOBS=$(JOBS)
+  endif
+	@$(MAKE) --directory $@ -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+# These depend on libtools
+spoofer hog corrupt loggingtest makebigfile : libtools
+
+# For sake of parallel sub-makes, pre-create the necessary output directories 
+bin lib:
+	@mkdir $@ 

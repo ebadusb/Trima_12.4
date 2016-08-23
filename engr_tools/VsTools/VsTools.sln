@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui", "gui\gui.vcxproj", "{2474277E-2754-4645-AE77-F36446B04585}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "trima_common", "trima_common\trima_common.vcxproj", "{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cds", "cds\cds.vcxproj", "{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		I80486|Win32 = I80486|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2474277E-2754-4645-AE77-F36446B04585}.Debug|Win32.ActiveCfg = I80486|Win32
+		{2474277E-2754-4645-AE77-F36446B04585}.Debug|Win32.Build.0 = I80486|Win32
+		{2474277E-2754-4645-AE77-F36446B04585}.I80486|Win32.ActiveCfg = I80486|Win32
+		{2474277E-2754-4645-AE77-F36446B04585}.I80486|Win32.Build.0 = I80486|Win32
+		{2474277E-2754-4645-AE77-F36446B04585}.Release|Win32.ActiveCfg = I80486|Win32
+		{2474277E-2754-4645-AE77-F36446B04585}.Release|Win32.Build.0 = I80486|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.Debug|Win32.ActiveCfg = I80486|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.Debug|Win32.Build.0 = I80486|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.I80486|Win32.ActiveCfg = I80486|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.I80486|Win32.Build.0 = I80486|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.Release|Win32.ActiveCfg = Release|Win32
+		{4A05A4BC-E67F-45FB-B50A-411169BE3C0D}.Release|Win32.Build.0 = Release|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.Debug|Win32.ActiveCfg = I80486|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.Debug|Win32.Build.0 = I80486|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.I80486|Win32.ActiveCfg = I80486|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.I80486|Win32.Build.0 = I80486|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.Release|Win32.ActiveCfg = I80486|Win32
+		{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}.Release|Win32.Build.0 = I80486|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

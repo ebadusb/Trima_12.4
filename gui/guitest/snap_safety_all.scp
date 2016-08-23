@@ -1,0 +1,556 @@
+# always start at two button screen with English
+
+#
+# set language postfix English
+#
+add_lang_suffix(" EN")
+
+#
+# set to run state and screen
+#
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end English
+
+
+######################################################
+# Dutch
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix Dutch
+#
+add_lang_suffix(" DU")
+
+#
+# change the language to Dutch
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+#simulateMousePress(260,180) #7
+#simulateMousePress(320,180) #8
+#simulateMousePress(360,180) #9
+#simulateMousePress(320,180) #8
+#simulateMousePress(320,220) #5
+#simulateMousePress(320,260) #2
+#simulateMousePress(330,300) #Enter
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 2nd Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 3rd Time
+simulateMousePress(320,380)
+# Dutch Btn in List Box
+simulateMousePress(320,330)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Dutch
+
+
+######################################################
+# French
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix French
+#
+add_lang_suffix(" FR")
+
+#
+# change the language to French
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# French Btn in List Box
+simulateMousePress(320,230)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end French
+
+
+######################################################
+# German
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix German
+#
+add_lang_suffix(" GE")
+
+#
+# change the language to German
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# German Btn in List Box
+simulateMousePress(320,280)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end German
+
+######################################################
+# Italian
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix Italian
+#
+add_lang_suffix(" IT")
+
+#
+# change the language to Italian
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+# Italian Btn in List Box
+simulateMousePress(320,330)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Italian
+
+######################################################
+# Japanese
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix Japanese
+#
+add_lang_suffix(" JA")
+
+#
+# change the language to Japanese
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+nanosleep(newTime)
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+nanosleep(newTime)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 2nd Time
+nanosleep(newTime)
+
+simulateMousePress(320,380)
+# Japanese Btn in List Box
+simulateMousePress(320,330)
+nanosleep(newTime)
+
+# cont button
+simulateMousePress(320,445)
+nanosleep(newTime)
+
+# at two button screen goto run state and screen
+systemState(9)
+nanosleep(newTime)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+nanosleep(newTime)
+
+# end Japanese
+
+######################################################
+# Korean
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+nanosleep(newTime)
+
+#
+# set language postfix Korean
+#
+add_lang_suffix(" KO")
+
+#
+# change the language to Korean
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+nanosleep(newTime)
+
+#
+# config keypad password
+#
+keypad_password()
+nanosleep(newTime)
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+nanosleep(newTime)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+nanosleep(newTime)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 2nd Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 3rd Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 4th Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 5th Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 6th Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Korean Btn in List Box
+simulateMousePress(320,330)
+nanosleep(newTime)
+
+
+# cont button
+simulateMousePress(320,445)
+nanosleep(newTime)
+
+# at two button screen goto run state and screen
+systemState(9)
+nanosleep(newTime)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Korean
+
+######################################################
+# Portuguese
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+nanosleep(newTime)
+
+#
+# set language postfix Portuguese
+#
+add_lang_suffix(" PO")
+
+#
+# change the language to Portuguese
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+nanosleep(newTime)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+nanosleep(newTime)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+nanosleep(newTime)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 2nd Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 3rd Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Down Arrow Btn - 4th Time
+simulateMousePress(320,380)
+nanosleep(newTime)
+
+# Portuguese Btn in List Box
+simulateMousePress(320,330)
+nanosleep(newTime)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Portuguese
+
+######################################################
+# Spanish
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix Spanish
+#
+add_lang_suffix(" SP")
+
+#
+# change the language to Spanish
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# Spanish Btn in List Box
+simulateMousePress(320,330)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Spanish
+
+
+######################################################
+# Swedish
+# go back to two button screen
+#
+systemState(2)
+nanosleep(newTime)
+enable_load_btn()
+
+#
+# set language postfix Swedish
+#
+add_lang_suffix(" SW")
+
+#
+# change the language to Swedish
+#
+# low left config btn
+#
+simulateMousePress(150,450)
+
+#
+# config keypad password
+#
+keypad_password()
+
+# Language\Unit Button Config Main
+simulateMousePress(120,120)
+
+# Language Button Language\Unit Screen
+simulateMousePress(160,140)
+
+# Language List Box
+#
+# Down Arrow Btn - 1st Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 2nd Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 3rd Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 4th Time
+simulateMousePress(320,380)
+# Down Arrow Btn - 5th Time
+simulateMousePress(320,380)
+# Swedish Btn in List Box
+simulateMousePress(320,330)
+
+# cont button
+simulateMousePress(320,445)
+
+# at two button screen goto run state and screen
+systemState(9)
+
+#
+# take snapshots of control alarms
+#
+safety(1,32769)
+
+# end Swedish

@@ -1,0 +1,147 @@
+
+                        x      x     eeee        qqqq  qq
+                         x    x     e    e      q    q q
+                          x  x     e      e    q      qq
+                           xx      eeeeeeee   q        q
+                           xx      e          q        q
+                          x  x     e      e    q      qq
+                         x    x     e    e      q    q q
+                        x      x     eeee        qqqq  q
+                                                       q
+                                                       q
+                                                       q
+                                                       qq
+
+Usage: Load and execute a program needing an argc/argv, like a unix main().
+
+       There are four forms of xeq, modeled after posix exec(), but without
+       an "e" form, as follows:
+
+       xeql( char *arg0, char *arg1, ..., char *arg9 )
+       xeqlp( char *arg0, char *arg1, ..., char *arg9 )
+       xeqv( char *argstring )
+       xeqvp( char *argstring )
+
+       where:
+
+       1. The "l" forms of xeq contain an argument list, one command
+          parameter per each of the ten possible function arguments.
+       2. The "v" forms of xeq contain a pointer to a string
+          in which the command parameters (arg0 ...) are separated by
+          whitespace.
+       3. For the "p" forms of xeq, arg0 must contain the file name
+          portion of a path to an executable module.  If no directory
+          delimiter (/) is included in arg0, the contents of the
+          "PATH" environment variable are prefixed to arg0.  If a
+          directory delimiter (/) is in arg0, then it is treated
+          as in 4, below.
+       4. For the non-"p" forms of xeq, arg0 must contain the fully-
+          qualified pathname of an executable module.
+       5. For both the "p" and non-"p" forms of xeq, if no filename
+          suffix delimiter (.) is included in arg0, the contents of the
+          "EXESUFFIX" environment variable are suffixed to arg0.  If a
+          filename suffix delimiter (.) is in arg0, then it is assumed
+          that suffixing is unnecessary.
+
+       In addition to "PATH", above, all forms of xeq can use two other
+       environment variables: "EXESUFFIX" and "DEBUG".  The former is
+       used as an extension on the file name of the executable module, if
+       none is contained within arg0, and must contain the suffix delimiter
+       appropriate for the filesystem.  The latter controls the output of
+       debug information from xeq.  DEBUG=0 implies don't output; 1, do
+       output.  These environment variables may be defined, in either the
+       Host or Target Shell, as follows:
+
+          putenv( "PATH=/tgtsvr" )
+          putenv( "EXESUFFIX=.o" )
+          putenv( "DEBUG=0" )
+
+       The values shown above are the defaults that xeq assumes in the
+       absence of a setting for the environment variable.
+
+       Any of the args can contain references to environment variables in the
+       simplest form: $name.  The parenthized version of referencing environment
+       variables (e.g. $(PATH) ) is not supported.  However, embedded variables
+       are supported.  Embedded variables come about when one variable references
+       another, e.g. putenv("EXECUTABLES=$PATH").
+
+       There are two formats that the arg0 parameter can take.  The first is
+       a simple program name, where the program name == file name == entry
+       point name.  In the second format, program name == file name, but the
+       entry point name is separately specified, following a greater-than (>)
+       character.  For example, to load the file test.o and execute the entry
+       point "cat" use the format "test>cat".
+
+       The following examples call the entry point "test" in program file test.o
+       in the directory /tgtsvr with parameters "a" and "$DEBUG" (for which the
+       value of the DEBUG environment variable is substituted).  They are all
+       functionally equivalent, assuming the environment variable settings above:
+
+           xeqlp "test","a","$DEBUG"
+           xeqlp "test>test","a","$DEBUG"
+           xeqlp "test.o","a","$DEBUG"
+           xeqlp "test.o>test","a","$DEBUG"
+           xeql "/tgtsvr/test","a","$DEBUG"
+           xeql "/tgtsvr/test>test","a","$DEBUG"
+           xeql "/tgtsvr/test.o","a","$DEBUG"
+           xeql "/tgtsvr/test.o>test","a","$DEBUG"
+           xeql "$PATH/test","a","$DEBUG"
+           xeql "$PATH/test>test","a","$DEBUG"
+           xeql "$PATH/test.o","a","$DEBUG"
+           xeql "$PATH/test.o>test","a","$DEBUG"
+           xeql "$EXECUTABLES/test","a","$DEBUG"
+           xeql "$EXECUTABLES/test>test","a","$DEBUG"
+           xeql "$EXECUTABLES/test.o","a","$DEBUG"
+           xeql "$EXECUTABLES/test.o>test","a","$DEBUG"
+           xeqvp "test a $DEBUG"
+           xeqvp "test>test a $DEBUG"
+           xeqvp "test.o a $DEBUG"
+           xeqvp "test.o>test a $DEBUG"
+           xeqv "/tgtsvr/test a $DEBUG"
+           xeqv "/tgtsvr/test>test a $DEBUG"
+           xeqv "/tgtsvr/test.o a $DEBUG"
+           xeqv "/tgtsvr/test.o>test a $DEBUG"
+           xeqv "$PATH/test a $DEBUG"
+           xeqv "$PATH/test>test a $DEBUG"
+           xeqv "$PATH/test.o a $DEBUG"
+           xeqv "$PATH/test.o>test a $DEBUG"
+           xeqv "$EXECUTABLES/test a $DEBUG"
+           xeqv "$EXECUTABLES/test>test a $DEBUG"
+           xeqv "$EXECUTABLES/test.o a $DEBUG"
+           xeqv "$EXECUTABLES/test.o>test a $DEBUG"
+
+       These examples will produce the following output, depending upon the arg0       format used:
+
+           argv[0] = "/tgtsvr/test.o"
+           argv[1] = "a"
+           argv[2] = "0"
+           value = 0 = 0x0
+
+       for non-">" formats, or
+
+           argv[0] = "/tgtsvr/test.o>test"
+           argv[1] = "a"
+           argv[2] = "0"
+           value = 0 = 0x0
+
+       for ">" formats.
+
+       The following is the C++ program used to produce the output:
+
+           #include <stdio.h>
+           
+           #ifdef __cplusplus 
+           extern "C" void test ( int argc, char** argv); 
+           #else 
+           void test ( int argc, char** argv); 
+           #endif
+           
+           void test( int argc, char** argv)
+           {
+               for( int j=0; j<argc; j++ )
+               {
+                   printf( "argv[%d] = \"%s\"\n", j, argv[j] );
+               }
+           
+           }
+

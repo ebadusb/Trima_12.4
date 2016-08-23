@@ -1,0 +1,378 @@
+# LANGUAGE CONFIGURATION
+
+# THIS SCRIPT WILL AIM TO CREATE ALL SCREENS THAT ARE PART
+# OF THE CONFIGURATION SECTION OF THE GUI.
+
+# NEWTIME IS A VARIABLE THAT HANDLES THE DELAY BETWEEN ACTIONS
+
+# ** ASSUME START FROM 2 BUTTON SCREEN **
+
+##############################################################
+#	SETUP STUFF
+##############################################################
+
+*newTime = 3
+add_lang_suffix(" EN")
+set_screen_name(1)
+
+##############################################################
+#	CONFIG MAIN
+##############################################################
+
+# ENTER CONFIGURATION
+	LowerLeft
+	nanosleep(newTime)
+
+# ENTER PASSWORD
+	scrn("C_PS")
+	keypadPassword
+	nanosleep(newTime)
+
+# START CONFIGURATION SCREEN
+	scrn("C")
+
+##############################################################
+#	LANGUAGE / UNIT
+##############################################################
+
+# ENTER LANGUAGE / UNIT SCREEN
+	simulateMousePress(116,142)
+	nanosleep(newTime)
+	scrn("C_LU")
+
+# HEIGHT
+	simulateMousePress(152,218)
+	nanosleep(newTime)
+	scrn("C_LU_HE")
+	simulateMousePress(347,275)
+
+# WEIGHT
+	simulateMousePress(151,300)
+	nanosleep(newTime)
+	scrn("C_LU_WE")
+	simulateMousePress(353,357)
+
+# DECIMAL DELIMITER
+	simulateMousePress(145,381)
+	nanosleep(newTime)
+	scrn("C_LU_DD")
+	simulateMousePress(354,300)
+
+# LANGUAGE
+	simulateMousePress(149,142)
+	nanosleep(newTime)
+	scrn("C_LU_L1")
+	simulateMousePress(330,382)
+	simulateMousePress(330,382)
+	simulateMousePress(330,382)
+	nanosleep(newTime)
+	scrn("C_LU_L2")
+	simulateMousePress(330,135)
+	simulateMousePress(330,135)
+	simulateMousePress(330,135)
+	simulateMousePress(330,180)
+
+##############################################################
+#	MACHINE
+##############################################################
+
+# ENTER MACHINE SCREEN
+	simulateMousePress(111,228)
+	nanosleep(newTime)
+	scrn("C_MA")
+
+# DATE FORMAT
+	simulateMousePress(145,139)
+	nanosleep(newTime)
+	scrn("C_MA_DF")
+	simulateMousePress(363,136)
+
+# TIME FORMAT
+	simulateMousePress(148,265)
+	nanosleep(newTime)
+	scrn("C_MA_TF")
+	simulateMousePress(361,279)
+
+# AUDIBLE ALERT VOLUME
+	simulateMousePress(168,390)
+	nanosleep(newTime)
+	scrn("C_MA_AA")
+	simulateMousePress(337,195)
+
+# REMOVE CASSETTE BUTTON
+	simulateMousePress(430,390)
+	scrn("C_MA_REM")
+	simulateMousePress(415,270)
+	scrn("C_MA_REM_CONF")
+	simulateMousePress(505,265)
+
+# ADD CASSETTE
+	simulateMousePress(320,155)
+	simulateMousePress(120,240)
+	simulateMousePress(70,375)
+	simulateMousePress(70,290)
+	simulateMousePress(70,330)
+	simulateMousePress(180,250)
+	simulateMousePress(150,375)
+	simulateMousePress(430,300)
+	scrn("C_MA_ADD")
+
+# ADD SHORT REF
+	simulateMousePress(320,155)
+	simulateMousePress(120,240)
+	simulateMousePress(150,375)
+	scrn("C_MA_SHORT")
+
+# ADD SHORT SET CODE
+	simulateMousePress(320,200)
+	simulateMousePress(120,240)
+	simulateMousePress(150,375)
+	scrn("C_MA_SHORT")
+
+# ADD BAD MATCH
+	simulateMousePress(320,155)
+	simulateMousePress(120,240)
+	simulateMousePress(70,375)
+	simulateMousePress(70,290)
+	simulateMousePress(70,330)
+	simulateMousePress(180,250)
+	simulateMousePress(150,375)
+
+	simulateMousePress(320,200)
+	simulateMousePress(120,240)
+	simulateMousePress(70,375)
+	simulateMousePress(70,290)
+	simulateMousePress(70,330)
+	simulateMousePress(180,250)
+	simulateMousePress(70,290)
+	simulateMousePress(70,330)
+	simulateMousePress(180,250)
+	simulateMousePress(150,375)
+
+	simulateMousePress(430,300)
+	scrn("C_MA_BAD")
+
+	simulateMousePress(306,452)
+	nanosleep(newTime)
+
+##############################################################
+#	PROCEDURE
+##############################################################
+
+# ENTER PROCEDURE SCREEN
+	simulateMousePress(153,304)
+	nanosleep(newTime)
+	scrn("C_PR")
+	simulateMousePress(486,308)
+	nanosleep(newTime)
+	scrn("C_PR_AL")
+	simulateMousePress(281,375)
+	simulateMousePress(340,453)
+	nanosleep(newTime)
+
+##############################################################
+#	AUTOMATED PROCESSES
+##############################################################
+
+# ENTER AUTOMATED PROCESSES SCREEN
+	simulateMousePress(110,380)
+	nanosleep(newTime)
+	scrn("C_AP")
+	simulateMousePress(340,453)
+	nanosleep(newTime)
+
+##############################################################
+#	PLATELETS
+##############################################################
+
+# ENTER PLATELET SCREEN
+	simulateMousePress(310,140)
+	nanosleep(newTime)
+	scrn("C_P1")
+	simulateMousePress(50, 380)
+	simulateMousePress(50, 380)
+	simulateMousePress(50, 380)
+	simulateMousePress(50, 380)
+	nanosleep(newTime)
+	scrn("C_P2")
+	simulateMousePress(340,453)
+
+##############################################################
+#	PLASMA
+##############################################################
+
+# ENTER PLASMA SCREEN
+	simulateMousePress(291,219)
+	nanosleep(newTime)
+	scrn("C_PA")
+	simulateMousePress(306,452)
+	nanosleep(newTime)
+
+##############################################################
+#	RBCs
+##############################################################
+
+# ENTER RBC SCREEN
+	simulateMousePress(291,296)
+	nanosleep(newTime)
+	scrn("C_RB")
+
+# DRBC SPLIT NOTIFICATION
+	simulateMousePress(488,386)
+	nanosleep(newTime)
+	scrn("C_RB_DS")
+	simulateMousePress(311,283)
+	simulateMousePress(345,449)
+	nanosleep(newTime)
+
+##############################################################
+#	DONOR
+##############################################################
+
+# ENTER DONOR SCREEN
+	simulateMousePress(533,148)
+	nanosleep(newTime)
+	scrn("C_DO")
+
+# MAXIMUM DRAW FLOW
+	simulateMousePress(501,139)
+	nanosleep(newTime)
+	scrn("C_DO_MD")
+	simulateMousePress(361,330)
+
+# INITIAL DRAW RAMP
+	simulateMousePress(504,225)
+	nanosleep(newTime)
+	scrn("C_DO_IR")
+	simulateMousePress(353,276)
+	simulateMousePress(310,456)
+	nanosleep(newTime)
+
+##############################################################
+#	DONOR VOLUME LIMITS
+##############################################################
+
+# ENTER DONOR VOLUME LIMITS SCREEN
+	simulateMousePress(508,219)
+	nanosleep(newTime)
+	scrn("C_DV_1")
+	simulateMousePress(162,138)
+	simulateMousePress(553,146)
+	nanosleep(newTime)
+	scrn("C_DV_2")
+	simulateMousePress(162,138)
+	simulateMousePress(553,146)
+	simulateMousePress(315,448)
+	nanosleep(newTime)
+
+##############################################################
+#	REPLACEMENT FLUID
+##############################################################
+
+# ENTER REPLACEMENT FLUID SCREEN
+	simulateMousePress(466,293)
+	nanosleep(newTime)
+	scrn("C_RF_1")
+	simulateMousePress(90,188)
+	nanosleep(newTime)
+	scrn("C_RF_2")
+	simulateMousePress(324,450)
+	nanosleep(newTime)
+
+##############################################################
+#	PROCEDURE PRIORITY
+##############################################################
+
+# PROCEDURE PRIORITY
+	simulateMousePress(500,400)
+	nanosleep(newTime)
+	scrn("C_PP")
+
+# ROWS
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	nanosleep(newTime)
+	scrn("C_PP_R1")
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	nanosleep(newTime)
+	scrn("C_PP_R2")
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	nanosleep(newTime)
+	scrn("C_PP_R3")
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	nanosleep(newTime)
+	scrn("C_PP_R4")
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	simulateMousePress(330,394)
+	nanosleep(newTime)
+	scrn("C_PP_R5")
+
+# PLASMA
+	simulateMousePress(221,212)
+	nanosleep(newTime)
+	scrn("C_PP_L1")
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	nanosleep(newTime)     
+	scrn("C_PP_L2")
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	simulateMousePress(372,413)
+	nanosleep(newTime)
+	scrn("C_PP_L3")
+	simulateMousePress(383,222)
+
+# RBC
+	simulateMousePress(335,219)
+	nanosleep(newTime)
+	scrn("C_PP_RB")
+	simulateMousePress(502,185)
+
+# PLATELETS
+	simulateMousePress(99,214)
+	nanosleep(newTime)
+	scrn("C_PP_P1")
+	simulateMousePress(253,404)
+	simulateMousePress(253,404)
+	simulateMousePress(253,404)
+	simulateMousePress(253,404)
+	nanosleep(newTime)
+	scrn("C_PP_P2")
+	simulateMousePress(268,222)
+
+# BLOOD TYPE
+	simulateMousePress(435,218)
+	nanosleep(newTime)
+	scrn("C_PP_T1")
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	nanosleep(newTime)
+	scrn("C_PP_T2")
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	nanosleep(newTime)
+	scrn("C_PP_T3")
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	simulateMousePress(316,408)
+	nanosleep(newTime)
+	scrn("C_PP_T4")
+	simulateMousePress(320,219)
+	simulateMousePress(325,453)
+	reboot

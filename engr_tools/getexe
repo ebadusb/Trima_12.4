@@ -1,0 +1,6 @@
+cd /trima/$i
+echo extracting gzipped tarred exes from /d/update/exes.tar.gz to $1
+cd /trima/$1
+gzip -dc /d/update/exes.tar.gz | tar -xvf -
+echo updating CRCs
+/d/tools/fix_crc

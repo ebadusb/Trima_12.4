@@ -1,0 +1,14 @@
+# FILENAME: clean02.dat
+# PURPOSE: verify -clean forces cleanup of only specified test workspace
+# CHANGELOG:
+#   01/12/99 - dyes - initial version
+
+
+SUITE clean02_suite
+
+TEST clean02_test1
+RUN echo clean02_test1
+
+TEST clean02_test2
+RUN echo clean02_test2
+

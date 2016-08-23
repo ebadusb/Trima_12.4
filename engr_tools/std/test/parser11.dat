@@ -1,0 +1,13 @@
+# FILENAME: parser11.dat
+# PURPOSE: verify RUN command cannot be backgrounded
+# CHANGELOG:
+#   11/29/99 - dyes - initial version
+
+
+SUITE parser11_suite
+
+
+TEST parser11_test
+RUN echo "cannot background RUN command" &
+
+

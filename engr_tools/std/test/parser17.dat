@@ -1,0 +1,14 @@
+# FILENAME: parser17.dat
+# PURPOSE: verify EXPORT without env var name is caught by parser
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE parser17_suite
+
+
+TEST parser17_test
+EXPORT =foobar
+RUN echo foobar
+
+

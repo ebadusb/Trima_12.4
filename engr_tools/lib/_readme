@@ -1,0 +1,3 @@
+MKS SI requires a file in a dir before it will add the dir to
+the project.  This file lets tools/lib exit.
+tools/lib is the install location of libraries built under tools.

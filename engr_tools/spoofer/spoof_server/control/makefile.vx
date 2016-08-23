@@ -1,0 +1,85 @@
+################################################################################
+#
+# FILENAME:  makefile.vx
+# PURPOSE: builds spoof_server_control.out for Trima testing.
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..\..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I $(MAINDIR)\engr_tools\libtools \
+	-I $(MAINDIR)\trima_common \
+	-I $(MAINDIR)\engr_tools\spoofer \
+	-I $(MAINDIR)\cds \
+	-I $(MAINDIR)\proc\algorithm
+
+#
+# Define additional compile flags
+#
+ADDN_CXXFLAGS = -D SUPPORT_CONTROL_SPOOFS
+
+#
+# VPATH must include the relative pathnames (from the directory containing this
+# makefile) to any directories containing source files used for the applications.
+#
+vpath %.cpp .. ../..
+
+include $(MAINDIR)/makefile.vxc
+
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+
+#
+# Definitions required for building spoof_server_control.out
+#
+APP_NAME := spoof_server_control
+spoof_server_control_dir = ..\..\..\bin
+spoof_server_control_map = $(APP_NAME).map
+spoof_server_control_libs = $(LTLIBDIR)\libtools.a \
+                  $(LIBDIR)\libtrima_common.a \
+                  $(LTLIBDIR)\libspoofer.a
+spoof_server_control_c_files =
+spoof_server_control_cxx_files = ../spoof_server.cpp \
+	../../namedobject.cpp ../../spoofabledata.cpp ../../spoofedobject.cpp
+include $(COMDIR)/makefile.process_app
+
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\spoofer && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR) lib
+
+$(APP_LIST) : libs
+
+include $(COMDIR)/makefile.build_apps
+

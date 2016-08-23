@@ -1,0 +1,13 @@
+﻿<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" loadImage="GetImage" onLoad="RibbonLoaded" xmlns:x="CaridianBCT">
+	<ribbon>
+		<tabs>
+			<tab idQ="x:Analysis" label="Analysis">
+				<group id="QueryManager" label="Extended Query">
+					<button id="QueryButton" label="Query" image="search-48x48.png" size="large" onAction="QueryWorksheet" />
+					<button id="ManagerButton" label="Manager" image="manager-48x48.png" size="large" onAction="SearchManager" />
+					<button id="SettingsButton" label="Settings" image="settings-48x48.png" size="large" onAction="SearchSettings" />
+				</group>
+			</tab>
+		</tabs>
+	</ribbon>
+</customUI>

@@ -1,0 +1,18 @@
+# FILENAME: precondition02.dat
+# PURPOSE: verify failing PRECONDITION aborts test without executing other commands
+# CHANGELOG:
+#   01/12/99 - dyes - initial version
+
+
+SUITE precondition02_suite
+
+TEST precondition02_test
+PRECONDITION echo foobar1
+PRECONDITION ls bogusfile  # forces precondition to fail
+PRECONDITION echo foobar2
+PRECONDITION echo foobar3
+SETUP echo foobar4
+RUN echo foobar5
+CLEANUP echo foobar6
+
+

@@ -1,0 +1,5 @@
+cd /d/tools
+cp profile /etc
+cp termdef /bin
+cp telnetd /usr/ucb
+cp inetd.conf /etc

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="I80486|Win32">
+      <Configuration>I80486</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4AAD5BA-DB5C-4D79-AE32-B52779CD449F}</ProjectGuid>
+    <RootNamespace>cds</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>..\build.bat trima_common CPU=I80486 RMSGDIR=../.rmsg</NMakeBuildCommandLine>
+    <IncludePath>$(COMDIR)\include;$(WIND_BASE)\target\h;..\..\..\trima_common;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='I80486|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\cds\config_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\guiUnitTestCds.cpp" />
+    <ClCompile Include="..\..\..\cds\halstatus_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\predict_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procadjust_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\proccycle_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procdonor_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procplsrinseback_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procpqi_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procruntargets_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procrun_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\proctime_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\proctrimaset_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\procvolumes_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\software_cds.cpp" />
+    <ClCompile Include="..\..\..\cds\xif_cds.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\cds\config_cds.h" />
+    <ClInclude Include="..\..\..\cds\guiUnitTestCds.h" />
+    <ClInclude Include="..\..\..\cds\gui_cds.h" />
+    <ClInclude Include="..\..\..\cds\halstatus_cds.h" />
+    <ClInclude Include="..\..\..\cds\predict_cds.h" />
+    <ClInclude Include="..\..\..\cds\procadjust_cds.h" />
+    <ClInclude Include="..\..\..\cds\proccycle_cds.h" />
+    <ClInclude Include="..\..\..\cds\procdonor_cds.h" />
+    <ClInclude Include="..\..\..\cds\procplsrinseback_cds.h" />
+    <ClInclude Include="..\..\..\cds\procpqi_cds.h" />
+    <ClInclude Include="..\..\..\cds\procruntargets_cds.h" />
+    <ClInclude Include="..\..\..\cds\procrun_cds.h" />
+    <ClInclude Include="..\..\..\cds\proctime_cds.h" />
+    <ClInclude Include="..\..\..\cds\proctrimaset_cds.h" />
+    <ClInclude Include="..\..\..\cds\procvolumes_cds.h" />
+    <ClInclude Include="..\..\..\cds\software_cds.h" />
+    <ClInclude Include="..\..\..\cds\xif_cds.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

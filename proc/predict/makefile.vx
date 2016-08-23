@@ -1,0 +1,99 @@
+# @(#) $Header: L:/BCT_Development/vxWorks/Trima/proc/predict/rcs/makefile.vx 1.10 2002/08/15 21:10:34 jl11312 Exp $
+#
+# Makefile - makefile for predict executable
+#
+# $Log: makefile.vx $
+# Revision 1.10  2002/08/15 21:10:34  jl11312
+# - updated for new makefile templates
+# Revision 1.9  2002/08/06 18:55:51  ms10234
+# Changed all int message names to end with "Msg"
+# Revision 1.8  2002/07/19 14:45:04  sb07663
+# first cut at working plt/pls/rbc optimization for Vx
+# Revision 1.7  2002/07/05 21:17:04  sb07663
+# external refs finally caught up with us; added split-by-reloc directive
+# Revision 1.6  2002/06/05 14:26:51  sb07663
+# added CDS include path
+# Revision 1.5  2002/04/19 17:48:24  sb07663
+# Removed obj_dir mod (now part of common make)
+# Revision 1.4  2002/04/19 17:26:32  sb07663
+# auto build object directory
+# Revision 1.3  2002/04/19 16:53:39  sb07663
+# First version with complete .cpp file list
+# Revision 1.2  2002/04/19 13:06:06  jl11312
+# - added clean target
+# Revision 1.1  2002/04/19 12:57:21  jl11312
+# Initial revision
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change libs app
+endif
+
+ADDN_INCDIR = -I ..\..\trima_common -I..\interface -I..\algorithm -I..\..\cds
+ADDN_LDFLAGS =
+ADDN_CXXFLAGS =
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+include $(MAINDIR)/makefile.vxc
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd ..\interface && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd ..\algorithm && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd ..\..\unit_test\predict && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME := predict
+predict_dir = ..\bin
+predict_c_files   = 
+
+                                        
+#predict_cxx_files =  predictConfig.cpp \
+#                     procState.cpp \
+#                     predict.cpp \
+#                     flows.cpp   \
+#                     pqipredictor.cpp \
+#                     procdet.cpp \
+#                     procdetrbcpls.cpp \
+#                     procdetpltplsrbc.cpp\
+#		      piralgo.cpp \
+#                     procdetfactory.cpp 
+
+predict_cxx_files =  predictConfig.cpp  \
+                     procDataState.cpp \
+                     flows.cpp \
+                     procdet.cpp \
+                     procdetrbcpls.cpp piralgo.cpp procdetfactory.cpp \
+                     pqipredictor.cpp  procdetpltplsrbc.cpp  predict.cpp procedure_list.cpp predict_task.cpp predict_driver.cpp
+                     
+
+
+predict_libs = $(LIBDIR)\libproc_interface.a $(LIBDIR)\libproc_algorithm.a $(LIBDIR)\libtrima_common.a
+predict_lib_list =
+include $(MAINDIR)/makefile.process_app
+
+app : $(APP_LIST)
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps
+

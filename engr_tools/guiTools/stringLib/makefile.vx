@@ -1,0 +1,89 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/stringLib/rcs/makefile.vx 1.3 2009/05/20 22:33:53Z dslausb Exp dslausb $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   makefile.vx
+#
+#     Description:
+#
+#	This is the makefile.vx to a library containing all the
+#	strings from each language.  You can link it to other
+#	tools to pull out strings.  See the alarm table and reason
+#	table tools to get an idea how this works.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: makefile.vx $
+# Revision 1.3  2009/05/20 22:33:53Z  dslausb
+# Update header information
+# Revision 1.2  2009/05/20 22:12:51Z  dslausb
+# Add another source file
+# Revision 1.1  2009/05/20 18:40:43Z  dslausb
+# Initial revision
+#
+#*******************************************************************************
+
+##########   DEFINITIONS   ###########################################
+
+#
+# VPATH must include the relative pathnames (from the directory containing this
+# makefile) to any directories containing source files used for the applications.
+#
+# (see VPATH defined in makefile_defs.vx below)
+
+# REQUIRED PATH DEFINITIONS
+TRIMA_ROOT=../../..
+
+include ../makefile_defs.vx
+
+# NAMES OF GENERATED FILES
+FILENAME=stringLib
+LIB=$(FILENAME).a
+
+STRING_TABLE_OBJS=$(notdir $(LANGS:.info=.o)) stringTable.o
+STRING_TABLE_CPPS=$(notdir $(LANGS:.info=.cpp))
+STRING_TABLE_HPPS=$(notdir $(LANGS:.info=.hpp))
+STRING_TABLE_SEDS=$(notdir $(LANGS:.info=.sed))
+
+##########   MAKE RULES   ###########################################
+
+# Use this to retain the intermediate files; otherwise, they get deleted
+#
+#.PRECIOUS: %.sed %.cpp
+
+build: $(STRING_TABLE_HPPS) $(LIB)
+
+$(LIB) : stringTable.o $(STRING_TABLE_HEADER) $(STRING_TABLE_HPPS) $(STRING_TABLE_OBJS)
+	@rm -f $@
+	$(AR) $(AR_OPTIONS) $@ $(STRING_TABLE_OBJS) stringTable.o
+
+%.cpp:%.sed %.info
+	sed -n -f $^ > $@
+
+%.hpp:$(STRING_TABLE_HEADER)
+	sed 's/__LANG_NAME__/$(subst -,_,$*)/g' headerTemplate.slick >> $@
+	sed -i 's/__FILE_NAME__/$*/g' $@
+	echo '#include "$@"' >> $^
+	echo 'static stringTable_$(subst -,_,$*) stringTable_$(subst -,_,$*)Obj("$*");' >> $^
+
+%.sed:sedTemplate.slick
+	sed 's/__LANG_NAME__/$(subst -,_,$*)/g' sedTemplate.slick > $@
+	sed -i 's/__FILE_NAME__/$*/g' $@
+
+# specific rules
+$(STRING_TABLE_HEADER):
+	echo '// Generated $@' > $@
+
+# CLEAN UP GENERATED FILES
+extra_clean:
+	$(DELETE) $(STRING_TABLE_CPPS)
+	$(DELETE) $(STRING_TABLE_SEDS)
+	$(DELETE) $(STRING_TABLE_HPPS)
+	$(DELETE) $(STRING_TABLE_HEADER)
+

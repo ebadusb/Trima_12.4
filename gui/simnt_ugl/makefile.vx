@@ -1,0 +1,45 @@
+# @(#) $Header: $
+#
+# Makefile - makefile for SimNT UGL library
+#
+# $Log: $
+#
+
+.PHONY: all
+all: ugl
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define the location of the resulting library.  Note
+# that ARCHIVE_DIR is used in DOS shell commands, and must use \ directory
+# separators.
+#
+OUT_DIR = bin
+WINDML_CONFIG_DIR = $(shell cmd /c cd)
+
+.PHONY: ugl
+
+ugl : $(OUT_DIR)/ugl_SIMNT.o
+
+$(WINDML_CONFIG_DIR)/simnt_windml.o : $(WINDML_CONFIG_DIR)/simnt.cfg
+	@if not exist $(OUT_DIR) mkdir $(OUT_DIR)
+	pushd $(WIND_BASE)\target\src\ugl && $(MAKE) WINDML_CONFIG_DIR=$(WINDML_CONFIG_DIR) WINDML_CONFIG_NAME=simnt windmlclean
+	pushd $(WIND_BASE)\target\src\ugl && $(MAKE) WINDML_CONFIG_DIR=$(WINDML_CONFIG_DIR) WINDML_CONFIG_NAME=simnt
+	pushd $(WIND_BASE)\target\src\ugl && $(MAKE) WINDML_CONFIG_DIR=$(WINDML_CONFIG_DIR) WINDML_CONFIG_NAME=simnt uglobj
+	rm -f $(OUT_DIR)/ugl_SIMNT.o
+
+$(OUT_DIR)/ugl_SIMNT.o: $(WINDML_CONFIG_DIR)/simnt_windml.o
+	mv $^ $@
+
+.PHONY: clean
+clean:
+	pushd $(WIND_BASE)\target\src\ugl && $(MAKE) -f Makefile CPU=$(CPU) rclean
+	rm -f $(OUT_DIR)/ugl_SIMNT.o
+

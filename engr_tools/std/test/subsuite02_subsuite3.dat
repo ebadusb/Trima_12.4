@@ -1,0 +1,14 @@
+# FILENAME: subsuite02_subsuite3.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/23/99 - dyes - initial version
+
+# passing subsuite should exit 0
+
+SUITE subsuite02_subsuite3
+
+TEST subsuite02_test3
+RUN echo "subsuite02_test3 should fail"
+EXIT 1 # to force the failure
+
+

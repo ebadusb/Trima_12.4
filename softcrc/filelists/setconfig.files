@@ -1,0 +1,10 @@
+#
+# Files included in user configuration CRC
+#
+# $Header: E:/BCT_Development/Trima5.1x/Trima/softcrc/filelists/rcs/setconfig.files 1.1 2006/04/19 19:22:49Z dslausb Exp dslausb $
+# $Log: setconfig.files $
+# Revision 1.1  2006/04/19 19:22:49Z  dslausb
+#
+#  
+/config/setconfig.dat
+

@@ -1,0 +1,203 @@
+# sw.dat - software options for Trima
+#
+# 1.) This file must have lines that are less then 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) NO SPACES ARE ALLOWED BETWEEN name=value!
+#
+# 3.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+# NO SPACES ARE ALLOWED BETWEEN name=value
+
+##################   VERSION NUMBER  #################################
+[OPTIONS]
+#
+# The following version number must be changed if the format of this
+# file changes, allowing install or downgrade scripts to determine
+# when file conversion is necessary.
+#
+#
+# US Default:
+#
+file_version=6.2.0.0.1
+#######################################################################
+
+[FEATURES]
+#
+#
+#  Each feature is described by the format:
+#     feature=enable,CRC
+#
+#  Each feature contains an enable field.  This is a 32-bit value entered
+#  in binary (e.g. a value of 10010 has bits 1 and 4 set).  The meaning of
+#  each bit is:
+#
+#    bit0 = enable regardless of language selected
+#    bit1 = enable feature if English language is selected
+#    bit2 = French
+#    bit3 = German
+#    bit4 = Italian
+#    bit5 = Japanese
+#    bit6 = Spanish
+#    bit7 = Dutch
+#    bit8 = Portuguese
+#    bit9 = Swedish
+#    bit10 = Korean
+#    bit11 = Russian
+#    bit12 = Czech
+#    bit13 = Chinese
+#    bit14 = Polish
+#    bits 15-24 reserved future languages
+#    bits 25-31 reserved
+#
+#  Each line in this section is individually CRCd.  The CRC generated from the
+#  feature line must match the given CRC or an error will be given and the
+#  Trima machine will generate safe state.  Note that the CRC is based on the
+#  actual string used in the setting, not the numeric value.  Thus, the
+#  following two sample lines would have different CRC values, although they
+#  would result in the same software option selection.  The CRC must be entered
+#  as a hex value.
+#
+#    setting=1
+#    setting=001
+#
+
+#
+# Asia enabled features
+#
+alternate_next_procedure_button=0,28fd9829
+display_average_inlet_flow=0,f9431ad0
+four_way_volume_cutoff=0,072e8f00
+select_screen_display_platelet_volume=0,658a694c
+
+#
+# Japan Only features
+#
+alternate_gui=0,c5a1f257
+allow_adjust_flow_rates_on_procedure_select=0,bdc63c96
+confirm_ac_connection=0,3ce9087
+dont_connect_ac_msg_at_set_load=0,1659e888
+jp_sample_bag_configuration=0,6d65baf4
+
+
+#
+# Country specific options
+#
+display_residual_volumes=1,ec987140
+
+
+#
+# Features Under Evaluation
+#
+postcount_platelet_mobilization_algorithm=1,bf8c4f87
+second_stage_uls_filtering=1,d3ceea41
+time_only_config_mode=0,55090f16
+
+
+#
+# periodic logging in service mode
+#
+service_mode_periodic_log=0,5826596d 
+
+
+#
+# PLO Monitoring
+#
+plo_flag=1,e713af2d
+plopca_flag=1,79a04d3d  
+
+
+#
+# Enable Air To Donor Mitigation
+#
+airout_mitigation=0,4022dede
+
+
+#
+# AMAP PLATELETS
+#
+amap_platelets_available=0,bc8f020c
+
+
+#
+# COMPLEMENTARY PLASMA
+#
+complementary_plasma_available=1,bc130cb5
+
+
+#
+# R&D only options.  Should always be set to 0 in the field.
+#
+
+
+#
+# Stack Monitor (QA only)
+#
+enable_sumo=0,1b44c5de
+
+
+#
+# FTP options - note that this is not a language sensitive setting.  A zero value will
+# disallow FTP with the cassette down (except in service boot or single step boot mode),
+# and a non-zero value will allow it.
+#
+allow_ftp_with_cassette_down=0,5e1b0bf3
+
+enable_screenshot_button=0,efa60ced
+
+cfr11_pin_logging=0,29ea10a7
+
+
+#
+# Enable APS and CPS high speed logging
+# WARNING: turn these on for versalogic only -- ampro will crash!
+#
+aps_high_speed_log_enable=0,adf9c8ed
+cps_high_speed_log_enable=0,70e1fe6f
+
+[GUI]
+#
+# De-bounce delay (in clock ticks) for touch screen
+#
+touchscreen_bounce_delay=8,c42cfd98
+
+#
+# The following GUI settings are used for string substitutions in displayed text.
+# In general, the are limited to numeric values since there is no provision
+# for translation, and they are in ASCII rather than Unicode.
+#
+# The GUI string tables should contain sub-strings such as #!{low_platelet_conc}
+# These sub-strings will be replaced by the corresponding values from this
+# configuration file.
+#
+
+#
+# Platelet concentration storage limits
+#
+low_platelet_conc=1000,50fc77c1
+high_platelet_conc=2100,b63fc124
+
+
+#
+# RBC bag capacity for cfg rbc
+# This is the maximum configurable volume for an RBC product.  It represents
+# the max bag capacity for a DRBC set. (Keep here so it's not hard-coded)
+#
+rbc_max_prod_vol=1000,ad1ba85c
+
+
+#
+# this time is the time limit between donor disconnect and the end of metering.
+# if this time limit is exceeded then we will flag the PLT product for WBC
+#
+max_metering_duration=30.0,eafe882a 
+

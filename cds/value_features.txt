@@ -1,0 +1,13 @@
+#
+# Format: EnumName ID ConfigFileLabel Permission[SERVICE|RND_ONLY|ANYONE]
+# 
+VALUE_FEATURE_FILE_TABLE_START
+VistaIP                    0  vista_ip_address                    SERVICE 
+VistaPort			         1  vista_port							SERVICE
+PlasmaLadderMin            2  plasma_ladder_min                   SERVICE
+PlasmaLadderMax	         3  plasma_ladder_max                   SERVICE   
+PPCConcLow                 4  ppc_conc_low                        SERVICE
+PPCConcHigh                5  ppc_conc_high                       SERVICE
+StandardConcLow            6  standard_conc_low                   SERVICE
+StandardConcHigh           7  standard_conc_high                  SERVICE
+VALUE_FEATURE_TABLE_END                                                                

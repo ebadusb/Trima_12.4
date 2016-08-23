@@ -1,0 +1,13 @@
+# FILENAME: subsuite01.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/23/99 - dyes - initial version
+
+# verify error message if -test name not found
+
+SUITE subsuite01_suite
+
+SUBSUITE subsuite01_subsuite
+
+
+

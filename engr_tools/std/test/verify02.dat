@@ -1,0 +1,21 @@
+# FILENAME: verify02.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE verify02_suite
+TEST verify02_test
+# verify multiple VERIFY commands run as expected
+RUN ls bogusfile   #  get output into test.err
+EXIT 1
+VERIFY touch foo
+VERIFY touch bar
+VERIFY echo "verify redirected" > echo.out
+
+
+
+
+
+
+

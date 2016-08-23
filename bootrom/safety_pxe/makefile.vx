@@ -1,0 +1,32 @@
+################################################################################
+#
+# Versalogic Safety boot image for Python board which uses PXE for booting.
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: bootrom_versa_pxe.sys
+endif
+
+.PHONY: clean
+clean:
+	rm -f bootrom_versa_pxe.sys
+	$(MAKE) -f Makefile clean
+
+bootrom_versa_pxe.sys : bootrom_uncmp
+	$(Q)objcopypentium -O binary --gap-fill=0 bootrom_uncmp bootrom.tmp
+	$(Q)aspentium preboot.s -o preboot.out
+	$(Q)objcopypentium -O binary --gap-fill=0 preboot.out preboot.1024
+	$(Q)copy /B preboot.1024+bootrom.tmp $@
+	$(Q)rm -f preboot.out preboot.1024 bootrom.tmp
+
+bootrom_uncmp:
+  ifeq ($(TERSE),true)
+	$(MAKE) --silent -f Makefile bootrom_uncmp
+  else
+	$(MAKE) -f Makefile bootrom_uncmp
+  endif

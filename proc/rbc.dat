@@ -1,0 +1,124 @@
+# 1.) This file must have lines that are less then 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) NO SPACES ARE ALLOWED BETWEEN name=value!
+#
+# 3.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+# NO SPACES ARE ALLOWED BETWEEN name=value
+
+#STS header
+[FileInfo]
+ReadOnly=false
+FileName="/config/rbc.dat"
+ServiceChangeable=true
+
+[RBC_DETECTOR]
+#
+#  RBC detector calibration values
+#
+init_red_return=85.0
+desired_rbc_ratio=1.0
+rbc_ratio_tolerance=0.05
+drbc_ratio_tolerance=0.08
+rbc_ratio_filter_periods=4.0
+#
+#
+#  Set identification values
+#
+red_low_pltplsrbc_stamp=700.0
+red_high_pltplsrbc_stamp=1800.0
+green_low_pltplsrbc_stamp=0.0
+green_high_pltplsrbc_stamp=0.0
+red_low_rbcpls_stamp=10.0
+red_high_rbcpls_stamp=250.0
+green_low_rbcpls_stamp=0.0
+green_high_rbcpls_stamp=0.0
+#
+#  Spillover configuration values
+#
+spillover_trigger_ratio=1.5
+spillover_trigger_samples=6.0
+drbc_trigger_ratio=2.0
+drbc_trigger_samples=120.0
+#
+#   Values for RBC detector check.  If the red or green reflection
+#   returned from the detector fall outside the min/max red or green
+#   ranges specified, the alarm is generated.  The values are checked
+#   at the frequency specified (1=500ms; 120=60sec=1min) and must
+#   fail for the configured consecutive number of samples before the
+#   alarm is generated.
+#
+rbc_test_min_red=15.0
+rbc_test_max_red=4600.0
+rbc_test_min_green=15.0
+rbc_test_max_green=4600.0
+rbc_test_freq=1.0
+rbc_test_samples=4.0
+#
+drbc_test_min_red=5.0
+drbc_test_max_red=4600.0
+drbc_test_min_green=5.0
+drbc_test_max_green=4600.0
+drbc_test_freq=1.0
+drbc_test_samples=120.0
+#
+#
+#   The minimum and maximum allowable red reflection strengths for cassette
+#   identification.  If the reflection falls outside of the above set ID
+#   values AND is below the minimum/maximum, then the set will be "unknown"
+#   and an alert will be generated.
+#
+minimum_cassette_reflection=10.0
+maximum_cassette_reflection=2000.0
+#
+#
+# [VERIFY_FLAGS]
+#
+# Number of Peak-to-Peak RG ratio samples constituting a full set for
+# Platelet Contaminant detection.
+color_ratio_peak_to_peak_samples=3.0
+# Frequency of Peak-to-Peak RG ratio sampling for Platelet Contaminant detection,
+# expressed as a number of .5 second intervals. 
+color_ratio_peak_to_peak_frequency=24.0
+# Red/Green Ratio trigger for declaring Platelet Contamination.
+color_ratio_peak_to_peak_trigger=0.05
+# Factor of actual platelet yield from which the RBC-detector integrated yield
+# must deviate before a PLATELET_VOLUME_ERROR reason is declared.
+yield_cutoff_constant=0.50
+#
+#
+# [INTEGRATED_YIELD]
+# Yield Integration constants used to compute RBC Detector's Yield
+#
+yield_reflectance_pltplsrbc_set=11.6
+#
+vin_start_red_platelet_baseline_sampling=210.0
+delta_vin_red_platelet_baseline_sampling=50.0
+
+#
+# Low platelet concentration alert
+low_concentration_alert_trigger_japan=1.0
+low_concentration_alert_trigger=1.5
+low_concentration_alert_threshold=0.54
+low_concentration_alert_shutoff_concentration=2500.0
+
+# [CHAMBER_SATURATION]
+chamber_sat_fsat=1.0
+chamber_sat_sws3a=1.0
+chamber_sat_sws3b=1.0
+chamber_sat_sws4a=1.0
+chamber_sat_sws4b=1.0
+
+# [PRIME_HEMOLYSIS]
+check_for_prime_hemolysis=1
+ 

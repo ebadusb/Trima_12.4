@@ -1,0 +1,15 @@
+# FILENAME: parser12.dat
+# PURPOSE: verify VERIFY command cannot be backgrounded
+# CHANGELOG:
+#   11/29/99 - dyes - initial version
+
+
+SUITE parser12_suite
+
+
+TEST parser12_test
+RUN echo "cannot background VERIFY command"
+VERIFY echo "cannot background VERIFY command" & 
+
+
+

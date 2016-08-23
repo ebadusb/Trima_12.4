@@ -1,0 +1,20 @@
+# FILENAME: parser07.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/22/99 - dyes - initial version
+
+# verify std parser catches multiple SUITE keywords
+
+SUITE parser07_suite
+SUITE foo
+ 
+
+
+
+
+
+
+
+
+
+

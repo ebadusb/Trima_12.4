@@ -1,0 +1,21 @@
+# FILENAME: cleanup01.dat
+# $Header: I:/Trima_Project/Source/tools/STD/TEST/rcs/CLEANUP01.DAT 1.2 2000/01/13 21:23:29 TD07711 Exp $
+# PURPOSE: test's std's CLEANUP keyword
+# CHANGELOG:
+#   $Log: CLEANUP01.DAT $
+#   Revision 1.2  2000/01/13 21:23:29  TD07711
+#   01/05/2000 - dyes - CLEANUP exit code no longer matters
+#      changed test to verify all CLEANUP commands run
+#   11/24/99 - dyes - initial version
+
+
+SUITE cleanup01_suite
+
+
+TEST cleanup01_test
+RUN echo "cleanup01 run"
+CLEANUP ls foo # exits nonzero
+CLEANUP echo "cleanup01 foobar"
+
+
+

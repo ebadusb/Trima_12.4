@@ -1,0 +1,17 @@
+# FILENAME: verify01.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE verify01_suite
+TEST verify01_test
+# test should fail if RUN passes but VERIFY exits non-zero
+RUN echo foo
+VERIFY ls bar
+
+
+
+
+
+

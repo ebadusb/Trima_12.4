@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DownloadBiometricSignatureMsg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Header>
+    <StartOfMessage>3405691582</StartOfMessage>
+    <MessageType>VIP_DOWNLOAD_BIOMETRIC_SIGNATURES</MessageType>
+    <SequenceNumber>5</SequenceNumber>
+    <Status>SENDER</Status>
+    <BodyLength>0</BodyLength>
+    <TimeStamp>0</TimeStamp>
+    <BodyCRC>0</BodyCRC>
+    <HeaderCRC>0</HeaderCRC>
+  </Header>
+  <Body>
+    <DeviceID>1</DeviceID>
+    <ScanSequence>0</ScanSequence>
+    <Signatures>
+    </Signatures>
+  </Body>
+</DownloadBiometricSignatureMsg>

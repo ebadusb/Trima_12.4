@@ -1,0 +1,109 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/rcs/makefile_defs.vx 1.4 2009/05/28 19:59:50Z dslausb Exp dslausb $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   makefile_defs.vx
+#
+#     Description:
+#
+#	This makefile is included from guiTools subdirectories.  It is especially
+#	useful if you intend to use the stringLib for outputing string stuff.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: makefile_defs.vx $
+# Revision 1.4  2009/05/28 19:59:50Z  dslausb
+# Fiddle with the search path
+# Revision 1.3  2009/05/27 18:41:36Z  dslausb
+# Add a local copy of g++
+# Revision 1.2  2009/05/27 17:02:59Z  dslausb
+# Turn ignore flag back on
+# Revision 1.1  2009/05/27 16:42:24Z  dslausb
+# Initial revision
+#
+#*******************************************************************************
+
+###########################
+#
+# COMMON DEFINITIONS
+#
+ENGR_TOOLS_DIR=$(TRIMA_ROOT)/engr_tools
+OLDPATH:=$(PATH)
+TRIMA_COMMON_DIR=$(TRIMA_ROOT)/trima_common
+TRIMA_COMMON_REENTRANT_DIR=$(TRIMA_ROOT)/trima_common_reentrant
+GUI_DIR=$(TRIMA_ROOT)/gui
+STRING_TABLE_DIR=$(ENGR_TOOLS_DIR)/guiTools/stringLib
+STRING_TABLE_LIB=$(STRING_TABLE_DIR)/stringLib.a
+STRING_TABLE_HEADER=$(STRING_TABLE_DIR)/langTableHeader.h
+
+CC=g++
+AR=ar
+
+vpath %.cpp $(GUI_DIR):$(TRIMA_COMMON_DIR):$(TRIMA_COMMON_REENTRANT_DIR)
+
+# COMPILER OPTIONS
+#   (Include gui, trima_common, and common.  Also, define WIN32 to leave out extra #includes (like Vista does).
+COMPILER_OPTIONS=-I$(GUI_DIR) -I$(TRIMA_COMMON_DIR) -I$(COMDIR)/include -I$(STRING_TABLE_DIR) -DWIN32 -D__WIN32__ -DCPU=SIMNT -D_NONTRIMA -D__ALARM_TABLE_BUILD__ -DPQMONITOR_BASE
+AR_OPTIONS= -rcs
+
+# DELETE COMMAND
+DELETE = rm -f
+
+include $(GUI_DIR)/stringFiles.vx
+
+STRING_LANG_NAMES=$(notdir $(LANGS:.info=))
+CSVS_NAMES=$(notdir $(LANGS:.info=.csv))
+OBJ_FILES=$(notdir $(CPP_FILES:.cpp=.o))
+
+EXE=$(FILENAME).exe
+
+###########################
+#
+# COMMON BUILD RULES
+#
+
+.IGNORE:
+.PHONY: all
+.PHONY: clean
+.PHONY: build
+.PHONY: table_output
+.PHONY: extra_clean
+.PHONY: changePath
+.PHONY: revertPath
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+all: changePath build revertPath
+endif
+
+table_output: $(STRING_TABLE_HEADER) $(CSVS_NAMES) $(FILENAME).xml
+
+$(EXE):$(EXTRA_EXE_DEPENDS) $(OBJ_FILES) $(STRING_TABLE_LIB)
+	$(CC) $(COMPILER_OPTIONS) -o$(EXE) $(OBJ_FILES) $(STRING_TABLE_LIB)
+
+%.o:%.cpp
+	$(CC) $(COMPILER_OPTIONS) $(EXTRA_COMPILER_OPTIONS) -c $<
+
+%.csv:$(EXE)
+	./$(EXE) -CSV $*
+
+%.xml:$(EXE)
+	./$(EXE) -XML $(STRING_LANG_NAMES)
+
+clean:extra_clean
+	$(DELETE) *.o ~* *.csv *.xml *.stackdump *.exe *.a
+
+changePath:
+	set PATH=$(ENGR_TOOLS_DIR)/gnuTools;$(PATH)
+	@echo New search path is $(PATH)
+
+revertPath:
+	set PATH=$(OLDPATH)
+	@echo Revert to search path is $(PATH)

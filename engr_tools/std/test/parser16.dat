@@ -1,0 +1,14 @@
+# FILENAME: parser16.dat
+# PURPOSE: verify EXPORT without a=b form is caught by parser
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE parser16_suite
+
+
+TEST parser16_test
+EXPORT foobar
+RUN echo foobar
+
+

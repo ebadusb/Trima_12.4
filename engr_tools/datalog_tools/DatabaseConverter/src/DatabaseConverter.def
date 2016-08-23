@@ -1,0 +1,10 @@
+;***************************************************************************
+; File: DatabaseConverter.def
+;
+; Purpose: Definition file for DatabaseConverter.dll project
+;***************************************************************************
+
+LIBRARY DatabaseConverter.dll
+
+EXPORTS
+	ExtractLogData

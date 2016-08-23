@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--perforce-xml-version=1.0-->
+<CustomToolDefList varName="customtooldeflist">
+ <CustomToolDef>
+  <Definition>
+   <Name>Static Analyze Changelist</Name>
+   <Command>cmd.exe</Command>
+   <Arguments>/c analyze.bat /v %C</Arguments>
+   <InitDir>$r\Trima\Main</InitDir>
+  </Definition>
+  <Console>
+   <CloseOnExit>false</CloseOnExit>
+  </Console>
+  <AddToContext>true</AddToContext>
+ </CustomToolDef>
+ <CustomToolDef>
+  <Definition>
+   <Name>Static Analyze File(s)</Name>
+   <Command>cmd</Command>
+   <Arguments>/c "dir /b/s %F > changed_files.p4 &amp;&amp; analyze.bat /v /f changed_files.p4"</Arguments>
+   <InitDir>$r\Trima\Main</InitDir>
+  </Definition>
+  <Console>
+   <CloseOnExit>false</CloseOnExit>
+  </Console>
+  <AddToContext>true</AddToContext>
+ </CustomToolDef>
+</CustomToolDefList>

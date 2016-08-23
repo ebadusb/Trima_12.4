@@ -1,0 +1,25 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/rcs/makefile.vx 1.1 2009/05/20 18:41:48Z dslausb Exp dslausb $
+#
+# Makefile.vx - gui tools makefile
+#
+# $Log: makefile.vx $
+# Revision 1.1  2009/05/20 18:41:48Z  dslausb
+# Initial revision
+#
+#################################################
+
+DIR_LIST := stringLib alarmTable reasonTable
+
+.PHONY: all
+all : $(DIR_LIST)
+
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+.PHONY: force
+force: ;
+
+$(DIR_LIST) : force
+	set PATH=$(MAINDIR)/engr_tools/gnuTools
+	@cd $@ && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+

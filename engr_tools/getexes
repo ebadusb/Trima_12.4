@@ -1,0 +1,13 @@
+cd /trima
+echo extracting gzipped tarballs
+tar xvf /d/update/Allexes.tar
+echo extracting exes
+for i in router tcpip proc gui safety service tools
+do
+	echo $i
+	cd $i
+	gzip -dc exes.tar.gz | tar -xvf -
+	cd ..
+done
+echo updating CRCs
+/d/tools/fix_crc

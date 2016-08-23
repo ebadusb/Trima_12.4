@@ -1,0 +1,449 @@
+#! /bin/sh
+#
+#
+#
+#
+#######################################################################################
+#                                                                                     #
+#   use ifdef option                                                                  #
+#                                                                                     #
+#######################################################################################
+#
+#ifdef __USAGE
+#
+#usage:
+#%C [-d <path>] [-i <filename>] [-o <filename>] [-s <path>]
+#
+#where:
+# -d <path> the directory where the sandbox is located
+# -i <path/filename> the input file for gui test autorun
+# -o <path/filename> the output file for test capture and subsequent gui test autorun
+# -s <path> the directory in which the gui snapshots will be placed
+#
+#endif
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   definition of standard routines for processing user request                       #
+#                                                                                     #
+#######################################################################################
+
+#
+#   usage message routine
+#
+
+print_usage ()
+{
+
+   echo " "
+   echo "usage:"
+   echo "$current_executible [-d <path>] [-i <filename>] [-o <filename>] [-s <path>]"
+   echo " "
+   echo "where:"
+   echo " -d <path> the directory where the sandbox is located"
+   echo " -i <path/filename> the input file for gui test autorun"
+   echo " -o <path/filename> the output file for test capture and subsequent gui autorun"
+   echo " -s <path> the directory in which the gui snapshots will be placed"
+   echo " "
+
+   exit 1
+
+ }
+
+
+#
+#   scroll through sins until a valid memory allocation unit is found
+#
+
+get_shared_memory_entry ()
+{
+
+   prefix=0
+
+   while test $prefix -lt 3
+   do
+      shmemprefix=`sin -h -p $guipid fi | awk '{print $6}' | cut -d'/' -f6 | cut -c 1-6`
+      if [ "`$shmemprefix | cut -c 1-2`" = "Pg" ]
+      then
+         let prefix=99
+      else
+         let prefix=prefix+1
+      fi
+   done
+
+   if test $prefix -eq 3
+   then
+      echo " "
+      echo "shared memory capture failure ..."
+   fi
+
+}
+
+
+#
+#   capture current executable name for display
+#
+
+   current_executable=${0##*/}
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   definition of default user sandbox directory locations                            #
+#                                                                                     #
+#######################################################################################
+
+#
+#   default user directories
+#
+
+bfulkerson_sandbox="/home1/bnf/sandbox"
+mcobb_sandbox="/home1/mjc/mjcsand"
+root_sandbox="/trima"
+twahl_sandbox="/home1/twahl/guisand"
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   establish parameters to customize gui launcher                                    #
+#                                                                                     #
+#######################################################################################
+
+#
+#   node numbers for parameter list
+#
+
+node1="1"
+node2="2"
+
+
+#
+#   parameter list for all exe's
+#
+
+parameters="$LOGNAME$node1 1 $LOGNAME$node2"
+
+
+#
+#   current sandbox or testing directory
+#
+
+case $LOGNAME in
+   bnf)   sandbox="$bfulkerson_sandbox" ;;
+   mjc)   sandbox="$mcobb_sandbox" ;;
+   root)  sandbox="$root_sandbox" ;;
+   twahl) sandbox="$twahl_sandbox" ;;
+esac
+
+
+
+
+#######################################################################################
+#                                                                                     #
+#   set snapshot directory location                                                   #
+#                                                                                     #
+#######################################################################################
+
+#
+#  must match SNAPSHOT_TEMP_DIR value in xcommmsg.hpp
+#
+
+temp_snapshot_dir="/home1/tempsnap"
+
+
+#######################################################################################
+#                                                                                     #
+#   process all user defined options and initialize all common variables to run trima #
+#   gui as requested by user                                                          #
+#                                                                                     #
+#######################################################################################
+
+#
+#   initialize option flags and then get options
+#
+
+typeset -i dflag=0 iflag=0 oflag=0 sflag=0
+
+while getopts d:i:o:s: opt $*
+do
+   case $opt in
+      d) sandbox_dir="$OPTARG" ; dflag=1 ;;
+      i) input_file="$OPTARG" ; iflag=1 ;;
+      o) output_file="$OPTARG" ; oflag=1 ;;
+      s) snapshot_dir="$OPTARG" ; echo " " ; sflag=1 ;;
+   esac
+done
+
+
+#
+#   define sandbox location if provided
+#
+
+if test $dflag -eq 1
+then
+   sandbox="$sandbox_dir"
+fi
+
+
+#
+#   echo the sandbox location and parameter list
+#
+
+echo " "
+echo "task parameter list is defined as : $LOGNAME$node1 1 $LOGNAME$node2"
+echo " "
+echo "gui sandbox directory defined as : $sandbox"
+
+
+#
+#   define parameter list for xcommmsg
+#
+
+if test $iflag -eq 1
+then
+   echo " "
+   echo "gui autorun input file defined as : $input_file"
+   input_parameter="-infile $input_file"
+fi
+
+if test $oflag -eq 1
+then
+   echo " "
+   echo "gui autocapture output file defined as : $output_file"
+   output_parameter="-outfile $output_file"
+fi
+
+if test $sflag -eq 1
+then
+   echo " "
+   echo "gui snapshot directory defined as : $snapshot_dir"
+   snapshot_parameter="-snapshot $snapshot_dir"
+   export GUI_SNAPSHOT=$temp_snapshot_dir
+else
+   unset GUI_SNAPSHOT
+fi
+
+if test $iflag -eq 1 -a $oflag -eq 1 -a $sflag -eq 1
+then
+
+  test_parameters="$input_parameter $output_parameter $snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 0 -a $sflag -eq 0
+then
+
+  test_parameters="$input_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 1 -a $sflag -eq 0
+then
+
+  test_parameters="$output_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 0 -a $sflag -eq 1
+then
+
+  test_parameters="$snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 1 -a $sflag -eq 0
+then
+
+  test_parameters="$input_parameter $output_parameter"
+
+elif test $iflag -eq 0 -a $oflag -eq 1 -a $sflag -eq 1
+then
+
+  test_parameters="$output_parameter $snapshot_parameter"
+
+elif test $iflag -eq 1 -a $oflag -eq 0 -a $sflag -eq 1
+then
+
+  test_parameters="$input_parameter $snapshot_parameter"
+
+else
+
+  test_parameters=" "
+
+fi
+
+
+#
+#   process list for testing
+#
+
+processes="router gui xcommmsg"
+
+
+#
+#   check for superuser privelages before checking for processes and opening pterms
+#
+
+if test $PS1 != "#"
+then
+   echo " "
+   echo "operation not permitted!"
+   echo "error: superuser privelages required to execute $current_executable"
+   echo " "
+   echo "*bye*"
+   echo " "
+   exit 1
+fi
+
+
+#
+#   check for processes and parameters
+#
+
+   echo " "
+   echo " "
+   echo "checking for existing gui and components ..."
+
+for process in $processes
+do
+
+   /bin/sin -h -P $process format a | grep -q -e "$process $parameters"
+
+   if test 0 -eq $?
+   then
+
+      echo " "
+      echo "error : process $process $parameters already exists"
+      echo " "
+      echo "would you like to quit or continue?"
+      echo -n "press [x] to exit or press [enter] to kill process and continue -> "
+      read continue
+      echo " "
+
+      if [ "$continue" = "x" -o "$continue" = "X" ]
+      then
+         echo " "
+         echo "*bye*"
+         echo " "
+         exit 1
+      fi
+
+      /bin/sin -P $process format ia | grep -e "$process $parameters"
+
+      processid=`sin -h -P $process format ia | grep -e "$process $parameters" | awk /[0-9]/'{print $1}'`
+
+      echo " "
+      echo "attempting to kill $processid ..."
+      kill -SIGKILL $processid
+
+      if test 0 -eq $?
+      then
+         echo " "
+         echo "... $process($processid) is dead!"
+
+         if [ "$process" = "router" ]
+         then
+            /bin/rm -r /dev/mqueue/$node1*
+         else
+            /bin/rm -r /dev/mqueue/$process$processid
+         fi
+      else
+         echo " "
+         echo "... unable to kill PID $processid"
+         echo " "
+         echo "*bye*"
+         echo " "
+         exit 1
+      fi
+
+   fi
+
+done
+
+
+#
+#   check for existing mqueue entry
+#
+
+echo " "
+echo "checking for existing mqueue entry ..."
+
+/bin/rm -f /dev/mqueue/$node1*
+
+
+#
+#   start gui and all necessary components
+#   and capture router and gui PIDs
+#
+
+echo " "
+echo "launching gui and all necessary components ..."
+
+cd $sandbox/router
+pterm -x 532 -g 4x60  -t "GUI Router Window" -F 1 router $parameters &
+sleep 6
+routerpid=`sin -h -P $sandbox/router/router format i | awk /[0-9]/'{print $1}'`
+cd $sandbox/gui
+pterm -y 482 -g 15x100  -t "GUI Executable Window" -F 1 wd gui $parameters &
+sleep 6
+guipid=`sin -h -P $sandbox/gui/gui format i | awk /[0-9]/'{print $1}'`
+cd $sandbox/gui/guitest
+pterm -x 532 -y 72 -g 56x60 -t "GUI Messaging Window" -F 1 xcommmsg $parameters $test_parameters
+
+
+#
+#   capture session ids and wd pid and shared memeory post process
+#
+
+sessionid=`sin -h -P $sandbox/gui/gui format s | awk /[0-9]/'{print $1}'`
+wdpid=`sin -h -P wd format is | grep -e "$sessionid" | awk /[0-9]/'{print $1}'`
+get_shared_memory_entry
+
+
+#
+#   clean mqueues
+#
+
+echo " "
+echo "checking for and removing residual mqueue entries ..."
+
+/bin/rm -f /dev/mqueue/$node1*
+/bin/rm -f /dev/mqueue/gui$guipid
+
+
+#
+#   kill router and gui
+#
+
+echo " "
+echo "killing router, gui, and wd ..."
+
+echo " "
+echo "... killing router PID# $routerpid"
+kill -SIGKILL $routerpid
+
+echo " "
+echo "... killing gui PID# $guipid"
+kill -SIGKILL $guipid
+
+if [ "`$shmemprefix | cut -c 1-2`" = "Pg" ]
+then
+   echo " "
+   echo "... removing all gui shared memory $shmemprefix "
+   /bin/rm -f /dev/shmem/$shmemprefix*
+else
+   echo " "
+   echo "***NOTE*** ***NOTE*** ***NOTE*** ***NOTE*** ***NOTE*** "
+   echo "... you must move all shared memory explicitly"
+fi
+
+echo " "
+echo "... killing wd PID# $wdpid"
+kill -SIGKILL $wdpid
+
+echo " "
+echo "***NOTE*** ***NOTE*** ***NOTE*** ***NOTE*** ***NOTE*** "
+echo "... you must close(Alt+F4) the debug window explicitly "
+echo " "
+echo "*bye*"
+echo " "
+

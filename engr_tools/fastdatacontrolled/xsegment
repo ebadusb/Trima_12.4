@@ -1,0 +1,50 @@
+# Check args
+case "$#" in
+        0) echo "Insufficient arguments.  Syntax:"
+           echo "     xsegment <size> <file_collected_on_trima>"
+           echo "       where <size> is the number of entries desired in the"
+           echo "             output file."
+           echo "       where <file_collected_on_trima> is the name of a file containing"
+           echo "             data collected by /d/tools/fastdatacontrolled tool."
+           echo "     Note: Run the data file through xsingle before using this tool."
+           exit ;;
+        1) echo "Insufficient arguments.  Syntax:"
+           echo "     xsegment <size> <file_collected_on_trima>"
+           echo "       where <size> is the number of entries desired in the"
+           echo "             output file."
+           echo "       where <file_collected_on_trima> is the name of a file containing"
+           echo "             data collected by /d/tools/fastdatacontrolled tool."
+           echo "     Note: Run the data file through xsingle before using this tool."
+           exit ;;
+        2) echo "Segmenting $2.out into files of size $1..." ;;
+esac 
+
+segsize=$1
+count=$segsize
+count=`expr $count + $segsize + 1`
+index=2
+size=`grep -c [0-9] $2.out`
+while [ $count -le "$size" ]
+do
+   echo "$2" >$2.out.$index
+   index=`expr $index + 1`
+   count=`expr $count + $segsize`
+done
+count=$segsize
+start=1
+index=1
+size=`grep -c [0-9] $2.out`
+rm -rf insts
+while [ $count -le "$size" ]
+do
+   inst=$start,$count
+   op='p'
+   instruct=$inst$op 
+   echo sed  -n -e \"$instruct\" $2.out ">>" $2.out.$index >>insts 
+   index=`expr $index + 1`
+   start=`expr $start + $segsize`
+   count=`expr $count + $segsize`
+done
+chmod a+x insts
+./insts
+

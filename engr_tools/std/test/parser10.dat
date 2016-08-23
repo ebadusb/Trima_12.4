@@ -1,0 +1,13 @@
+# FILENAME: parser10.dat
+# PURPOSE: verify null SETUP command is caught by parser
+# CHANGELOG:
+#   11/29/99 - dyes - initial version
+
+
+SUITE parser10_suite
+
+
+TEST parser10_test
+RUN echo "test should not run"
+CLEANUP
+

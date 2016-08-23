@@ -1,0 +1,41 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/alarmTable/rcs/makefile.vx 1.2 2009/05/20 22:13:24Z dslausb Exp dslausb $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   makefile.vx
+#
+#     Description:
+#
+#	This is the makefile.vx to generate a program that outputs
+#	all the relevant information on all the Trima alarms into
+#	a nicely formatted CSV table.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: makefile.vx $
+# Revision 1.2  2009/05/20 22:13:24Z  dslausb
+# Move some utility functions out to the string library.
+# Revision 1.1  2009/05/20 18:39:07Z  dslausb
+# Initial revision
+#
+#*******************************************************************************
+
+TRIMA_ROOT=../../..
+CPP_FILES=genAlrmTbl.cpp alarmtb.cpp alarmcontainer.cpp
+FILENAME=alarmTable
+ALARM_ENUM_STRINGS_HEADER=alarmEnumStrings.h
+EXTRA_EXE_DEPENDS=$(ALARM_ENUM_STRINGS_HEADER)
+
+include ../makefile_defs.vx
+
+build:table_output
+
+$(ALARM_ENUM_STRINGS_HEADER):$(notdir $(ALARM_ENUM_STRINGS_HEADER:.h=.sed)) $(TRIMA_COMMON_DIR)\alarms.h
+	sed -n -f $^ $(TRIMA_COMMON_DIR)\alarms.h > $@ 
+

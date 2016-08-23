@@ -1,0 +1,2 @@
+tools/include is the install location for common header files under tools.
+This file lets tools/include dir exist under MKS.

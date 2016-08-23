@@ -1,0 +1,15 @@
+# FILENAME: std07.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE std07_suite
+TEST std07_test
+# test that parser detects RUN with no command
+RUN
+
+
+
+
+

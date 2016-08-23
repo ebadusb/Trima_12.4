@@ -1,0 +1,126 @@
+################################################################################
+#
+# Makefile for CDS (Common Data Store) apps and libraries
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I$(MAINDIR)/trima_common -I$(COMDIR)/include -I$(MAINDIR)/os -I$(MAINDIR)/proc/algorithm
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+
+include $(MAINDIR)/makefile.vxc
+
+# Should be the switches used by O2.  Using O2 (PRODUCTION) and 486 target
+# causes the compiler to crash.  Oddly, setting what the O2 documented
+# switches are specifically mitigates the problem.  These switches should be
+# revisited if the compiler is updated.
+
+ifeq ($(BUILD_TYPE), PRODUCTION)
+ifeq ($(CPU), I80486)
+OPTFLAGS := -fstrength-reduce \
+            -fthread-jumps    \
+            -fcse-skip-blocks \
+            -fcse-follow-jumps \
+            -frerun-cse-after-loop \
+            -fexpensive-optimizations \
+#           -fschedule-insns \
+            -fschedule-insns2 \
+            -fshorten-lifetimes \
+            -fcombine-statics \
+            -ffunction-sections \
+            -fcaller-saves \
+            -fno-peephole \
+            -ffloat-store \
+            -fforce-mem \
+            -fforce-addr \
+            -fno-omit-frame-pointer
+endif
+endif
+
+#
+# Generate Feature files from txt files
+#
+FEATURE_FILES = \
+   BooleanFeatures.h BooleanFeatureInit.cpp \
+   ValueFeatures.h ValueFeatureInit.cpp 
+
+ADDN_CLEAN  += $(FEATURE_FILES)
+
+.PHONY: features 
+features: $(FEATURE_FILES)
+
+BooleanFeatures.h: bool_features.txt build_bool_feature_enum.sed
+	$(Q)echo x Generating: $@
+	$(Q)sed -n -f build_bool_feature_enum.sed < bool_features.txt > $@
+
+BooleanFeatureInit.cpp: BooleanFeatures.h bool_features.txt build_bool_feature_init.sed
+	$(Q)echo x Generating: $@
+	$(Q)sed -n -f build_bool_feature_init.sed < bool_features.txt > $@
+
+ValueFeatures.h: value_features.txt build_value_feature_enum.sed
+	$(Q)echo x Generating: $@
+	$(Q)sed -n -f build_value_feature_enum.sed < value_features.txt > $@
+
+ValueFeatureInit.cpp: ValueFeatures.h value_features.txt build_value_feature_init.sed
+	$(Q)echo x Generating: $@
+	$(Q)sed -n -f build_value_feature_init.sed < value_features.txt > $@
+
+#
+# Definitions required for building cds.out
+#
+APP_NAME := cds
+cds_dir  = ..\lib
+cds_map  = cds.map
+cds_libs = $(LIBDIR)/libtrima_common.a
+cds_c_files =
+cds_cxx_files = config_cds.cpp halstatus_cds.cpp predict_cds.cpp \
+                procadjust_cds.cpp proccycle_cds.cpp procdonor_cds.cpp \
+                procpqi_cds.cpp procrun_cds.cpp procruntargets_cds.cpp proctime_cds.cpp \
+                proctrimaset_cds.cpp procvolumes_cds.cpp procplsrinseback_cds.cpp \
+                software_cds.cpp xif_cds.cpp  guiProcedures_cds.cpp  \
+                crc16.cpp regionalizationKeyManager.cpp BooleanFeatureInit.cpp ValueFeatureInit.cpp
+
+# Add this unit testing CDS if we're compiling for simulator.
+ifeq ($(CPU),SIMNT)
+cds_cxx_files += guiUnitTestCds.cpp                
+endif
+
+include $(COMDIR)/makefile.process_app
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: features libs $(APP_LIST)
+
+#
+# cd must use \ (DOS/Windows # style) directory separators if they are needed.
+#
+.PHONY: libs
+libs:
+	@cd ..\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+include $(COMDIR)/makefile.build_apps
+

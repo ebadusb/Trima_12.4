@@ -1,0 +1,422 @@
+######################################################################################
+#
+#  Proc States -
+#          
+#     This file is the main control file for Proc.  This file specifies the control
+#  of processing ( states and transitions out of those states ), and the alarms active
+#  during each state.  
+#
+#     Each state that does not specify a parent state will be a child of the main 
+#  control state which is always active.  If a state specifies a parent state, the 
+#  parent state must already have been defined.  An example of state declaration is 
+#  as follows:
+#
+#                 [state] RootState1
+#                         [state] ChildState1 RootState1
+#                         [state] ChildState2 RootState1
+#                 [state] RootState2
+#                         [state] ChildState1 RootState2
+#                          ...
+#
+#  The parent state must be in a lower level in the hierarchy before it will be
+#  recognized.
+# 
+#     The monitors which will be active during the state's control lifecycle must be
+#  specified immediately after the state.  Monitors specified at the top of the file
+#  will be active throughout the entire lifecycle of Proc.  These monitors are 
+#  considered to be owned by the main control state.  Alarms are specific types of 
+#  monitors. Monitor specification is as follows:
+#
+#                 [state] RootState
+#                         [alarm]   Alarm1
+#                         [monitor] Monitor1   
+#
+#     Transitions are specified after the monitors.  There are 5 different types of 
+#  transitions which may be used.  Each transition has an optional specification for
+#  the next state which will be the last entry.  If no specification the the next state
+#  has been given it will default to the next in the states sibling list of states.
+#  The next state must be lower in the hierarchy than the state owning the current
+#  transition for the state to be valid.  Each state by default has a 'complex' transition
+#  as one of its attributes.  The complex transition may have a mixture of any or all
+#  of the other transitions as its children.  The number of children must be specified
+#  followed by the operation type which will be performed on the transition's children.
+#  The state to transition into if the operation between the child transition is true
+#  follows the operation type.  The children are the last piece for the complex 
+#  transition specification. An example of a complex transition is as follows:
+#
+#                 [state] RootState
+#                         [complex] 2 and NextState
+#                                   [message] SpilloverRequestMsg
+#                                   [message] CancelProcedureMsg
+#
+#  A conditional transition works off of the return value of the state transition
+#  status function.  If the return value is equal to the conditional transitions
+#  return value, the transition will occur.  The return value will be the only 
+#  required value for the conditional transition.
+#
+#                 [state] RootState
+#                         [conditional] 1 NextState
+#
+#  A message transition accepts a message name and the next state as arguments.  When
+#  the transition sees the message go through the system it will cause the transition.
+#
+#                 [state] RootState
+#                         [message] Message1 NextState
+#
+#  A timer message will transition after the given time has expired.  The time will be
+#  started from the moment of entry into the state.  The time is in milliseconds.
+#
+#                 [state] RootState
+#                         [timer] 5000 NextState # 5 seconds
+#
+#  An unconditional transition will occur when the state returns any valid transition
+#  code.  
+#
+#                 [state] RootState
+#                         [unconditional] NextState
+#
+########################################################################################
+#
+#     Proc will not start if the file becomes corrupt...
+#
+########################################################################################
+
+# APS and CPS log monitors enabled in sw.dat
+[monitor]       ApsLogMonitor
+[monitor]       cpsLogMonitor
+[monitor]       ClinicalDataLogMonitor
+
+[alarm]         CentAlarm
+[alarm]         DoorAlarm
+[alarm]         MotorAlarm
+[alarm]         LeakAlarm
+[alarm]         VoltageAlarm
+[alarm]         BasinTempAlert
+[alarm]         SalineAlarm
+
+[state]         StartProtocol
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [unconditional] PFR
+
+[state]         PFR
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [message]       MSSEndRunMsg       DonorDisconnect 
+   [state]         PFInit                                                   PFR
+   [state]         PFRecover                                                PFR
+      [conditional] 1 PFPowerTest
+      [conditional] 2 StartupTest
+   [state]         PFPowerTest                                              PFR
+      [state]         PowerTest                                PFPowerTest 
+         [state]         SafetyPowerTest     PowerTest
+         [state]         PowerOnTest         PowerTest
+      [state]         CentrifugeTests                          PFPowerTest
+         [state]         SafetyPowerTest64   CentrifugeTests 
+         [state]         CentShutdownTest    CentrifugeTests
+   [state]         PFBranch                                                 PFR
+      [conditional] 1 ACPrime
+      [conditional] 2 ConnectDonor
+      [conditional] 3 DonorConnected
+      [conditional] 4 MeteredStorage 
+      [conditional] 5 MSSDisconnect
+      [conditional] 6 DonorDisconnect
+
+[state]         StartupTest
+   [alarm]         ResLowLevelAlarm
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [unconditional] OperatorResponse
+   [state]         CalibVerification                                StartupTest
+   [state]         PowerTest                                        StartupTest
+      [state]         SafetyPowerTest         PowerTest
+      [state]         PowerOnTest             PowerTest
+   [state]         ValvesTest                                       StartupTest
+   [state]         LeakDetectorTest                                 StartupTest
+   [state]         DoorLatchTest                                    StartupTest
+   [state]         GUIStarted                                       StartupTest
+
+[state]         OperatorResponse
+   [alarm]         ResLowLevelAlarm
+   [message]       CancelProcedureMsg         DonorDisconnect 
+   [message]       ConfirmDisposableLoadedMsg LoadCassette 
+   [message]       ClampedForTestingMsg       DisposableTest  
+   [message]       GUIRequestRaiseCassetteMsg UnloadCassette 
+   [message]       GUIRequestBeginRunMsg      ConnectDonor    
+   [message]       DisconnectCompleteMsg      PostRun        
+   [message]       MSSConfirmUnloadMsg        PostRun    
+
+[state]         LoadCassette
+   [alarm]         ACTooSoonAlarm
+   [alarm]         ResLowLevelAlarm
+   [message]       CancelProcedureMsg         DonorDisconnect
+   [message]       GUIRequestRaiseCassetteMsg UnloadCassette 
+   [message]       PendingCassetteAlarmMsg    UnloadCassette 
+   [unconditional] OperatorResponse
+   [state]         OpenValves                                      LoadCassette
+   [state]         StartPumps                                      LoadCassette
+   [state]         LowerCassette                                   LoadCassette
+      [conditional] 1 
+      [conditional] 2 OpenValves
+   [state]         CassetteID                                      LoadCassette
+      [conditional] 1
+      [conditional] 2 UnloadCassette
+   [state]         StopPumps                                       LoadCassette
+   [state]         EvacuateSetValves                               LoadCassette
+   [state]         EvacuateBags                                    LoadCassette
+      [conditional] 1 
+      [conditional] 2 DonorDisconnect 
+   [state]         LowerNotification                               LoadCassette
+
+[state]         UnloadCassette
+   [alarm]         ResLowLevelAlarm
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [unconditional] OperatorResponse
+   [state]         OpenValves                                    UnloadCassette
+   [state]         StartPumps                                    UnloadCassette
+   [state]         RaiseCassette                                 UnloadCassette
+      [conditional] 1 StopPumps
+      [conditional] 2 OpenValves
+   [state]         StopPumps                                     UnloadCassette
+   [state]         UnlockDoor                                    UnloadCassette
+
+[state]         DisposableTest
+   [alarm]         ACTooSoonAlarm
+   [alarm]         ResLowLevelAlarm
+   [alarm]         CentPresAlarm
+   [message]       CancelProcedureMsg         DonorDisconnect 
+   [message]       GUIRequestRaiseCassetteMsg UnloadCassette  
+   [unconditional] ConnectAC
+   [state]         CloseValves                                   DisposableTest
+   [state]         CheckSampleBag                                DisposableTest
+      [conditional] 1 
+      [conditional] 2 DonorDisconnect 
+   [state]         PltBagEvac                                    DisposableTest
+   [state]         PltBagEvacPressureRelief                      DisposableTest
+   [state]         PressInletLine                                DisposableTest
+      [conditional] 1 DisposableTest1
+      [conditional] 2 DisposableTest2 
+      [conditional] 3 UnloadCassette 
+
+   [state]         DisposableTest1                               DisposableTest
+      [state]         InletPressTest                DisposableTest1
+         [conditional] 1 PressInletLine
+         [conditional] 2     
+      [state]         InletDecayTest                DisposableTest1
+         [conditional] 1 PressInletLine
+         [conditional] 2     
+      [state]         NegativePressTest             DisposableTest1
+      [state]         Air2ChannelPrime              DisposableTest1
+      [state]         PlsEvacFinished               DisposableTest1
+      [state]         Air2Channel                   DisposableTest1
+      [state]         ShowClampARM                  DisposableTest1
+         [message]       FinishedClampFromARMMsg    NegativePressRelief    
+      [state]         NegativePressRelief           DisposableTest1
+      [state]         UnlockDoor                    DisposableTest1
+         [unconditional] ConnectAC                         
+
+   [state]         DisposableTest2                               DisposableTest
+      [state]         InletPressTest2               DisposableTest2
+         [conditional] 1 PressInletLine
+         [conditional] 2     
+      [state]         NegativePressTest             DisposableTest2
+      [state]         InletDecayTest2               DisposableTest2
+         [conditional] 1 DisposableTest2  
+         [conditional] 2     
+      [state]         PressInletLine2               DisposableTest2
+      [state]         CloseCrossoverClamp           DisposableTest2
+         [message]       CrossoverClampedMsg        PressInletLine3    
+      [state]         PressInletLine3               DisposableTest2
+      [state]         InletPressTest                DisposableTest2
+         [conditional] 1 PressInletLine3
+         [conditional] 2
+      [state]         InletDecayTest                DisposableTest2
+         [conditional] 1 PressInletLine3
+         [conditional] 2
+      [state]         Air2ChannelPrime2             DisposableTest2
+      [state]         PlsEvacFinished               DisposableTest2
+      [state]         Air2Channel2                  DisposableTest2
+      [state]         ShowClampARM                  DisposableTest2
+         [message]       FinishedClampFromARMMsg    NegativePressRelief    
+      [state]         NegativePressRelief           DisposableTest2
+      [state]         UnlockDoor                    DisposableTest2
+         [unconditional] ConnectAC 
+
+
+[state]         ConnectAC
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [message]       ACConnectedMsg ACPrime        
+
+[state]         ACPrime
+   [alarm]         ResLowLevelAlarm
+   [alarm]         CentPresAlarm
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [unconditional] OperatorResponse
+   [state]         ACPrimeInlet                                         ACPrime
+      [alarm]         AcPrimeInletAlarm
+   [state]         ACPressReturnLine                                    ACPrime
+
+[state]         ConnectDonor
+   [message]       CancelProcedureMsg DonorDisconnect 
+   [message]       DonorConnectedMsg  DonorConnected  
+
+[state]         DonorConnected
+   [alarm]         PressureAlarm
+   [alarm]         PauseAlarm
+   [alarm]         APSDecoupleAlarm
+   [alarm]         ACOccMon
+   [alarm]         CentPresAlarm
+   [alarm]         ReservoirAlarm
+   [alarm]         ACLevelAlarm
+   [monitor]       PTFCPS_Alarm_Monitor
+   [alarm]         cpsPFRTestAlarm
+   [monitor]       PTFChannelPrimeTest
+   [monitor]       DeltaHCT_Monitor
+   [monitor]       CancelProc_Monitor
+   [monitor]       WBCEvent_Monitor
+   [message]       CancelProcedureMsg CloseValvesAndDisconnect 
+   [unconditional] CloseValvesAndDisconnect
+
+   [state]         DoorLockCheck                                 DonorConnected
+
+   [state]         BloodPrime                                    DonorConnected
+      [alarm]         HypoAlarm
+      [monitor]       SpillDet_Monitor
+      [monitor]       SpillReq_Monitor
+      [message]       RinsebackRequestMsg DonorDisconnect  # Rinseback disallowed here
+      [unconditional] BloodRun
+      [state]         BloodPrimeInlet         BloodPrime
+          [alarm]        ResLowLevelAlarm
+      [state]         BloodPrimeReturn            BloodPrime
+      [state]         EvacEndSetValves            BloodPrime
+      [state]         EvacEndSetValvesARM         BloodPrime
+      [state]         EvacEndSetValvesARMBlack    BloodPrime
+      [state]         EvacEndResetValves          BloodPrime
+
+   [state] BloodRun                                              DonorConnected
+      [alarm]         HypoAlarm
+      [alarm]         RBCAlarm
+      [alarm]         PrimeHemolysisAlarm
+      [alarm]         ThreeSpillover
+      [alarm]         AutoFlowTimeAlarm
+      [monitor]       SpillDet_Monitor
+      [monitor]       SpillReq_Monitor
+      [monitor]       ChamberSaturation
+      [monitor]       PrimeRBC_Monitor
+      [message]       RinsebackRequestMsg PreRinseback  
+      [unconditional] PreRinseback
+      [state]         PrimeChannel              BloodRun
+      [state]         PrimeChannel2A            BloodRun
+      [state]         PrimeChannel2             BloodRun
+      [state]         PrimeChannel3             BloodRun
+      [state]         PrimeChannel4             BloodRun
+      [state]         PrimeVent                 BloodRun
+      [state]         RampCentrifuge            BloodRun
+         [monitor]       Centrifuge_Monitor
+         [monitor]       AirBlock_Monitor
+      [state]         PrimeAirout1              BloodRun
+         [monitor]       Centrifuge_Monitor
+         [monitor]       AirBlock_Monitor
+      [state]         PrimeAirout2              BloodRun
+         [monitor]       Centrifuge_Monitor
+         [monitor]       AirBlock_Monitor
+      [state]         Collect                   BloodRun
+         [alarm]         DRBCSplitAlarm
+         [alarm]         LowConcentrationAlarm
+         [monitor]       AirBlock_Monitor
+         [monitor]       Alarm_Monitor
+         [monitor]       Centrifuge_Monitor
+         [monitor]       Collection_Monitor
+         [monitor]       DonorHCT_Monitor
+         [monitor]       PIR_Monitor
+         [monitor]       PlasmaLineOcclusion_Monitor
+         [monitor]       PlasmaLineOcclusionPCA_Monitor
+         [monitor]       Qchamber_Monitor
+         [monitor]       RBCDetCal_Monitor
+         [monitor]       RinsebackReq_Monitor
+         [monitor]       ValveFault_Monitor
+                
+   [state]         PreRinseback                                  DonorConnected
+      [conditional] 1 NormalRinseback
+      [conditional] 2 PlasmaRinseback
+      [conditional] 3 SalineRinseback
+
+   [state]         NormalRinseback                               DonorConnected
+      [monitor]       MssRinsebackVolmMonitor
+      [message]       AckRunCompleteMsg        DonorDisconnect
+      [state]         RinsebackLower           NormalRinseback     
+      [state]         RinsebackRecirculate     NormalRinseback    
+      [state]         RinsebackReservoir       NormalRinseback   
+      [state]         Rinseback                NormalRinseback  
+      [state]         DisconnectPrompt         NormalRinseback
+
+   [state]         PlasmaRinseback                               DonorConnected
+      [monitor]       MssRinsebackVolmMonitor
+      [message]       AckRunCompleteMsg        DonorDisconnect
+      [state]         PlsRinsebackSpillover    PlasmaRinseback
+      [state]         PlsRinsebackNo1          PlasmaRinseback
+      [state]         PlsRinsebackRinse        PlasmaRinseback 
+      [state]         PlsRinsebackRecirculate  PlasmaRinseback  
+      [state]         PlsRinsebackNo2          PlasmaRinseback   
+      [state]         PlsRinsebackPurge        PlasmaRinseback    
+      [state]         PlsRinsebackEvacuate     PlasmaRinseback     
+      [state]         DisconnectPrompt         PlasmaRinseback
+
+   [state]         SalineRinseback                               DonorConnected
+      [monitor]       MssRinsebackVolmMonitor
+      [message]       AckRunCompleteMsg        DonorDisconnect
+      [state]         SalCheckConnect          SalineRinseback
+      [state]         SalRecirc1               SalineRinseback
+      [state]         SalEvac1                 SalineRinseback
+      [state]         SalineDraw               SalineRinseback
+      [state]         SalRecirc2               SalineRinseback
+      [state]         SalEvac2                 SalineRinseback
+      [state]         SalFlush                 SalineRinseback
+      [state]         DisconnectPrompt         SalineRinseback
+
+[state]         CloseValvesAndDisconnect
+   [unconditional] DonorDisconnect
+
+[state]         DonorDisconnect
+   [monitor]       EndOfRun_Monitor
+   [monitor]       PostRunPreMss_Monitor
+   [conditional] 1 PostRun
+   [conditional] 2 UnloadCassette
+   [conditional] 3 MeteredStorage
+
+[state]         MeteredStorage
+   [alarm]      cpsHighAlarm   
+   [alarm]      InletVolmAlarm   
+   [alarm]      PltSSEmpty   
+   [alarm]      RbcSSEmpty   
+   [monitor]    MssRbcMonitor 
+   [message]    MSSEndRunMsg                 MSSDisconnect
+   [state]         MSSPFR                                        MeteredStorage
+      [conditional] 1 VerifyClosure
+      [conditional] 2 MSSConnect
+      [conditional] 3 MSSPrime 
+      [conditional] 4 MSSParallelProcessing
+      [conditional] 5 MSSDisconnect 
+   [state]         VerifyClosure                                 MeteredStorage
+   [state]         MSSSetup                                      MeteredStorage
+      [message]       MSSSetupMsg            ResSetup 
+   [state]         ResSetup                                      MeteredStorage
+   [state]         VerifyClosure3                                MeteredStorage
+   [state]         MSSConnect                                    MeteredStorage
+      [message]       MSSConnectedMsg        MSSPrime
+   [state]         MSSPrime                                      MeteredStorage
+      [state]         ResSetup2              MSSPrime
+      [state]         MSSRBCPrimeSalvage     MSSPrime 
+      [state]         MSSRBCPrime1           MSSPrime
+      [state]         ResSetup3              MSSPrime 
+      [state]         MSSPLTPrimeSalvage     MSSPrime 
+      [state]         MSSPLTPrime1           MSSPrime 
+      [state]         MSSPLTPrime2           MSSPrime 
+   [state]         MSSParallelProcessing                         MeteredStorage
+      # now goto the mssPltStates & mssRbcStates state files and run in parallel! 
+      [unconditional] MSSDisconnect
+
+[state]         MSSDisconnect          
+   [message]       MSSAckCompletionMsg       UnloadCassette
+
+[state]         PostRun
+   [monitor]       PostRun_Monitor
+   [state]         PFInit          PostRun
+   [state]         PostRunDisplay  PostRun

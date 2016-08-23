@@ -1,0 +1,275 @@
+#---------------------------------------------------------------------
+# The following variables must be defined before including this file.
+#---------------------------------------------------------------------
+
+# Got libtool? Blank otherwise
+LIBTOOL_CC := libtool --mode=compile
+LIBTOOL_LN := libtool --mode=link
+
+# Build target type: [bin] or [lib].
+ifndef BUILD_TYPE
+  BUILD_TYPE := lib 
+endif
+
+# Build configuration [release] or [debug] or [profile].
+ifndef BUILD_CONFIG
+  BUILD_CONFIG := debug
+endif
+
+#Trima source
+TRIMA_SRC_DIR := /trima/5.r
+
+#Predictor source
+PREDICTOR_SRC_DIR := .
+
+#Lib install dir
+#LIB_INSTALL_DIR := /usr/local/lib
+
+#Log Convert files 
+LOG_CONVERT_DIR := $(PREDICTOR_SRC_DIR)/dlog_read
+
+# Trima source files 
+TRIMA_SRC_FILES := $(TRIMA_SRC_DIR)/trima_common_reentrant/cassette.cpp \
+	$(TRIMA_SRC_DIR)/trima_common/CatalogChecker.cpp \
+	$(TRIMA_SRC_DIR)/trima_common_reentrant/cfg_vars.cpp \
+	$(TRIMA_SRC_DIR)/trima_common/datfile.cpp \
+	$(TRIMA_SRC_DIR)/trima_common_reentrant/donor.cpp \
+	$(TRIMA_SRC_DIR)/trima_common/filehelp.cpp \
+	$(TRIMA_SRC_DIR)/trima_common/substatemap.cpp \
+	$(TRIMA_SRC_DIR)/proc/algorithm/hypovolemia.cpp \
+	$(TRIMA_SRC_DIR)/proc/algorithm/postcount.cpp \
+	$(TRIMA_SRC_DIR)/proc/algorithm/posthct.cpp \
+	$(TRIMA_SRC_DIR)/cds/predict_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procadjust_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procdonor_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procpqi_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procrun_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procruntargets_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/proctime_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/proctrimaset_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/config_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procvolumes_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/proccycle_cds.cpp \
+	$(TRIMA_SRC_DIR)/cds/procplsrinseback_cds.cpp
+
+
+LOG_CONVERT_FILES := $(LOG_CONVERT_DIR)/adler32.c \
+	$(LOG_CONVERT_DIR)/compress.c \
+	$(LOG_CONVERT_DIR)/crc32.c \
+	$(LOG_CONVERT_DIR)/deflate.c \
+	$(LOG_CONVERT_DIR)/gzio.c \
+	$(LOG_CONVERT_DIR)/infblock.c \
+	$(LOG_CONVERT_DIR)/infcodes.c \
+	$(LOG_CONVERT_DIR)/inffast.c \
+	$(LOG_CONVERT_DIR)/inflate.c \
+	$(LOG_CONVERT_DIR)/inftrees.c \
+	$(LOG_CONVERT_DIR)/infutil.c \
+	$(LOG_CONVERT_DIR)/trees.c \
+	$(LOG_CONVERT_DIR)/uncompr.c \
+	$(LOG_CONVERT_DIR)/zutil.c
+
+PREDICTOR_SRC_FILES := 	$(PREDICTOR_SRC_DIR)/offline_config.cpp \
+	$(PREDICTOR_SRC_DIR)/dlog_reader.cpp \
+	$(PREDICTOR_SRC_DIR)/predict_reader.cpp \
+	$(PREDICTOR_SRC_DIR)/configdat_reader.cpp \
+	$(PREDICTOR_SRC_DIR)/offline_predict.cpp \
+	$(PREDICTOR_SRC_DIR)/configdat_utils.cpp \
+	$(PREDICTOR_SRC_DIR)/datastore.cpp \
+	$(PREDICTOR_SRC_DIR)/vxworks.cpp \
+	$(PREDICTOR_SRC_DIR)/crcgen.cpp \
+	$(PREDICTOR_SRC_DIR)/stubs.cpp \
+	$(PREDICTOR_SRC_DIR)/offline_optimizer.cpp 
+
+# Source files to build target from.
+BUILD_FILES := $(LOG_CONVERT_FILES) $(TRIMA_SRC_FILES) $(PREDICTOR_SRC_FILES)
+	
+#---------------------------------------------------------------------
+# Optional configuration flags.
+#---------------------------------------------------------------------
+
+
+# Root directory for build, all paths are relative to this dir.
+ifndef BUILD_ROOT
+  BUILD_ROOT := .
+endif
+
+# Directory for build output (intermediate + target).
+ifndef BUILD_OUTPUT
+  BUILD_OUTPUT := $(BUILD_ROOT)/$(BUILD_CONFIG)
+endif
+
+# Additional source directories (delimited with spaces).
+ifndef BUILD_VPATH
+  BUILD_VPATH := .
+endif
+
+# Additional directories to search for includes.
+ifndef BUILD_INCLUDE
+  BUILD_INCLUDE := -I../include -I../include/common -I../include/vxworks -I$(LOG_CONVERT_DIR) -I$(TRIMA_SRC_DIR)/trima_common -I$(TRIMA_SRC_DIR)/proc/algorithm -I$(TRIMA_SRC_DIR)/proc/interface -I$(TRIMA_SRC_DIR)/cds -I$(TRIMA_SRC_DIR)/proc/predict 
+endif
+
+# Additional libraries to link with.
+ifndef BUILD_LIBS
+  BUILD_LIBS :=   
+endif
+
+# Additional search paths for libraries.
+ifndef BUILD_LIBPATH
+  BUILD_LIBPATH := 
+endif
+
+# Custom compiler flags.
+ifndef BUILD_CFLAGS
+  BUILD_CFLAGS := -DWIN32 -D__WIN32__  -DCPU=SIMNT -D_NONTRIMA
+# -D_WIN32_WINNT=0x0501 -D__MSVCRT_VERSION__=0x0601 -D__MINGW__
+endif
+
+# Custom linker flags.
+ifndef BUILD_LFLAGS
+  BUILD_LFLAGS :=
+endif
+
+# Custom warning flags (defaults to pedantic mode).
+ifndef BUILD_WFLAGS
+  BUILD_WFLAGS := -W -Wall 
+endif
+
+# Compile C sources using specific standard: [c89] or [c99] or [gnu99].
+ifndef BUILD_USING_C_STD
+  BUILD_USING_C_STD := c99
+endif
+
+# Compile C++ sources using specific standard: [c++98] or [gnu++98]
+ifndef BUILD_USING_CPP_STD
+  BUILD_USING_CPP_STD := gnu++98
+endif
+
+#---------------------------------------------------------------------
+# Generic GCC build configurations: [release] or [debug]
+#---------------------------------------------------------------------
+
+ifeq ($(BUILD_CONFIG),debug)
+  TARGET := predict5r_d.exe
+  BUILD_CFLAGS += -pipe -g
+  BUILD_LFLAGS += -pipe -g
+endif
+
+ifeq ($(BUILD_CONFIG),release)
+  TARGET := predict5r.exe
+  BUILD_CFLAGS += -pipe -O2 -D NDEBUG
+  BUILD_LFLAGS += -pipe -s 
+endif
+
+#---------------------------------------------------------------------
+# Generic GCC build rules.
+#---------------------------------------------------------------------
+
+# Disable implicit suffix rules.
+.SUFFIXES:
+
+# Configure class-based search paths.
+vpath
+vpath %.c    $(BUILD_VPATH)
+vpath %.cpp  $(BUILD_VPATH)
+vpath %.o    $(BUILD_OUTPUT)
+vpath %.d    $(BUILD_OUTPUT)
+
+# Filter out C object files we know how to build.
+BUILD_C_OBJS := $(addsuffix .lo, $(basename $(filter %.c, $(BUILD_FILES))))
+
+# Filter out C++ object files we know how to build.
+BUILD_CPP_OBJS := $(addsuffix .lo, $(basename $(filter %.cpp, $(BUILD_FILES))))
+
+# Append build directory path to object files.
+OBJS := $(BUILD_C_OBJS:%.lo=$(BUILD_OUTPUT)/%.lo) $(BUILD_CPP_OBJS:%.lo=$(BUILD_OUTPUT)/%.lo)
+
+all: $(BUILD_OUTPUT)/$(TARGET)
+
+# Build static library
+$(BUILD_OUTPUT)/$(TARGET): $(OBJS)
+#	@echo -- Linking static library $(notdir $@)...
+	@echo -- Creating executable $(notdir $@)...
+	@mkdir -p $(dir $@)
+	@echo $(LIBTOOL_LN) g++ $(BUILD_WFLAGS) $(BUILD_LIBPATH) $(BUILD_LFLAGS) -o $@ $(OBJS) $(BUILD_LIBS)
+	@$(LIBTOOL_LN) g++ $(BUILD_WFLAGS) -L. $(BUILD_LIBPATH) $(BUILD_LFLAGS) -o $@ $(OBJS) $(BUILD_LIBS)
+#	@libtool --mode=install install -c $(BUILD_OUTPUT)/$(TARGET) $(LIB_INSTALL_DIR)/$(TARGET)
+
+# Compile C source
+$(BUILD_OUTPUT)/%.lo: %.c
+	@echo $(notdir $<)
+	@mkdir -p $(dir $@)
+	@echo $(LIBTOOL_CC) gcc -MMD -std=$(BUILD_USING_C_STD) $(BUILD_CFLAGS) $(BUILD_WFLAGS) -I. $(BUILD_INCLUDE) -c $< -o $@ 
+	@$(LIBTOOL_CC) gcc -MMD -std=$(BUILD_USING_C_STD) $(BUILD_CFLAGS) $(BUILD_WFLAGS) -I. $(BUILD_INCLUDE) -c $< -o $@ 
+
+# Compile C++ source
+$(BUILD_OUTPUT)/%.lo: %.cpp
+	@echo $(notdir $<)
+	@mkdir -p $(dir $@)
+	@echo $(LIBTOOL_CC) g++ -MMD -std=$(BUILD_USING_CPP_STD) $(BUILD_CFLAGS) -fpermissive $(BUILD_WFLAGS) -I. $(BUILD_INCLUDE) -c $< -o $@ 
+	@$(LIBTOOL_CC) g++ -MMD -std=$(BUILD_USING_CPP_STD) $(BUILD_CFLAGS) -fpermissive $(BUILD_WFLAGS) -I. $(BUILD_INCLUDE) -c $< -o $@ 
+
+#---------------------------------------------------------------------
+# Build tags database for Emacs. 
+#--------------------------------------------------------------------
+
+.PHONY: tags
+tags:
+	@echo -- Updating tags database...
+	@gtags
+
+#---------------------------------------------------------------------
+# Execute program (max 8 arguments).
+#---------------------------------------------------------------------
+
+run: all
+	@echo -- Executing $(BUILD_OUTPUT)/$(TARGET) \
+		$(ARG1) $(ARG2) $(ARG3) $(ARG4) $(ARG5) $(ARG6) $(ARG7) $(ARG8)
+	@$(BUILD_OUTPUT)/$(TARGET) \
+		$(ARG1) $(ARG2) $(ARG3) $(ARG4) $(ARG5) $(ARG6) $(ARG7) $(ARG8)
+
+#---------------------------------------------------------------------
+# Maintenance.
+#---------------------------------------------------------------------
+
+.PHONY: clean
+clean: clean-target clean-objs clean-deps clean-gprof clean-tags
+
+.PHONY: clean-target
+clean-target:
+	@-rm -f $(BUILD_OUTPUT)/$(TARGET)
+
+.PHONY: clean-objs
+clean-objs:
+	@-rm -rf echo $(OBJS)
+
+.PHONY: clean-deps
+clean-deps:
+	@-rm -f $(BUILD_C_OBJS:%.o=$(BUILD_OUTPUT)/%.d)
+	@-rm -f $(BUILD_CPP_OBJS:%.o=$(BUILD_OUTPUT)/%.d)
+
+.PHONY: clean-gprof
+clean-gprof:
+	@-rm -f $(BUILD_ROOT)/gmon.out
+	@-rm -f $(BUILD_ROOT)/callf.order
+	@-rm -f $(BUILD_ROOT)/callo.order
+	@-rm -f $(BUILD_ROOT)/gmon.order
+	@-rm -f $(BUILD_ROOT)/time.order
+
+.PHONY: clean-tags
+clean-tags:
+	@-rm -f $(BUILD_ROOT)/GSYMS
+	@-rm -f $(BUILD_ROOT)/GPATH
+	@-rm -f $(BUILD_ROOT)/GTAGS
+	@-rm -f $(BUILD_ROOT)/GRTAGS
+
+#---------------------------------------------------------------------
+# Autogenerated dependencies.
+#---------------------------------------------------------------------
+
+-include $(BUILD_C_OBJS:%.o=$(BUILD_OUTPUT)/%.d)
+-include $(BUILD_CPP_OBJS:%.o=$(BUILD_OUTPUT)/%.d)
+
+#---------------------------------------------------------------------
+# The End.
+#---------------------------------------------------------------------
+

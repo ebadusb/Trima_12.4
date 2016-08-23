@@ -1,0 +1,22 @@
+so01: TestMessage setup
+so01: TestMessage printing
+so01: pumpPower = 1
+so01: centrifugePower = 0
+so01: valveLED = 1
+so01: doorSolenoidPower = 0
+so01: alarmLight = 1
+so01: serviceEnableMode = 0
+so01: donorConnectMode = 1
+so01: test1 = 1000
+so01: test2 = 2000
+so01: TestMessage notify
+so01: diff: pumpPower out=1 in=0
+so01: diff: centrifugePower out=0 in=1
+so01: diff: valveLED out=1 in=0
+so01: diff: doorSolenoidPower out=0 in=1
+so01: diff: alarmLight out=1 in=0
+so01: diff: serviceEnableMode out=0 in=1
+so01: diff: donorConnectMode out=1 in=0
+so01: diff: test1 out=1000 in=510
+so01: diff: test2 out=2000 in=3990
+so01: exiting

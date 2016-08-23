@@ -1,0 +1,17 @@
+# FILENAME: cleanup02.dat
+# PURPOSE: test's std's CLEANUP success allows cleanup
+# CHANGELOG:
+#   01/12/2000 - dyes - verify CLEANUP exit of 1 still allows all cleanup
+#   commands to run, and allows workspace cleanup to take place.
+#   11/24/99 - dyes - initial version
+
+
+SUITE cleanup02_suite
+
+
+TEST cleanup02_test
+RUN echo "cleanup02 run"
+CLEANUP ls bogusfile   # nonzero exit
+CLEANUP echo foobar
+
+

@@ -1,0 +1,31 @@
+# FILENAME: skip03.dat
+# PURPOSE: verify -skips displays skipped tests
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE skip02_suite
+
+
+TEST skip02_test1
+SKIP 
+RUN echo test1
+
+
+TEST skip02_test2
+RUN echo test2
+
+
+TEST skip02_test3
+SKIP
+RUN echo test3
+
+
+
+
+
+
+
+
+
+

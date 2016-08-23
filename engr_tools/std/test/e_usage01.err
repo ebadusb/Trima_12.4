@@ -1,0 +1,15 @@
+ERROR std: unparsed token foobar
+Usage:  std - simple test driver
+std [options]
+Options:
+  -check - datafile integrity check, does not run test
+  -clean - force workspace cleanup, does not run test
+  -datafile <string> - datafile driving test suite execution, def=std.dat
+  -debug - enables debug messages
+  -loop <int> - number of times to loop on tests (1-1000000), def=1
+  -noclean - disables workspace cleanup
+  -nest <int> - levels of nesting supported (1-100), def=20
+  -path <string> - location of suite to run, def=.
+  -skips - show skipped tests, does not run test
+  -specs - show test specification, does not run test
+  -test <string> - act only on the specified test, def=NULL

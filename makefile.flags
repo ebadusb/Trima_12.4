@@ -1,0 +1,28 @@
+# @(#) $Header$
+#
+# Makefile.flags - makefile flag definitions for Trima
+#
+# $Log$
+#
+# This file simply includes the common makefile.flags.  If Trima
+# specific modifications are later needed, they can be put here.
+#
+
+include $(COMDIR)/makefile.flags
+
+################################################################################
+# Parasoft Static Analysis settings for generating a Build Data File.
+# - add DO_CPPTEST=true (or TRUE or yes or YES) to the command-line
+# - redefine compiler and linker commands to scan for build settings
+# - let outputfile and project name be defined via environment variables
+#
+ifneq ($(findstring $(DO_CPPTEST),true|TRUE|yes|YES),)
+  CXX := cpptestscan $(CXX)
+  CC  := cpptestscan $(CC)
+  LD  := cpptestscan $(LD)
+  CPPTEST_SCAN_PROJECT_NAME ?= CTScan_Trima
+  CPPTEST_SCAN_OUTPUT_FILE  ?= "$(MAINDIR)\ctscan.bdf"
+  export CPPTEST_SCAN_PROJECT_NAME CPPTEST_SCAN_OUTPUT_FILE
+endif
+
+################################################################################

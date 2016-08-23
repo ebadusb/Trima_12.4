@@ -1,0 +1,14 @@
+# FILENAME: parser14.dat
+# PURPOSE: verify null SPEC is caught by parser
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE parser14_suite
+
+
+TEST parser14_test
+SPEC
+RUN echo foobar
+
+

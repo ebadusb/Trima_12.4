@@ -1,0 +1,97 @@
+# @(#) $Header: H:/BCT_Development/Trima5.R/Trima/proc/alarm/rcs/makefile.vx 1.20 2008/09/15 20:55:37Z jheiusb Exp jheiusb $
+#
+# Makefile - makefile for proc alarm library
+#
+# $Log: makefile.vx $
+# Revision 1.20  2008/09/15 20:55:37Z  jheiusb
+# 7277 -- limit consec spillovers to 3!
+# Revision 1.19  2008/06/05 21:16:44Z  jheiusb
+# 7059 -- prime Hemolysis Alarm added
+# Revision 1.18  2007/07/11 23:23:28Z  jheiusb
+# 7180 -- move the CPS alarm to after first draw to allow Rinseback
+# Revision 1.17  2007/06/11 21:58:11Z  jheiusb
+# 8070 -- Scalar on Hin for Setup2
+# Revision 1.16  2007/06/08 17:14:50Z  jheiusb
+# 8060, 7180 -- fix the PTF alarms for CPS and the baselining algorithm for doubles
+# Revision 1.15  2007/03/15 19:10:09Z  jheiusb
+# 7215 -- port PTF fmea fixes from 51_ptf
+# Revision 1.14  2007/02/16 22:12:41Z  jheiusb
+# add RBC ss bag alarm
+# Revision 1.13  2006/03/03 17:28:03Z  jheiusb
+# initial merge
+# Revision 1.12  2003/05/01 20:40:47Z  jd11007
+# Revision 1.11  2002/11/26 17:51:12Z  ms10234
+# Added ability to make mega '.o' files with the same process as making a lib.  To make a mega '.o' file set the variable ARCHIVE_TYPE=OBJFILE
+# Revision 1.10  2002/11/20 00:55:45Z  ms10234
+# removed libproc_alarm.a
+# Revision 1.9  2002/11/18 22:22:53Z  ms10234
+# added global alarm_objs.o
+# Revision 1.8  2002/10/28 23:30:36Z  ms10234
+# Changed proc files to use interface class - ProcData
+# Revision 1.7  2002/10/04 18:42:48  ms10234
+# Created alarmhandler .out file
+# Revision 1.6  2002/08/15 21:10:33  jl11312
+# - updated for new makefile templates
+# Revision 1.5  2002/08/07 21:37:00  ms10234
+# Synch up v5 and vxworks version of Trima
+# Revision 1.4  2002/06/21 21:22:02  sb07663
+# Mods to remove dynamic data and implement CDS
+# Revision 1.3  2002/04/18 15:20:43  jl11312
+# - corrected use of '/' directory separator
+# Revision 1.2  2002/04/18 15:13:20  jl11312
+# - simplified interface to template makefile.lib
+# Revision 1.1  2002/04/12 16:55:51  sb07663
+# Initial revision
+#
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change lib
+endif
+
+#
+# Include directories used by source files for this library
+#
+ADDN_INCDIR = -I ..\..\trima_common -I..\..\cds -I..\interface -I..\algorithm
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the library
+#
+LIB_C_FILES   = 
+LIB_CXX_FILES = volt_alarm.cpp salinealarm.cpp reslowalarm.cpp \
+                rbc_alarm.cpp pres_alarm.cpp pause_alarm.cpp \
+	        mot_alarm.cpp leakalarm.cpp hypo_alarm.cpp \
+	        dooralarm.cpp centpres_alarm.cpp cpsPFRTestAlarm.cpp\
+		cent_alarm.cpp basintemp.cpp apsdecouplealarm.cpp \
+		drbcsplitalarm.cpp acoccmon.cpp acl_alarm.cpp ac_too_soon_alarm.cpp \
+		resalr.cpp lowconcentalarm.cpp acprimeinlet_alarm.cpp  \
+                cpsHighAlarm.cpp inletVolmAlarm.cpp \
+                pltSSEmptyAlarm.cpp rbcSSEmptyAlarm.cpp primeHemolysis_alarm.cpp threeSpillovers.cpp  \
+                autoflowTimeAlarm.cpp
+
+#
+# The following should define the location of the resulting library.  Note
+# that ARCHIVE_DIR is used in DOS shell commands, and must use \ directory
+# separators.
+#
+ARCHIVE_NAME = libproc_alarm.a
+ARCHIVE_DIR = $(MAINDIR)\lib
+ARCHIVE_TYPE = OBJFILE
+
+#
+# This is the standard makefile for vxWorks libraries
+#
+include $(MAINDIR)/makefile.lib
+

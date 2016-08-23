@@ -1,0 +1,121 @@
+#!/bin/bash
+#
+usage()
+{
+    cat <<EOF
+get_bdf : Gets a Trima BDF (Build Data File) from an Automated Build
+          directory for use by the Parasoft static analysis tool.
+
+usage: get_bdf [-h] [destination_dir] [trima_build_num]
+
+destination_dir - your Main or Trima_6.3 directory. If not provided, defaults to
+                  environment variable TSRC (top of Trima source tree), or "."
+
+trima_build_num - the last 3-4 digits of a Trima-12.1 build number to specify.
+                  If not provided, defaults to the latest Parasoft run on Jenkins.
+
+EOF
+}
+
+# This is equivalent to `dirname $1`
+xdirname()
+{
+    echo ${1%/*}
+}
+
+# This is equivalent to `basename $1`
+xbasename()
+{
+    echo ${1##*/}
+}
+
+MYDEST=${TSRC:=.}
+THEBDF=ctscan.bdf
+FIXBDF=$(xdirname $0)/fix_bdf
+
+########## Where the automated builds reside
+#
+ATBUILD='//bctquad3/home/BCT_Development/AutomatedBuilds/Trima'
+TBLD_MAIN="$ATBUILD/MainDev"    # Ad-hoc DEV build of Trima/Main
+TBLD_110="$ATBUILD/Trima_11.0"  # 6.3 QA builds
+TBLD_120="$ATBUILD/Trima-12.0"  # 6.3.1 QA builds
+TBLD_121="$ATBUILD/Trima-12.1"  # 6.4 QA builds
+TBLD=$TBLD_121
+
+JENKINS_PSOFT="$ATBUILD/LatestParasoft"  # Bi-nightly Parasoft run on Jenkins
+
+if [ "$1" = "-h" ] ; then
+    usage
+    exit 1
+fi
+
+########## Verify the required environment vars are defined:
+#
+if [ ! "$COMDIR" -o ! "$WIND_BASE" ] ; then
+   usage
+   echo "ERROR: need to define environment variables COMDIR and WIND_BASE" >&2
+   exit 1
+fi
+
+########## Look for optional destination_dir
+#
+DEST_SET=false
+if [ -d "$1" ] ; then
+   MYDEST=$1
+   DEST_SET=true
+   shift
+fi
+
+########## Sanity check that MYDEST is correct
+# 
+if [ -d $MYDEST/trima_common ] ; then
+   echo "Will copy BDF to MYDEST    : $MYDEST"
+else
+   usage
+   echo "ERROR: Cannot translate BDF to MYDEST=$MYDEST" >&2
+   if [ "$DEST_SET" = "true" ] ; then
+       echo 'ERROR: destination_dir must be *parent* of trima_common' >&2
+   else
+       echo 'ERROR: need to run this from *parent* of trima_common' >&2
+   fi
+   exit 1
+fi
+
+########## Look for optional build spec
+#
+if [ "$1" != "" ] ; then
+   bld=$TBLD/*.*$1
+   shift
+   SRC_BDF=$bld/Parasoft/$THEBDF
+   echo "Getting the BDF from build : $SRC_BDF"
+elif [ -f $JENKINS_PSOFT/$THEBDF ] ; then
+   # This uses the latest Parasoft analysis done on Jenkins
+   SRC_BDF=$JENKINS_PSOFT/$THEBDF
+   echo "Getting Jenkins' latest BDF: $SRC_BDF"
+else
+   # This will search the latest QA build directory:
+   # SRC_BDF=$(ls -1 $TBLD/*.00[2-9]??/Parasoft/$THEBDF|tail -n1)
+   # This uses the latest DEV build
+   SRC_BDF=$TBLD_MAIN/Parasoft/$THEBDF
+   echo "Getting latest BDF from    : $SRC_BDF"
+fi
+
+########## Run fix_bdf if SRC_BDF exists
+#
+if [ -f $SRC_BDF ] ; then
+   cd $MYDEST
+   [ -f $THEBDF ] && mv -f $THEBDF $THEBDF.bak
+   $FIXBDF $SRC_BDF > $THEBDF
+   ret=$?
+   # restore the original if we failed
+   [ $ret == 0 ] && echo Done. || mv -f $THEBDF.bak $THEBDF
+else
+   echo "Source BDF not found       : $SRC_BDF"
+   echo "The available QA BDF files are:"
+   ls -l $TBLD/*/Parasoft/*.bdf |tail |awk -F' ' '{printf("%3s %2s %5s %s\n", $7,$8,$9,$10)}'
+   echo ""
+   echo "Retry with the last non-zero digits of one of these build numbers"
+   ret=1
+fi
+
+exit $ret

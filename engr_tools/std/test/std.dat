@@ -1,0 +1,518 @@
+# FILENAME: std.dat
+# $Header: L:/BCT_Development/Trima/engr_tools/std/test/rcs/std.dat 1.4 2000/03/09 21:57:57 TD07711 Exp $
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   $Log: std.dat $
+#   07/25/2000 - dyes - update per libtools logger change (uses stderr instead of stdout)
+#   Revision 1.4  2000/03/09 21:57:57  TD07711
+#   IT4580
+#   01/24/2000 - dyes - add loop01
+#   Revision 1.4  2000/01/13 21:23:45  TD07711
+#   01/05/2000 - dyes
+#   1. modified cleanup01, cleanup02, setup02, lock01
+#   2. removed COPY of ./std in all tests, to make this file more compatible with NT
+#   3. added cleanup04, skip03, clean01, clean02, precondition01, precondition02,
+#      spec01, parser13, parser14, parser15, parser16, parser17, export01
+#   12/08/99 - dyes
+#   1. adding version info to std, 
+#   2. modified run02 and subsuite05
+#   11/07/99 - dyes - initial version
+
+
+SUITE std
+# this suite verifies operation of std, and drives 
+# testing of several subsuites as well.
+
+
+TEST usage01
+SPEC verify usage message if invalid arg
+COPY e_usage01.err
+RUN ../../std foobar
+EXIT 1
+VERIFY grep -v version test.err > grep.out
+VERIFY diff grep.out e_usage01.err
+
+
+TEST parser01
+SPEC verify parser catches missing std.dat file
+RUN ../../std
+EXIT 1
+VERIFY grep "fopen failed on file=std.dat" test.err
+
+
+TEST parser02
+SPEC verify parser catches std.dat file that has no SUITE keyword
+COPY parser02.dat
+RUN ../../std -datafile parser02.dat
+EXIT 1
+VERIFY grep "no SUITE name given" test.err
+
+
+TEST parser03
+SPEC verify parser catches TEST without corresponding RUN keyword
+SPEC verify std exits non-zero if parser error
+COPY parser03.dat
+RUN ../../std -datafile parser03.dat
+EXIT 1
+VERIFY grep "test=parser03_test has no RUN command" test.err
+
+
+TEST parser04
+SPEC verify parser catches RUN keyword but no command
+COPY parser04.dat
+RUN ../../std -datafile parser04.dat
+EXIT 1
+VERIFY grep "NULL value for RUN" test.err
+
+
+TEST parser05
+SPEC verify parser catches more than 1 RUN keyword for a TEST
+COPY parser05.dat
+RUN ../../std -datafile parser05.dat
+EXIT 1
+VERIFY grep "RUN command already defined" test.err
+
+
+TEST parser06
+SPEC verify parser catches SUITE keyword with no name
+COPY parser06.dat
+RUN ../../std -datafile parser06.dat
+EXIT 1
+VERIFY grep "SUITE name not defined" test.err
+
+
+TEST parser07
+SPEC verify parser catches more than one line with SUITE keyword
+COPY parser07.dat
+RUN ../../std -datafile parser07.dat
+EXIT 1
+VERIFY grep "SUITE name already defined" test.err
+
+
+TEST parser08
+SPEC verify parser catches -test option usage with no match
+COPY parser08.dat
+RUN ../../std -datafile parser08.dat -noclean -test bogus
+EXIT 1
+VERIFY grep "test=bogus not defined in suite=parser08_suite" test.err
+
+
+TEST parser09
+SPEC verify parser catches SETUP keyword with no command
+COPY parser09.dat
+RUN ../../std -datafile parser09.dat
+EXIT 1
+VERIFY grep "NULL value" test.err
+
+
+TEST parser10
+SPEC verify parser catches CLEANUP keyword with no command
+COPY parser10.dat
+RUN ../../std -datafile parser10.dat
+EXIT 1
+VERIFY grep "NULL value" test.err
+
+
+TEST parser11
+SPEC verify RUN commands cannot be backgrounded
+COPY parser11.dat
+RUN ../../std -datafile parser11.dat -noclean
+EXIT 1
+VERIFY grep "backgrounded RUN command" test.err
+
+
+TEST parser12
+SPEC verify VERIFY commands cannot be backgrounded
+COPY parser12.dat
+RUN ../../std -datafile parser12.dat -noclean
+EXIT 1
+VERIFY grep "backgrounded VERIFY command" test.err
+
+
+TEST parser13
+SPEC verify parser catches PRECONDITION keyword with no command
+COPY parser13.dat
+RUN ../../std -datafile parser13.dat
+EXIT 1
+VERIFY grep "NULL value" test.err
+
+
+TEST parser14
+SPEC verify parser catches SPEC keyword with no spec text
+COPY parser14.dat
+RUN ../../std -datafile parser14.dat
+EXIT 1
+VERIFY grep "NULL value" test.err
+
+
+TEST parser15
+SPEC verify parser catches EXPORT keyword with no value
+COPY parser15.dat
+RUN ../../std -datafile parser15.dat
+EXIT 1
+VERIFY grep "NULL value" test.err
+
+
+TEST parser16
+SPEC verify parser catches EXPORT without value of form a=b
+COPY parser16.dat
+RUN ../../std -datafile parser16.dat
+EXIT 1
+VERIFY grep form test.err | grep expected
+
+
+TEST parser17
+SPEC verify parser catches EXPORT without env name specified
+COPY parser17.dat
+RUN ../../std -datafile parser17.dat
+EXIT 1
+VERIFY grep form test.err | grep expected
+
+
+TEST copy01
+SPEC verify multiple COPY lines copy correctly to execution space
+COPY copy01.dat copy01_file1 copy01_file2 copy01_file3
+RUN ../../std -datafile copy01.dat -noclean
+VERIFY grep file1 copy01_test.dir/copy01_file1
+VERIFY grep file2 copy01_test.dir/copy01_file2
+VERIFY grep file3 copy01_test.dir/copy01_file3
+
+
+TEST copy02
+SPEC verify COPY copy failure aborts the test
+COPY copy02.dat 
+RUN ../../std -datafile copy02.dat
+EXIT 1
+VERIFY grep ABORT test.err
+VERIFY grep bogus test.err
+VERIFY grep "run=1" test.err
+VERIFY grep "pass=0" test.err
+VERIFY grep "fail=1" test.err
+
+
+TEST setup01
+SPEC verify multiple SETUP command execute as expected
+SPEC verify SETUP output goes to setup.out
+SPEC verify test runs correctly if SETUP commands exit 0
+COPY setup01.dat
+RUN ../../std -datafile setup01.dat -noclean
+VERIFY ls setup01_test.dir/foo
+VERIFY ls setup01_test.dir/bar
+
+
+TEST setup02
+SPEC verify SETUP failure aborts the test without running other SETUP commands.
+COPY setup02.dat e_setup02.out
+RUN ../../std -datafile setup02.dat
+EXIT 1
+VERIFY grep ABORT test.err
+VERIFY grep "fail=1" test.err
+VERIFY grep foobar test.out > grep.out
+VERIFY diff grep.out e_setup02.out
+
+
+TEST setup03
+SPEC verify that SETUP command can be backgrounded
+COPY setup03.dat
+RUN ../../std -datafile setup03.dat
+VERIFY grep "setup03 setup" test.out
+
+
+TEST run01
+SPEC verify test passes if RUN command exits 0
+SPEC verify cleanup when test passes
+COPY run01.dat
+RUN ../../std -datafile run01.dat
+VERIFY ls run01_test.dir 2>&1 | grep "No such file or directory"
+
+
+TEST run02
+SPEC verify stdout logged to test.out
+SPEC verify no cleanup if test failed
+SPEC verify test fails if RUN command exits with other than expected code
+SPEC verify EXIT keyword will set expected exit code appropriately
+SPEC verify std exits non-zero if test failure
+COPY run02.dat e_run02.out
+RUN ../../std -datafile run02.dat
+EXIT 1
+VERIFY grep FAIL test.err
+VERIFY diff e_run02.out run02_test.dir/test.out
+SPEC verify test summary info
+SPEC verify SUITE name appears in test summary
+VERIFY grep "summary" test.err
+VERIFY grep "suite=run02_suite" test.err
+VERIFY grep started test.err 
+VERIFY grep finished test.err
+VERIFY grep "total tests=1" test.err
+VERIFY grep "run=1" test.err
+VERIFY grep "skipped=0" test.err
+VERIFY grep "pass=0" test.err
+VERIFY grep "fail=1" test.err
+
+
+TEST run03
+SPEC verify -test option runs a specified test within the suite
+SPEC verify -test option runs test when it is last one of the suite
+SPEC verify stderr logged to test.err
+COPY run03.dat
+RUN ../../std -datafile run03.dat -test run03_test3 -noclean
+VERIFY grep "total tests=1" test.err
+VERIFY grep run03_test3 test.err
+VERIFY grep foobar run03_test3.dir/test.err
+
+
+TEST run04
+SPEC verify -test option runs test when it is first one of the suite
+COPY run04.dat
+RUN ../../std -datafile run04.dat -test run04_test1 -noclean
+VERIFY grep "total tests=1" test.err
+VERIFY grep run04_test1 test.err
+
+
+TEST verify01
+SPEC verify test fails if RUN exits 0, but VERIFY exits non-zero
+SPEC verify test stdout is redirected into test.out
+SPEC verify VERIFY stdout is redirected into verify.out
+SPEC verify VERIFY stderr is captured in test.err
+COPY verify01.dat
+RUN ../../std -datafile verify01.dat
+EXIT 1
+VERIFY grep FAIL test.err | grep VERIFY
+VERIFY grep foo verify01_test.dir/test.out
+VERIFY grep bar test.err
+
+
+TEST verify02
+SPEC verify test passes if both RUN command and VERIFY exit 0
+SPEC verify multiple VERIFY commands are run as expected
+SPEC verify no cleanup on a pass when -nocleanup option is given
+SPEC verify VERIFY command redirection overides default redirection to verify.out
+COPY verify02.dat
+RUN ../../std -datafile verify02.dat -noclean
+VERIFY ls verify02_test.dir/foo
+VERIFY ls verify02_test.dir/bar
+VERIFY grep "total tests=1" test.err
+VERIFY grep "run=1" test.err
+VERIFY grep "skipped=0" test.err
+VERIFY grep "pass=1" test.err
+VERIFY grep "fail=0" test.err
+VERIFY grep "verify redirected" verify02_test.dir/echo.out
+
+
+TEST cleanup01
+SPEC verify multiple CLEANUP command execute even if 1st one fails
+COPY cleanup01.dat
+RUN ../../std -datafile cleanup01.dat
+VERIFY grep foobar test.out
+
+
+TEST cleanup02
+SPEC verify CLEANUP exiting 0 or 1 still results in execution space cleanup
+SPEC verify all CLEANUP commands run, even if 1st one exits nonzero
+SPEC verify that test passes even if CLEANUP exits nonzero
+COPY cleanup02.dat
+RUN ../../std -datafile cleanup02.dat
+VERIFY ls cleanup02_test.dir 2>&1 | grep "No such file or directory"
+VERIFY grep foobar test.out
+VERIFY grep "pass=1" test.err
+
+
+TEST cleanup03
+SPEC verify that CLEANUP command can be backgrounded
+COPY cleanup03.dat
+RUN ../../std -datafile cleanup03.dat
+VERIFY grep "cleanup03 cleanup" test.out
+
+
+TEST cleanup04
+SPEC verify CLEANUP commands run even if SETUP command fails
+COPY cleanup04.dat
+RUN ../../std -datafile cleanup04.dat
+EXIT 1
+VERIFY grep foobar test.out
+
+
+TEST skip01
+SPEC verify SKIP keyword skips the associated test
+SPEC verify std exits zero when failing tests are skipped
+COPY skip01.dat
+RUN ../../std -datafile skip01.dat -noclean
+VERIFY grep "total tests=1" test.err
+VERIFY grep "run=0" test.err
+VERIFY grep "skipped=1" test.err
+VERIFY grep "pass=0" test.err
+VERIFY grep "fail=0" test.err
+
+
+TEST skip02
+SPEC verify use of -test overides the SKIP keyword
+COPY skip02.dat
+RUN ../../std -datafile skip02.dat -test skip02_test
+VERIFY grep "total tests=1" test.err
+VERIFY grep "run=1" test.err
+VERIFY grep "skipped=0" test.err
+VERIFY grep "pass=1" test.err
+VERIFY grep "fail=0" test.err
+
+
+TEST skip03
+SPEC verify that -skips displays all skipped tests
+SPEC verify that -skips displays count of total tests and those skipped
+COPY skip03.dat
+RUN ../../std -datafile skip03.dat -skips
+VERIFY grep test1 test.err
+VERIFY grep test3 test.err
+VERIFY grep "skipped=2" test.err
+VERIFY grep "total tests=3" test.err
+
+
+TEST subsuite01
+SPEC verify SUBSUITE keyword will run associated subsuite
+SPEC verify std exits 0 if subsuite's tests all pass
+SPEC verify -nest option of 2 allows 2 levels of suites
+COPY subsuite01.dat subsuite01_subsuite.dat
+SETUP mkdir subsuite01_subsuite
+SETUP cp subsuite01_subsuite.dat subsuite01_subsuite/std.dat
+RUN ../../std -datafile subsuite01.dat -noclean -nest 2
+VERIFY grep "total tests=2" test.err
+VERIFY grep "pass=2" test.err
+
+
+TEST subsuite02
+SPEC verify std exits non-zero if last of 3 subsuites fail
+COPY  subsuite02.dat
+COPY subsuite02_subsuite1.dat subsuite02_subsuite2.dat subsuite02_subsuite3.dat
+SETUP mkdir subsuite02_subsuite1
+SETUP mkdir subsuite02_subsuite2
+SETUP mkdir subsuite02_subsuite3
+SETUP cp subsuite02_subsuite1.dat subsuite02_subsuite1/std.dat
+SETUP cp subsuite02_subsuite2.dat subsuite02_subsuite2/std.dat
+SETUP cp subsuite02_subsuite3.dat subsuite02_subsuite3/std.dat
+RUN ../../std -datafile subsuite02.dat
+EXIT 1
+VERIFY grep "total tests=3" test.err
+VERIFY grep "fail=1" test.err
+
+
+TEST subsuite03
+SPEC verify parser catches excessive subsuite nesting
+SPEC verify -nest option can limit subsuite nesting
+COPY subsuite03.dat subsuite03_subsuite.dat
+SETUP mkdir subsuite03_subsuite
+SETUP cp subsuite03_subsuite.dat subsuite03_subsuite/std.dat
+RUN ../../std -datafile subsuite03.dat -nest 1
+EXIT 1
+VERIFY grep "nesting limit exceeded" test.err
+
+
+TEST subsuite04
+SPEC verify -test option limits execution to this suite only
+COPY subsuite04.dat 
+RUN ../../std -datafile subsuite04.dat -test subsuite04_test
+VERIFY grep "total tests=1" test.err
+VERIFY grep "pass=1" test.err
+
+
+TEST subsuite05
+SPEC verify that suite can contain both subsuits and tests
+SPEC verify subsuites are run before tests
+COPY subsuite05.dat subsuite05_subsuite.dat
+COPY e_subsuite05.out
+SETUP mkdir subsuite05_subsuite
+SETUP cp subsuite05_subsuite.dat subsuite05_subsuite/std.dat
+RUN ../../std -datafile subsuite05.dat -noclean
+VERIFY awk ' { print $3 } ' test.err | head -5 | tail -4 > awk.out
+VERIFY diff awk.out e_subsuite05.out
+
+
+TEST lock01
+SPEC verify that locked workspace results in aborted test
+COPY lock01.dat
+SETUP mkdir lock01_test.dir
+SETUP touch lock01_test.dir/std.lock
+RUN ../../std -datafile lock01.dat
+EXIT 1
+VERIFY grep "run=1" test.err
+VERIFY grep ABORT test.err
+VERIFY grep "fail=1" test.err
+
+
+TEST clean01
+SPEC verify that -clean does removes all test workspaces
+COPY clean01.dat
+SETUP mkdir clean01_test1.dir
+SETUP touch clean01_test1.dir/std.lock
+SETUP mkdir clean01_test2.dir
+SETUP touch clean01_test2.dir/std.lock
+RUN ../../std -datafile clean01.dat -clean
+VERIFY grep removing test.err | grep clean01_test1.dir
+VERIFY ls clean01_test1.dir 2>&1 | grep "No such file or directory"
+VERIFY grep removing test.err | grep clean01_test2.dir
+VERIFY ls clean01_test2.dir 2>&1 | grep "No such file or directory"
+
+
+TEST clean02
+SPEC verify that -clean and -test cleans up only specified test's workspace
+COPY clean02.dat
+SETUP mkdir clean02_test1.dir
+SETUP touch clean02_test1.dir/std.lock
+SETUP mkdir clean02_test2.dir
+SETUP touch clean02_test2.dir/std.lock
+RUN ../../std -datafile clean02.dat -clean -test clean02_test2
+VERIFY ls clean02_test1.dir
+VERIFY grep removing test.err | grep clean02_test2.dir
+VERIFY ls clean02_test2.dir 2>&1 | grep "No such file or directory"
+
+
+TEST precondition01
+SPEC verify multiple PRECONDITION command execute as expected
+COPY precondition01.dat
+RUN ../../std -datafile precondition01.dat
+VERIFY grep pre1 test.out
+VERIFY grep pre2 test.out
+VERIFY grep pre3 test.out
+VERIFY grep "pass=1" test.err
+
+
+TEST precondition02
+SPEC verify PRECONDITION failure aborts test and std exits 1
+SPEC verify subsequent PRECONDITION, SETUP, and CLEANUP commands do not execute
+COPY precondition02.dat e_precondition02.out
+RUN ../../std -datafile precondition02.dat
+EXIT 1
+VERIFY grep foobar test.out > grep.out
+VERIFY diff grep.out e_precondition02.out
+VERIFY grep "fail=1" test.err
+
+
+TEST spec01
+SPEC verify -specs displays specs for multiple tests
+COPY spec01.dat
+RUN ../../std -datafile spec01.dat -specs
+VERIFY grep spec01_test1 test.out
+VERIFY grep "test1 spec1" test.out
+VERIFY grep spec01_test2 test.out
+VERIFY grep "test2 spec1" test.out
+VERIFY grep "test2 spec2" test.out
+VERIFY grep spec01_test3 test.out
+
+
+TEST export01
+SPEC verify EXPORT can set multiple env variables
+SPEC verify that EXPORT "a=" will remove an env variable
+SPEC verify EXPORT command is run prior to SETUP
+COPY export01.dat
+RUN ../../std -datafile export01.dat -noclean
+VERIFY grep FOO2=foo2 export01_test.dir/export.out
+VERIFY grep FOO3=foo3 export01_test.dir/export.out
+
+
+TEST loop01
+SPEC verify -loop 2 will run the tests two times
+COPY loop01.dat
+RUN ../../std -datafile loop01.dat -loop 2
+VERIFY grep "total tests=2" test.err
+VERIFY grep "run=2" test.err
+VERIFY grep "skipped=0" test.err
+VERIFY grep "pass=2" test.err
+VERIFY grep "fail=0" test.err

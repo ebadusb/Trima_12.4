@@ -1,0 +1,19 @@
+# FILENAME: skip01.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE skip01_suite
+TEST skip01_test
+SKIP
+# verify SKIP keyword skips a failing test
+RUN echo foobar  
+EXIT 1		# expecting exit=1 causes test to fail if run
+
+
+
+
+
+
+

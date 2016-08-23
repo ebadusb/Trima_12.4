@@ -1,0 +1,4 @@
+suite=subsuite05_suite
+suite=subsuite05_subsuite
+test=subsuite05_test1
+test=subsuite05_test2

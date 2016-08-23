@@ -1,0 +1,65 @@
+################################################################################
+#
+# Makefile for control driver apps
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I$(MAINDIR)\trima_common -I.. -I$(MAINDIR)\config -I$(MAINDIR)\os
+ADDN_CPPFLAGS = -DCONTROL_BUILD
+ADDN_CCFLAGS = -DCONTROL_BUILD
+ADDN_CXXFLAGS = -DCONTROL_BUILD
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+DRIVER_LIBDIR = ../lib
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+include $(MAINDIR)/makefile.vxc
+
+#
+# Definitions required for building ctl_drv.out
+#
+APP_NAME := ctl_drv
+ctl_drv_dir = ..\bin
+ctl_drv_map = ctl_drv.map
+ctl_drv_libs = $(DRIVER_LIBDIR)/liblow_level.a \
+	       $(LIBDIR)/libtrima_common_sys.a
+ctl_drv_c_files = c_ultra.c
+ctl_drv_cxx_files = c_cent2.cpp c_door.cpp c_pump.cpp c_rbc.cpp \
+		    c_sound.cpp c_temp.cpp c_valve.cpp ctl_drv.cpp \
+		ctl_msg.cpp cfastmsg.cpp sounds.cpp rbcport.cpp 
+include $(COMDIR)/makefile.process_app
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd .. && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR) lib
+
+include $(COMDIR)/makefile.build_apps
+

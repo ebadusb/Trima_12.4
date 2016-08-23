@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<QuerySerialize xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<QuerySettings>
+		<DefaultSheetName>Results</DefaultSheetName>
+		<SwitchSheet>true</SwitchSheet>
+	</QuerySettings>
+	<QueryAssetList>
+		<QueryInfo>
+			<Name>Trima Predict Created Product</Name>
+			<Query>
+SELECT CDbl(TimeSeconds + TimeNanoSec / 1000000000) AS RecordTime, Message
+FROM TextOutput
+WHERE Message LIKE 'Predict: Created product%';
+			</Query>
+			<TableName>PredictCreatedProduct</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Log Level List</Name>
+			<Query>
+SELECT LevelName
+FROM LogLevel
+GROUP BY LevelName
+ORDER BY LevelName;
+			</Query>
+			<TableName>LogLevelList</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Periodic Column List </Name>
+			<Query>
+SELECT Name, Description
+FROM PeriodicSetItem
+GROUP BY Name, Description
+ORDER BY Name;
+			</Query>
+			<TableName>PeriodicColumnList</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query End of File</Name>
+			<Query>SELECT * FROM EndOfFile;</Query>
+			<TableName>QueryEndOfFile</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Log Header</Name>
+			<Query>SELECT * FROM LogHeader;</Query>
+			<TableName>QueryLogHeader</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Log Info</Name>
+			<Query>SELECT * FROM LogInfo;</Query>
+			<TableName>QueryLogInfo</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Log Level</Name>
+			<Query>SELECT * FROM LogLevel;</Query>
+			<TableName>QueryLogLevel</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Periodic Log Float</Name>
+			<Query>SELECT * FROM PeriodicLogFloat;</Query>
+			<TableName>QueryPeriodicLogFloat</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Periodic Log Int</Name>
+			<Query>SELECT * FROM PeriodicLogInt;</Query>
+			<TableName>QueryPeriodicLogInt</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Periodic Log String</Name>
+			<Query>SELECT * FROM PeriodicLogString;</Query>
+			<TableName>QueryPeriodicLogString</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Periodic Set</Name>
+			<Query>SELECT * FROM PeriodicSet;</Query>
+			<TableName>QueryPeriodicSet</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Periodic Set Item</Name>
+			<Query>SELECT * FROM PeriodicSetItem;</Query>
+			<TableName>QueryPeriodicSetItem</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Start Net Con</Name>
+			<Query>SELECT * FROM StartNetCon;</Query>
+			<TableName>QueryStartNetCon</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Task Created</Name>
+			<Query>SELECT * FROM TaskCreated;</Query>
+			<TableName>QueryTaskCreated</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Task Deleted</Name>
+			<Query>SELECT * FROM TaskDeleted;</Query>
+			<TableName>QueryTaskDeleted</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Text Output</Name>
+			<Query>SELECT * FROM TextOutput;</Query>
+			<TableName>QueryTextOutput</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Query Time Stamps</Name>
+			<Query>SELECT * FROM TimeStamps;</Query>
+			<TableName>QueryTimeStamps</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Trima Config From File</Name>
+			<Query>
+				SELECT Message
+				FROM TextOutput
+				WHERE (((Message) Like 'config data%'))
+				ORDER BY CDbl(TimeSeconds+TimeNanoSec/1000000000);
+			</Query>
+			<TableName>ConfigFromFile</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+		<QueryInfo>
+			<Name>Trima System Config</Name>
+			<Query>
+SELECT PeriodicSetItem.KeyCode, PeriodicSetItem.Name, PeriodicSetItem.Description, PeriodicSetItem.Format, Last(PeriodicLogInt.Data) AS IntData, Last(PeriodicLogFloat.Data) AS FloatData
+FROM (PeriodicSetItem LEFT JOIN PeriodicLogInt ON PeriodicSetItem.KeyCode = PeriodicLogInt.KeyCode) LEFT JOIN PeriodicLogFloat ON PeriodicSetItem.KeyCode = PeriodicLogFloat.KeyCode
+GROUP BY PeriodicSetItem.KeyCode, PeriodicSetItem.Name, PeriodicSetItem.Description, PeriodicSetItem.Format
+HAVING (((PeriodicSetItem.Name) Like 'Config%'))
+ORDER BY PeriodicSetItem.Name;
+			</Query>
+			<TableName>TrimaConfig</TableName>
+			<TableGeneration>true</TableGeneration>
+			<RangeGeneration>true</RangeGeneration>
+		</QueryInfo>
+	</QueryAssetList>
+	<BatchAssetList>
+		<AssetBatchOfQueryInfo>
+			<Name>Query all log tables</Name>
+			<Comment>Queries all the datalog tables.</Comment>
+			<List>
+				<string>Query End of File</string>
+				<string>Query Log Header</string>
+				<string>Query Log Info</string>
+				<string>Query Log Level</string>
+				<string>Query Periodic Log Float</string>
+				<string>Query Periodic Log Int</string>
+				<string>Query Periodic Log String</string>
+				<string>Query Periodic Set</string>
+				<string>Query Periodic Set Item</string>
+				<string>Query Start Net Con</string>
+				<string>Query Task Created</string>
+				<string>Query Task Deleted</string>
+				<string>Query Text Output</string>
+				<string>Query Time Stamps</string>
+			</List>
+		</AssetBatchOfQueryInfo>
+	</BatchAssetList>
+</QuerySerialize>

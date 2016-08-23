@@ -1,0 +1,8 @@
+# Machine global variables
+# DO NOT add non-machine specific variables here.
+# They go in /trima/config/globals
+MACHINE=1T000XX
+SENPID=000000000000
+EXTERNALIP=172.21.127.255
+EXTERNALBIP=172.21.255.255
+

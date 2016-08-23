@@ -1,0 +1,15 @@
+# FILENAME: setup03.dat
+# PURPOSE: test's std's SETUP command can be backgrounded
+# CHANGELOG:
+#   11/24/99 - dyes - initial version
+
+
+SUITE setup03_suite
+
+
+TEST setup03_test
+SETUP echo "setup03 setup" &
+SETUP sleep 1
+RUN echo "setup03 run"
+
+

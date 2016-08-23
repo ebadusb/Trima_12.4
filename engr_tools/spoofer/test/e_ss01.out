@@ -1,0 +1,70 @@
+ss01: TestMessage setup
+ss01: TestMessage printing
+ss01: inletRPM = 100
+ss01: inletRevs = 101
+ss01: inletAccumRevs = 102
+ss01: plateletRPM = 103
+ss01: plateletRevs = 104
+ss01: plateletAccumRevs = 105
+ss01: plasmaRPM = 106
+ss01: plasmaRevs = 107
+ss01: plasmaAccumRevs = 108
+ss01: acRPM = 109
+ss01: acRevs = 110
+ss01: acAccumRevs = 111
+ss01: returnRPM = 112
+ss01: returnRevs = 113
+ss01: returnAccumRevs = 114
+ss01: returnDirection = 1
+ss01: rbcValve = 2
+ss01: plasmaValve = 3
+ss01: plateletValve = 0
+ss01: valveLedTest = 1
+ss01: cassettePosition = 2
+ss01: reservoir = 1
+ss01: centrifugeRPM = 200
+ss01: centrifugeError = 0
+ss01: doorLocks = 2
+ss01: pauseSwitch = 0
+ss01: stopSwitch = 1
+ss01: event = 4
+ss01: msgCount = 1000
+ss01: returnPumpDirChgTime = 2000
+ss01: test1 = 3000
+ss01: test2 = 4000
+ss01: serviceEnableMode = 0
+ss01: TestMessage notify
+ss01: diff: inletRPM out=100 in=11
+ss01: diff: inletRevs out=101 in=22
+ss01: diff: inletAccumRevs out=102 in=33
+ss01: diff: plateletRPM out=103 in=45
+ss01: diff: plateletRevs out=104 in=57
+ss01: diff: plateletAccumRevs out=105 in=69
+ss01: diff: plasmaRPM out=106 in=81
+ss01: diff: plasmaRevs out=107 in=93
+ss01: diff: plasmaAccumRevs out=108 in=106
+ss01: diff: acRPM out=109 in=119
+ss01: diff: acRevs out=110 in=132
+ss01: diff: acAccumRevs out=111 in=145
+ss01: diff: returnRPM out=112 in=158
+ss01: diff: returnRevs out=113 in=172
+ss01: diff: returnAccumRevs out=114 in=186
+ss01: diff: returnDirection out=1 in=0
+ss01: diff: rbcValve out=2 in=0
+ss01: diff: plasmaValve out=3 in=1
+ss01: diff: plateletValve out=0 in=2
+ss01: diff: valveLedTest out=1 in=2
+ss01: diff: cassettePosition out=2 in=0
+ss01: diff: reservoir out=1 in=2
+ss01: diff: centrifugeRPM out=200 in=400
+ss01: diff: centrifugeError out=0 in=1
+ss01: diff: doorLocks out=2 in=1
+ss01: diff: pauseSwitch out=0 in=1
+ss01: diff: stopSwitch out=1 in=0
+ss01: diff: event out=4 in=6
+ss01: diff: msgCount out=1000 in=1005
+ss01: diff: returnPumpDirChgTime out=2000 in=2100
+ss01: diff: test1 out=3000 in=2990
+ss01: diff: test2 out=4000 in=4010
+ss01: diff: serviceEnableMode out=0 in=1
+ss01: exiting

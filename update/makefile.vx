@@ -1,0 +1,10 @@
+# Build the update script using the source from the Install directory 
+#
+# This makefile just sets the UPDATEDIR to the correct script and includes the makefile from there
+
+MAINDIR = ..
+UPDATEDIR = $(MAINDIR)/../Install/Install6X
+
+include $(UPDATEDIR)/makefile.vx
+
+

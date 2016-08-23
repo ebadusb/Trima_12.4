@@ -1,0 +1,14 @@
+# FILENAME: parser15.dat
+# PURPOSE: verify null EXPORT is caught by parser
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE parser15_suite
+
+
+TEST parser15_test
+EXPORT
+RUN echo foobar
+
+

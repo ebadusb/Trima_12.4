@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DatalogProcessor", "DatalogProcessor.vcproj", "{ED4FB7A5-7F27-4C5A-9F78-718CD2CAF3BA}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DatalogProcessorSetup", "DatalogProcessorSetup.vdproj", "{80D8610B-33AE-4978-8ECB-A6F07D081143}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED4FB7A5-7F27-4C5A-9F78-718CD2CAF3BA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED4FB7A5-7F27-4C5A-9F78-718CD2CAF3BA}.Debug|Win32.Build.0 = Debug|Win32
+		{ED4FB7A5-7F27-4C5A-9F78-718CD2CAF3BA}.Release|Win32.ActiveCfg = Release|Win32
+		{ED4FB7A5-7F27-4C5A-9F78-718CD2CAF3BA}.Release|Win32.Build.0 = Release|Win32
+		{80D8610B-33AE-4978-8ECB-A6F07D081143}.Debug|Win32.ActiveCfg = Debug
+		{80D8610B-33AE-4978-8ECB-A6F07D081143}.Debug|Win32.Build.0 = Debug
+		{80D8610B-33AE-4978-8ECB-A6F07D081143}.Release|Win32.ActiveCfg = Release
+		{80D8610B-33AE-4978-8ECB-A6F07D081143}.Release|Win32.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

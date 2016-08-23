@@ -1,0 +1,7 @@
+[total_machine_on_time]
+value=60
+[total_centrifuge_on_time]
+value=60
+[total_no_of_runs]
+value=1
+

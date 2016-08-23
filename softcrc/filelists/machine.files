@@ -1,0 +1,44 @@
+#
+# Files included in machine specific configuration.  Note that files
+# included in other CRC lists are excluded from this list.
+#
+# $Header$
+#
+
+# Individual files to ignore
+IGNORE /config/autocal.dat
+IGNORE /config/cal.dat
+IGNORE /config/cassette.dat
+IGNORE /config/setconfig.dat
+IGNORE /config/cassette.dat.bk
+IGNORE /config/setconfig.dat.bk
+IGNORE /config/config.dat
+IGNORE /config/config.dat.bk
+IGNORE /config/hw.dat
+IGNORE /config/meter.dat
+IGNORE /config/meter.dat.bk
+IGNORE /config/pin.bio
+IGNORE /config/rbc.dat
+IGNORE /config/trap_override.dat
+IGNORE /config/terror_config.dat
+IGNORE /config/test_build
+IGNORE /config/clinical_build
+IGNORE /config/features.tmp
+IGNORE /config/machine.tmp
+IGNORE /config/features.bin
+IGNORE /config/telnet
+IGNORE /config/ftp_with_cassette_down
+IGNORE /config/machine.id
+
+# Directories to ignore
+IGNORE /config/crc
+IGNORE /config/strings
+IGNORE /config/fonts
+IGNORE /config/data
+IGNORE /config/drivers
+IGNORE /machine/snap
+
+/config
+
+
+

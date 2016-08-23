@@ -1,0 +1,252 @@
+#Start up.
+
+### Set Up Time and Screen Name Stuff
+*newTime = 4
+set_screen_name(0)
+add_lang_suffix(" EN")
+
+
+### Snap The Two-Button Screen
+scrn("DON_SYSDON_START")
+
+### Grab all the config screens.
+walkThroughMssConfig
+
+### Grab the Donor Download Screen
+#gotoDonorDL
+#nanosleep(newTime)
+#scrn("DON_DL")
+#simulateMousePress(160,450)
+
+
+### Enter Donor Info Screen
+simulateMousePress(200,200)
+nanosleep(newTime)
+scrn("DON_Donvital_Init")
+
+
+### Enter Donor Info
+# - male
+simulateMousePress(175,300)
+# - height 6"3'
+simulateMousePress(300,300)
+scrn("enterheight")
+simulateMousePress(375,290)
+simulateMousePress(375,320)
+simulateMousePress(375,375)
+# - donor weight 235
+simulateMousePress(510,300)
+scrn("enterweight")
+simulateMousePress(505,327)
+simulateMousePress(560,328)
+simulateMousePress(512,284)
+simulateMousePress(524, 372)
+nanosleep(newTime)
+scrn("DONDONVITAL")
+
+
+### Enter Donor Vitals
+simulateMousePress(363,448)
+nanosleep(newTime)
+scrn("DonorVital")
+# - bloodtype O+
+simulateMousePress(140,240)
+scrn("bloodtypeselect")
+simulateMousePress(75,325)
+simulateMousePress(160,366)
+# - hematocrit 44
+simulateMousePress(300,300)
+scrn("enterhematocrit")
+simulateMousePress(266,280)
+simulateMousePress(266,280)
+simulateMousePress(350,368)
+# - platelet precount 300
+simulateMousePress(500,300)
+simulateMousePress(559,326)
+simulateMousePress(447,373)
+simulateMousePress(447,373)
+simulateMousePress(540,367)
+
+
+### Predict Screen
+simulateMousePress(350,450)
+nanosleep(newTime)
+scrn("DON_PREDICT")
+# - Open the Clock Calc
+simulateMousePress(545,386)
+# - Enter 40
+simulateMousePress(461,284)
+simulateMousePress(451,371)
+scrn("adjustproceduretimwcalculator")
+simulateMousePress(534,366)
+nanosleep(newTime)
+simulateMousePress(350,450)
+
+### Load the System
+getCassetteEntryScreenNew()
+
+### Enter SysLoad Screen
+scrn("DonSysLoad")
+
+### Bring Up "Loading" Screen
+cassetteStatus(2);
+scrn("DonSysEvac")
+
+### Enter PAS Clamp Screen
+simulateMousePress(333, 444)
+nanosleep(newTime)
+scrn("PASClamp")
+
+### Enter Clamp Screen
+simulateMousePress(333, 444)
+cassetteLoaded
+nanosleep(newTime)
+scrn("SysClamp")
+
+### Enter PLT Split Init Screen
+simulateMousePress(333, 444)
+nanosleep(newTime)
+scrn("PLTSplitInit")
+
+### Enter SysTest Screen
+systemState(3)
+nanosleep(newTime)
+scrn("DON_SYSTEST_INPROG")
+testComplete
+scrn("DON_SYSTEST_COMPLETE")
+
+
+### Enter Attach AC Screen
+systemState(4)
+scrn("SYS_STATE_4")
+
+
+### Back to Two-Button Screen
+simulateMousePress(333,444)
+systemState(5)
+scrn("SYS_STATE_5")
+
+
+### AC Complete
+acComplete
+nanosleep(newTime)
+scrn("DON_SYSDON_PREP")
+
+
+### Donor Connect
+simulateMousePress(333,444)
+systemState(6)
+run_draw_data
+nanosleep(newTime)
+scrn("DON_CONN")
+
+### Swap out donconn screen
+switchConnScreens
+scrn("DON_CONN_2")
+### Blood Prime
+simulateMousePress(333,444)
+systemState(7)
+run_prime_data
+scrn("DON_RUNPRIME")
+
+
+### End Run Screen
+simulateMousePress(575,50)
+nanosleep(newTime)
+scrn("EndRun")
+simulateMousePress(425,375)
+
+
+### Run Screen
+systemState(8)
+# - Draw Cycle
+run_draw_data
+nanosleep(newTime)
+scrn("run_data")
+# - Return Cycle
+run_return_data
+nanosleep(newTime)
+scrn("DON_RUNPROC_RET")
+
+
+### Rinseback
+systemState(9)
+scrn("SYS_STATE_9")
+
+
+### Disconnect (MSS Version)
+systemState(10)
+disconnectMsg(0)
+scrn("DISCON_NON_MSS_1")
+simulateMousePress(333,444)
+simulateMousePress(300,400)
+
+confirmDisconnect
+scrn("DISCON_NON_MSS_2")
+
+disconnectMsg(3)
+scrn("DISCON_MSS_1")
+
+### 2nd Disconnect Screen
+disco2
+scrn("DISCON_MSS_2")
+
+
+### MSS Begin
+### Clamp Channel
+simulateMousePress(333,444)
+systemState(12)
+#transitionFromDiscoToMss()
+scrn("MssClampChannelLines")
+
+
+### End MSS Run Screen
+simulateMousePress(575,50)
+scrn("MssEndRun")
+simulateMousePress(425,375)
+
+
+### Channel Test
+simulateMousePress(333,444)
+nanosleep(newTime)
+scrn("MssChannelTest")
+
+
+### PLT MSS Connection
+mssTransition(1)
+nanosleep(newTime)
+scrn("MssPltConnect")
+
+
+### Solution Prime
+simulateMousePress(333,444)
+nanosleep(newTime)
+scrn("MssSolutionPrime")
+
+
+### MSS Plt Split
+mssTransition(2)
+nanosleep(newTime)
+scrn("MssPltSplit")
+
+
+### Solution Addition
+simulateMousePress(333,444)
+mssTransition(3)
+mssData(16)
+nanosleep(newTime)
+scrn("MssAddition")
+
+
+### Seal and Detach
+systemState(13)
+nanosleep(newTime)
+scrn("MssSealDetach")
+
+
+### Remove Set
+simulateMousePress(333,444)
+nanosleep(newTime)
+scrn("MssRemoveSet")
+
+snagRunsum

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<RunParams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <inputFileName>C:\temp\1T01191_20040527_001_000138.dlog</inputFileName>
+  <outputDirectory>C:\temp</outputDirectory>
+  <episodicFormat>%S</episodicFormat>
+  <episodicFilter>false</episodicFilter>
+  <timestampFormat>%D5</timestampFormat>
+  <timestampFilter>false</timestampFilter>
+  <taskFormat>%S</taskFormat>
+  <taskFilter>false</taskFilter>
+  <logLevelFormat>%S</logLevelFormat>
+  <logLevelFilter>false</logLevelFilter>
+  <logLevels>
+    <areAllLevelsSelected>false</areAllLevelsSelected>
+    <IndicatorList>
+      <AllSelectedIndicator>
+        <platform>Trima</platform>
+        <allSelected>false</allSelected>
+      </AllSelectedIndicator>
+      <AllSelectedIndicator>
+        <platform>Optia</platform>
+        <allSelected>false</allSelected>
+      </AllSelectedIndicator>
+      <AllSelectedIndicator>
+        <platform>Atreus</platform>
+        <allSelected>false</allSelected>
+      </AllSelectedIndicator>
+      <AllSelectedIndicator>
+        <platform>Elutra</platform>
+        <allSelected>false</allSelected>
+      </AllSelectedIndicator>
+    </IndicatorList>
+    <UsedLevelList>
+      <LogLevel>
+        <levelName>predict_debug</levelName>
+        <inUse>true</inUse>
+        <platform>Trima</platform>
+      </LogLevel>
+    </UsedLevelList>
+  </logLevels>
+  <columnOrderTemplateLoc>predict-col.csv</columnOrderTemplateLoc>
+  <repeatPeriodic>true</repeatPeriodic>
+  <createConfig>true</createConfig>
+  <externalViewer />
+  <isSingleFile>true</isSingleFile>
+  <isRecursive>false</isRecursive>
+  <isTrimaDir>false</isTrimaDir>
+  <multFileDir />
+  <searchCrit />
+  <machineNames />
+  <startDate>2007-05-10T00:00:00-06:00</startDate>
+  <endDate>2007-05-10T00:00:00-06:00</endDate>
+  <minimumFileSize>0</minimumFileSize>
+  <suppressDecodeErrors>false</suppressDecodeErrors>
+  <suppressSearchErrors>false</suppressSearchErrors>
+  <suppressEpisodic>false</suppressEpisodic>
+  <suppressPeriodic>false</suppressPeriodic>
+  <columnsToWrap>1</columnsToWrap>
+  <apcOutput>false</apcOutput>
+  <suppressBinaryTags>false</suppressBinaryTags>
+  <regexSearch>true</regexSearch>
+  <isFileListSearch>false</isFileListSearch>
+  <mapAtreusProtoCols>false</mapAtreusProtoCols>
+  <searchMachine>Trima</searchMachine>
+  <suppressEmptyCols>true</suppressEmptyCols>
+  <suppressTestMachines>false</suppressTestMachines>
+  <versionMapList>
+    <UsedVersionList />
+  </versionMapList>
+</RunParams>

@@ -1,0 +1,11 @@
+#
+# Files included in user configuration CRC
+#
+# $Header$
+# $Log$
+#
+#  
+
+/config/machine.id
+/config/features.bin
+

@@ -1,0 +1,62 @@
+#
+#Set Automatic Constructors
+#
+cplusXtorSet(1)
+cplusStratShow()
+
+#
+# Load data logger
+#
+ld < d:\devel\trimavx\config\bin\sysinit_control.out
+
+#
+# Load System Stubs
+#
+#ld < c:\builds\trima\build2\unit_test\bin\system_stubs.out
+
+#
+# Execute system init stuff
+#
+#start()
+# Needed to start up the datalogger
+#putenv("LOG_FILE_NAME=1T00001_20021231_001_111111");
+#putenv("MACHINE=1T00001");
+#putenv("TRIMA_CRC=0x1234abcd");
+#putenv("AN2IP=172.21.0.1");
+#putenv("AN2BIP=172.21.255.255");
+#putenv("BUILD=5.999");
+#putenv("RELEASE=Version 5.X");
+#putenv("HW_REVISION=abcdefg");
+#sysinit_main()
+trima_datalogInit()
+
+
+#
+# Load Common
+#
+ld < d:\devel\trimavx\lib\control_common.out
+
+
+#
+# Start Message System
+#
+#sp (routerInit, 0,0,0,0,0,0,0,0,0)
+#sp (msgsystimerInit, 0,0,0,0,0,0,0,0,0)
+
+
+#
+# Load Common Data Stores
+#
+#ld < d:\devel\trimavx\lib\cds.out
+
+#
+# Load Test Code
+#
+#ld < d:\devel\trimavx\unit_test\bin\cds_test.out
+ld < d:\devel\trimavx\unit_test\cds\I80486\pfr_test.o
+
+
+#
+# Execute Test Program
+#
+#test_config_cds()

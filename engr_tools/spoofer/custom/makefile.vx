@@ -1,0 +1,93 @@
+#-------------------------------------------------------------------------------
+# $Header: $ 
+#
+# FILENAME:  makefile.vx
+# PURPOSE: builds custom spoofs for Trima testing.
+#
+# $Log: $
+#-------------------------------------------------------------------------------
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+#-------------------------------------------------------------------------------
+# The following are used to compile the spoof.
+# SPOOF_NAME is the name of the spoof. This must match the filename.
+# SPOOF_SRC is the path of the source file.
+# SPOOF_DST is the destination of the spoof file.
+#-------------------------------------------------------------------------------
+SPOOF_NAME = 
+SPOOF_SRC = .
+SPOOF_DST = .
+
+#-------------------------------------------------------------------------------
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#-------------------------------------------------------------------------------
+MAINDIR = ..\..\..
+
+#-------------------------------------------------------------------------------
+# VPATH must include the relative pathnames (from the directory containing this
+# makefile) to any directories containing source files used for the applications.
+#-------------------------------------------------------------------------------
+vpath %.cpp $(SPOOF_SRC)
+
+#-------------------------------------------------------------------------------
+# Define include directories needed for apps built in this directory
+#-------------------------------------------------------------------------------
+ADDN_INCDIR = -I $(MAINDIR)\engr_tools\libtools \
+	-I $(MAINDIR)\trima_common \
+	-I $(MAINDIR)\cds \
+	-I $(MAINDIR)\proc\algorithm \
+	-I $(MAINDIR)\engr_tools\spoofer \
+	-I $(MAINDIR)\engr_tools\spoofer\spoof \
+	-I $(MAINDIR)\engr_tools\spoofer\custom\source \
+	-I $(MAINDIR)\engr_tools\spoofer\custom\config
+
+#-------------------------------------------------------------------------------
+# Include makefile.vxc for common build settings.
+#-------------------------------------------------------------------------------
+include $(MAINDIR)/makefile.vxc
+
+#-------------------------------------------------------------------------------
+# Define location for Trima libraries
+#-------------------------------------------------------------------------------
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+#-------------------------------------------------------------------------------
+# Definitions required for building custom_spoof.out
+#-------------------------------------------------------------------------------
+APP_NAME := $(SPOOF_NAME)
+ADDN_CXXFLAGS = -D SUPPORT_CONTROL_SPOOFS -D SUPPORT_SAFETY_SPOOFS -D SUPPORT_NAMED_OBJECTS
+$(SPOOF_NAME)_dir = $(SPOOF_DST)
+$(SPOOF_NAME)_map = $(APP_NAME).map
+$(SPOOF_NAME)_libs = $(LTLIBDIR)\libtools.a \
+                  $(LIBDIR)\libtrima_common.a \
+                  $(LTLIBDIR)\libspoofer.a
+$(SPOOF_NAME)_c_files =
+$(SPOOF_NAME)_cxx_files = $(SPOOF_NAME).cpp
+include $(COMDIR)/makefile.process_app
+
+#-------------------------------------------------------------------------------
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#-------------------------------------------------------------------------------
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+.PHONY: libs
+libs:
+        @cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\spoofer && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\spoofer\spoof && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+include $(COMDIR)/makefile.build_apps
+

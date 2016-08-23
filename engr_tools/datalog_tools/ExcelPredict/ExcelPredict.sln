@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelPredict", "ExcelPredict.vcproj", "{507AA235-21E6-46C6-9DCC-A9B3CFCBB5B5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D} = {FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExcelPredictBuildProcess", "ExcelPredictBuildProcess.vcproj", "{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{507AA235-21E6-46C6-9DCC-A9B3CFCBB5B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{507AA235-21E6-46C6-9DCC-A9B3CFCBB5B5}.Debug|Win32.Build.0 = Debug|Win32
+		{507AA235-21E6-46C6-9DCC-A9B3CFCBB5B5}.Release|Win32.ActiveCfg = Release|Win32
+		{507AA235-21E6-46C6-9DCC-A9B3CFCBB5B5}.Release|Win32.Build.0 = Release|Win32
+		{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}.Debug|Win32.Build.0 = Debug|Win32
+		{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}.Release|Win32.ActiveCfg = Release|Win32
+		{FF7A2761-80D2-40A9-8B98-A6E3D3E6D21D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

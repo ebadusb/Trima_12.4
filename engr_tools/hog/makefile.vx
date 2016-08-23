@@ -1,0 +1,67 @@
+# $Header: $ 
+#
+# FILENAME:  makefile.vx
+# PURPOSE: builds hog_main.out for Trima testing.
+#
+# $Log: makefile.vx $
+
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all: check_opt_change local_build
+endif
+
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I $(MAINDIR)\engr_tools\libtools \
+	-I $(MAINDIR)\trima_common 
+
+include $(MAINDIR)/makefile.vxc
+
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)\lib
+LTLIBDIR = $(MAINDIR)\engr_tools\lib
+
+
+#
+# Definitions required for building spoof_main.out
+#
+APP_NAME := hog_main
+hog_main_dir = ..\bin
+hog_main_map = $(APP_NAME).map
+hog_main_libs = $(LTLIBDIR)\libtools.a \
+                  $(LIBDIR)\libtrima_common.a
+hog_main_c_files =
+hog_main_cxx_files = main.cpp 
+include $(COMDIR)/makefile.process_app
+
+
+#
+# This is the primary target for this makefile.  makefile.process_app
+# handles build APP_LIST with all of the defined applications.
+#
+.PHONY: local_build
+local_build: libs $(APP_LIST)
+
+.PHONY: libs
+libs:
+        @cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\engr_tools\libtools && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+include $(COMDIR)/makefile.build_apps
+

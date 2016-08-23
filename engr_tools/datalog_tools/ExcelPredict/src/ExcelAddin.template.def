@@ -1,0 +1,25 @@
+;***************************************************************************
+; File: Generic.def
+;
+; Purpose: Definition file for ExcelPredict.xll project
+;***************************************************************************
+
+LIBRARY ExcelPredict.xll
+
+EXPORTS
+	DllMain
+	xlAutoOpen
+	xlAutoClose
+	xlAutoRegister12
+	xlAutoAdd
+	xlAutoRemove
+	xlAddInManagerInfo12
+	xlAutoFree12
+	Optimizer_64_LoadOptimizerFromLog
+	Optimizer_64_LoadOptimizerFromConfig
+	Optimizer_64_LoadOptimizerFromConfigs
+	Optimizer_64_UpdateConditions
+	Optimizer_64_UpdateConfigurations
+	Optimizer_64_OptimizeProduct
+	SoftwareOptions_64_SetOption
+	SoftwareOptions_64_GetOption

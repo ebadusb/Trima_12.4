@@ -1,0 +1,82 @@
+################################################################################
+#
+# Makefile for Trima system initialization software
+#
+################################################################################
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change libs app
+endif
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I$(MAINDIR)/trima_common -I$(MAINDIR)/os -I$(MAINDIR)/config
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..\..
+include $(MAINDIR)/makefile.vxc
+
+#
+# Define absolute path for Trima libraries
+#
+LIBDIR := $(shell cmd /c 'cd $(MAINDIR) && cd')\lib
+
+CONFIG_COMMON_LIBS := $(LIBDIR)\libtrima_datalog.a \
+                      $(COMDIR)\datalog\lib\libdatalog.a \
+                      $(COMDIR)\zlib\lib\libzlib.a
+#
+# We need to link everything from the trima and common datalog libraries.  A quick
+# way to do this is to simply extract the object files into our temporary obj directory
+# and force all of them to be linked.
+#
+.opt/lib_objs: $(CONFIG_COMMON_LIBS) | .opt $(CPU)
+  ifeq ($(TERSE),true)
+	@echo x Extracting CONFIG_COMMON_LIBS objs in $(BASEDIR)
+  endif
+	$(Q)cd $(CPU) && for %l in ($(CONFIG_COMMON_LIBS)) do @$(AR) x %l 
+	$(Q)rm -f $(@).tmp 
+	$(Q)for %l in ($(CONFIG_COMMON_LIBS)) do @$(AR) t %l >> $(@).tmp
+	$(Q)sed "s@^@$(CPU)/@" < $(@).tmp > $@
+	$(Q)rm -f $(@).tmp
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME := sysinit_control
+sysinit_control_dir = ..\bin
+sysinit_control_c_files =
+sysinit_control_cxx_files = load_ugl.cpp sysinit_control.cpp sysinit_common.cpp sysinit_message.cpp sysinit_tasks.cpp tftpd.cpp
+sysinit_control_libs = $(LIBDIR)\libtrima_common.a $(COMDIR)\softcrc\lib\libsoftcrc.a $(COMDIR)\debug\lib\libdebug.a
+sysinit_control_lib_list = .opt/lib_objs
+include $(MAINDIR)/makefile.process_app
+
+APP_NAME := sysinit_safety
+sysinit_safety_dir = ..\bin
+sysinit_safety_c_files =
+sysinit_safety_cxx_files = sysinit_safety.cpp sysinit_common.cpp sysinit_message.cpp sysinit_tasks.cpp safety_warm_ram.cpp
+sysinit_safety_libs = $(LIBDIR)\libtrima_common.a $(COMDIR)\debug\lib\libdebug.a
+sysinit_safety_lib_list = .opt/lib_objs
+include $(MAINDIR)/makefile.process_app
+
+.PHONY: app
+app : $(APP_LIST)
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps
+
+.PHONY: libs
+libs:
+	@cd $(MAINDIR)\trima_common && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+	@cd $(MAINDIR)\datalog && $(MAKE) -f makefile.vx CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)

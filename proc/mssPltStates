@@ -1,0 +1,10 @@
+#  The state file controls the PLT portion of MSS
+#    it is spawned from MSSParallelProcessing.cpp
+#
+#
+[state]   MSSPLT
+[state]          VacPurge                   MSSPLT
+[state]          PasFinalFlowVerification   MSSPLT  
+[state]          VacPurgeFinal              MSSPLT  
+[state]          MSSPltAdditionPause        MSSPLT
+[state]          MSSPLTAddition             MSSPLT

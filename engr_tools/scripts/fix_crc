@@ -1,0 +1,27 @@
+# FILENAME: fix_crc
+# $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/scripts/rcs/fix_crc 1.4 2006/09/22 20:25:55Z dslausb Exp dslausb $
+# PURPOSE: generates valid crcs for current files to allow Trima procedure to run
+
+attrib "/trima/trima.crc", "-R"
+attrib "/trima/safety.crc", "-R"
+attrib "/config/crc/caldat.crc", "-R"
+attrib "/config/crc/config.crc", "-R"
+attrib "/config/crc/hwdat.crc", "-R"
+attrib "/config/crc/machine.crc", "-R"
+attrib "/config/crc/rbcdat.crc", "-R"
+attrib "/config/crc/setconfig.crc", "-R"
+attrib "/config/crc/cassette.crc", "-R"
+attrib "/config/crc/graphics.crc", "-R"
+attrib "/config/crc/strings.crc", "-R"
+
+softcrc "-filelist /trima/softcrc/filelists/trima.files -update /trima/trima.crc"
+softcrc "-filelist /trima/softcrc/filelists/safety.files -update /trima/safety.crc"
+softcrc "-filelist /trima/softcrc/filelists/caldat.files -update /config/crc/caldat.crc"
+softcrc "-filelist /trima/softcrc/filelists/config.files -update /config/crc/config.crc"
+softcrc "-filelist /trima/softcrc/filelists/hwdat.files -update /config/crc/hwdat.crc"
+softcrc "-filelist /trima/softcrc/filelists/machine.files -update /config/crc/machine.crc"
+softcrc "-filelist /trima/softcrc/filelists/rbcdat.files -update /config/crc/rbcdat.crc"
+softcrc "-filelist /trima/softcrc/filelists/setconfig.files -update /config/crc/setconfig.crc"
+softcrc "-filelist /trima/softcrc/filelists/cassette.files -update /config/crc/cassette.crc"
+softcrc "-filelist /trima/softcrc/filelists/graphics.files -update /config/crc/graphics.crc"
+softcrc "-filelist /trima/softcrc/filelists/strings.files -update /config/crc/strings.crc"

@@ -1,0 +1,14 @@
+# FILENAME: parser13.dat
+# PURPOSE: verify null PRECONDITION command is caught by parser
+# CHANGELOG:
+#   01/12/2000 - dyes - initial version
+
+
+SUITE parser13_suite
+
+
+TEST parser13_test
+PRECONDITION
+RUN echo foobar
+
+

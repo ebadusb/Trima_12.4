@@ -1,0 +1,13 @@
+# FILENAME: parser03.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE parser03_suite
+TEST parser03_test
+# test that parser detects no RUN command for a TEST
+
+
+
+

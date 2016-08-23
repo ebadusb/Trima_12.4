@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelFill", "ExcelFill.csproj", "{B2399D5B-E732-4D58-89B9-B4C226D0A874}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ExcelFillSetup", "ExcelFillSetup.vdproj", "{A873EE6F-6405-42EB-868D-3E1CE08DC15B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B2399D5B-E732-4D58-89B9-B4C226D0A874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2399D5B-E732-4D58-89B9-B4C226D0A874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2399D5B-E732-4D58-89B9-B4C226D0A874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2399D5B-E732-4D58-89B9-B4C226D0A874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A873EE6F-6405-42EB-868D-3E1CE08DC15B}.Debug|Any CPU.ActiveCfg = Debug
+		{A873EE6F-6405-42EB-868D-3E1CE08DC15B}.Debug|Any CPU.Build.0 = Debug
+		{A873EE6F-6405-42EB-868D-3E1CE08DC15B}.Release|Any CPU.ActiveCfg = Release
+		{A873EE6F-6405-42EB-868D-3E1CE08DC15B}.Release|Any CPU.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

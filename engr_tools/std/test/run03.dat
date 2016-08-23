@@ -1,0 +1,22 @@
+# FILENAME: run03.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/22/99 - dyes - initial version
+
+# verify -test option runs the specified test
+
+SUITE run03_suite
+
+
+TEST run03_test1
+RUN echo "run03_test1 should not run"
+
+
+TEST run03_test2
+RUN echo "run03_test2 should not run"
+
+
+TEST run03_test3
+RUN ls foobar
+EXIT 1
+

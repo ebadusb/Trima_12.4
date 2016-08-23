@@ -1,0 +1,36 @@
+################################################################################
+#
+# Makefile for Trima bootrom images
+#
+################################################################################
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: dirs
+else
+all: check_opt_change dirs
+endif
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+# For parallel make, need pass these to the sub-makes directly
+ifneq ($(strip $(JOBS)),)
+ JVARS=$(JOBS) TERSE=$(TERSE) Q=$(Q)
+endif
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := control_versalogic safety_pxe safety_versalogic
+
+.PHONY: dirs
+dirs : $(DIR_LIST)
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+  ifneq ($(JVARS),)
+	@echo x Sub-Make of: $(BASEDIR)/$@ with JVARS: $(JVARS)
+  endif
+	@cd $@ && $(MAKE) -f makefile.vx $(JVARS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)

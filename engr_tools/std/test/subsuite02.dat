@@ -1,0 +1,15 @@
+# FILENAME: subsuite02.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/23/99 - dyes - initial version
+
+# verify suite fails if 3rd subsuite fails
+
+SUITE subsuite02_suite
+
+SUBSUITE subsuite02_subsuite1
+SUBSUITE subsuite02_subsuite2
+SUBSUITE subsuite02_subsuite3
+
+
+

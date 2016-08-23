@@ -1,0 +1,18 @@
+# FILENAME: subsuite04.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/22/99 - dyes - initial version
+
+# verify -test option runs the specified test and no subsuites
+
+SUITE subsuite04_suite
+
+
+TEST subsuite04_test
+RUN echo "subsuite04_test should run"
+
+
+SUBSUITE subsuite04_subsuite
+
+
+

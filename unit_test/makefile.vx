@@ -1,0 +1,30 @@
+################################################################################
+#
+# makefile.vx - main unit_test makefile
+#
+################################################################################
+
+#
+# List of sub-directories to be built
+#
+DIR_LIST := trimaut cds predict
+
+# The gui unit test directory is stuff just for
+# the simulator.  It doesn't make sense to go in
+# there for a real build.
+ifeq ($(CPU),SIMNT)
+DIR_LIST += gui                
+endif
+
+.PHONY: all
+all : $(DIR_LIST)
+
+MAINDIR = ..
+include $(MAINDIR)/makefile.vxc
+
+.PHONY: $(DIR_LIST)
+$(DIR_LIST) :
+  ifneq ($(JOBS),)
+	@echo x Sub-Make of: $(BASEDIR)/$@ with JOBS=$(JOBS)
+  endif
+	@cd $@ && $(MAKE) -f makefile.vx $(JOBS) CPU=$(CPU) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)

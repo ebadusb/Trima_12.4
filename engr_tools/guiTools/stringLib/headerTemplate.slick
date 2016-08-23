@@ -1,0 +1,45 @@
+/************************> ENGINEER TOOLS DOMAIN <****************************
+*
+     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+*
+     Author:      Dan Slauson
+*
+     Class name:  N/A
+*
+     File name:   headerTemplate.slick
+*
+     Description:
+*
+	This is a boilerplate header file that will be modified by sed
+*	in the makefile in order to generate a language-specific structure
+	for each string.info file.
+*
+*************************< ENGINEER TOOLS DOMAIN >*****************************
+*
+* $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/stringLib/rcs/headerTemplate.slick 1.1 2009/05/20 18:40:43Z dslausb Exp dslausb $
+* $Log: headerTemplate.slick $
+* Revision 1.1  2009/05/20 18:40:43Z  dslausb
+* Initial revision
+*
+*******************************************************************************/
+
+#ifndef ____LANG_NAME___CLASS_SINGLE_INCLUDE__
+#define ____LANG_NAME___CLASS_SINGLE_INCLUDE__
+
+#include "string_id.h"
+#include "stringTable.h"
+
+class stringTable___LANG_NAME__ : public stringTable
+{
+private:
+
+	virtual void init(string langHashCode);
+	
+public:
+
+	stringTable___LANG_NAME__(string langHashCode);
+
+};
+
+#endif // #ifndef ____LANG_NAME___CLASS_SINGLE_INCLUDE__
+

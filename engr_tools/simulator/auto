@@ -1,0 +1,81 @@
+# 
+# simguiTelnet - Start the Trima GUI over Telnet
+# 
+
+# Set up the environment
+newTime = malloc(8)
+# Set time to July 4, 2010 at 4:20.  Go to www.unixtimestamp.com to change this.
+*newTime = 0x4C305240
+*(newTime+4) = 0
+clock_settime(0, newTime)
+putenv("TRIMA_MACHINE_NAME=1T03656")
+
+# Load up the sysinit module
+ld < host:c:\sim\trima\main\source\config\bin\sysinit_control.out
+
+# Initalize the datalog
+trima_datalogInit
+
+# Load up trima_common files
+ld < host:c:\sim\trima\main\source\trima_common\SIMNT\filehelp.o
+ld < host:c:\sim\trima\main\source\trima_common\SIMNT\datfile.o
+
+# Load the control library
+ld < host:c:\sim\trima\main\source\lib\control_lib.out
+
+# Load the CDS module
+ld < host:c:\sim\trima\main\source\lib\cds.out
+
+# Start the router and message system
+taskSpawn ("router", 30, 0, 20000, Router_main__6Router,  0,0,0,0,0)
+taskSpawn ("msgsystmr", 25, 0, 20000, MsgSysTimer_main__11MsgSysTimer,  0,0,0,0,0)
+
+# Load the datfile reader module
+ld < host:c:\sim\trima\main\source\gui\bin\fontdefs.o
+ld < host:c:\sim\trima\main\source\gui\simnt_ugl\bin\ugl_SIMNT.o
+ld < host:c:\sim\trima\main\source\gui\bin\language_loader.out
+ld < host:c:\sim\trima\main\source\gui\bin\datfile_reader.out
+
+# Read in the sw.dat data
+readSoftwareCDS
+
+# Read in the CDS data
+readConfigDat
+
+
+#read cassette information
+readCassette
+
+# Load up the GUI modules
+#ld < host:c:\sim\trima\main\source\gui\bin\fontdefs.o
+ld < host:c:\sim\trima\main\source\bin\graphics_package.out
+ld < host:c:\sim\trima\main\source\gui\bin\gui.out
+
+# Read in languages and strings
+readLanguageStuff
+
+# Run guimain
+guimain
+
+# Load and start predict
+ld < host:c:\sim\trima\main\source\proc\bin\predict.out
+taskSpawn ("predict", 150, 0, 100000, PredictTask_main,  0,0,0,0,0)
+
+# Load up the unit test modules
+ld < host:c:\sim\trima\main\source\unit_test\bin\simUtils.out
+*newTime = 5
+nanosleep(newTime)
+
+# Start the responder unit test stuff
+taskSpawn ("responder", 100, 0, 100000, responderLoop);
+nanosleep(newTime)
+
+# Transition to system state 2
+setSystemState 2
+
+# Enable the load Button
+enableLoadBtn
+
+#start the routine
+goFullRoutine
+

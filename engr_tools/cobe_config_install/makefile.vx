@@ -1,0 +1,58 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/cobe_config_install/rcs/makefile.vx 1.4 2009/01/14 14:45:43Z rm70006 Exp dslausb $
+#
+# Makefile - makefile for cobe config install executable
+#
+
+.PHONY: all
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+all: check_opt_change app
+endif
+
+#
+# Local overrides - must be defined before including makefile.vxc
+#
+ADDN_INCDIR = -I..\..\trima_common
+
+# The following ADDN_LDFLAGS was removed and code placed in
+# guiinit.cpp instead that would accomplish the same thing.
+# Doing this allows updateTrima.cpp to compile with out trying
+# to link in gui.
+# ADDN_LDFLAGS = -u _guimain__Fv
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+#
+# The following should define all of the source files of each type
+# to be compiled for the executable
+#
+APP_NAME := update
+update_dir  = bin
+update_map  = update.map
+update_cxx_files = updateTrima.cpp
+update_libs = $(COMDIR)/softcrc/lib/libsoftcrc.a
+include $(COMDIR)/makefile.process_app
+
+ADDN_CLEAN := $(update_dir)/updateTrima
+
+#
+# This is the rule that copies update.out to updateTrima
+$(update_dir)/updateTrima: $(update_dir)/update.out
+	cp -f $(update_dir)/update.out $(update_dir)/updateTrima
+
+app : $(APP_LIST) $(update_dir)/updateTrima
+
+
+#
+# This is the standard makefile for Trima applications
+#
+include $(MAINDIR)/makefile.build_apps
+

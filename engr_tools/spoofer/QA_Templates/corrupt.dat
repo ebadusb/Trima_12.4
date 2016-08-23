@@ -1,0 +1,86 @@
+#########################################################################################################
+# To use this file:
+# 1) Save a local copy of this file
+# 2) In your local copy, set configuration options below and save changes
+#    NOTE: Whitespace matters! Only toggle options or set byte number
+# 3) Copy this file to the /machine/tools directory on the trima device
+# 4) Make sure corrupt_main.out is also in the /machine/tools directory
+# 5) The next time the system boots, corrupt_main will load this file and perform the actions configured
+#########################################################################################################
+
+
+# Note: Whitespace matters here!! When modifying an entry, only modify the option, any
+#       other modifications could cause corrupt_main to not function properly.
+
+
+# The following entries specify which PFR data ought be corrupted (Control or Safety)
+# To configure corruption, remove the '#' at the beginning of the line which corresponds
+# to the desired configuration and add a '#' at the beginning of the other line for that option.
+#
+# Note: One or both of the options below can be enabled. However, if both are enabled, the
+#       same operation will be performed on both sets of PFR data (ie. both sets of data will be
+#       cleared, the same byte will be flipped in both sets of data, etc.)
+
+corruptControl=false
+#corruptControl=true
+
+corruptSafety=false
+#corruptSafety=true
+
+# Use the "clearData" option below to simply delete the PFR data specified by 
+# the configuration above.
+
+clearData=false
+#clearData=true
+
+
+# Individual bytes of the PFR data can be flipped using the option below. 
+# Remove the '#' at the beginning of the line to enable this option and change the 
+# value at the end of the line in order to specify which byte of the PFR data to flip.
+# The byte values correspond to the offset from the beginning of the PFR data,
+# such that byte=0 flips the first byte of data.
+
+#byte=120
+
+# Set updateCRC=true to recompute the CRC(s) for corrupted data. Default: false
+# 
+#updateCRC=true
+
+# Set logSafety=true to log the SPFRecovery structure. Default: false
+#
+#logSafety=true
+
+# Some Safety PFR data fields can be set explicitly. To enable this option:
+#
+# 1) set corruptSafety=true above
+# 2) uncomment the section tag [SAFETY_PFR_FIELDS]; otherwise, any name=value
+#    lines below it are ignored. You can also comment/uncomment individual lines.
+#
+# The currently supported fields are provided below.
+# 
+# - See corrupt.cpp::initItemMap() to add new fields
+# - For boolean fields, use 1/0 for true/false
+# - For enums, specify a numeric value, not an enumeration
+
+#[SAFETY_PFR_FIELDS]
+#
+# These are the supported PFR fields from SPFRecovery.SDonorVitals:
+#
+
+#cDonorVitalsStatus=1
+#fDonorWeight=1000
+#fDonorHct=10.0
+#DonorBloodType=1
+#fProcDonorTBV=5000
+#fSafetyDonorTBV=7000
+
+#
+# These are the supported PFR fields from SPFRecovery:
+#
+
+#PFRSafetyAlarmInProgress=1
+#PFR_SystemState=10
+#PFR_cDonorConnectedState=255
+#PFR_fAccumInletVolumeAtHighRatio=299
+#PFR_bTBVLockOut=0
+#PFR_fSafetyDonorTBV_liters=7.0

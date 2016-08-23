@@ -1,0 +1,136 @@
+#
+#
+#  Simulator setup and datalog initialization
+#
+
+#Change this line to the appropriate directory on your build machine.
+cd "d:/trima"
+
+newTime = malloc(8)
+? shParse "*newTime = [clock seconds]"
+*(newTime+4) = 0
+clock_settime (0, newTime)
+putenv("TRIMA_MACHINE_NAME=1TVXSIM")
+ld < config/bin/sysinit_control.out
+trima_datalogInit
+
+#
+#
+#   Common module loads
+#
+ld < lib/control_lib.out 
+#ld < lib/trimamessages.out
+ld < lib/cds.out
+taskSpawn ("router", 30, 0, 20000, Router_main__6Router,  0,0,0,0,0)
+taskSpawn ("msgsystmr", 25, 0, 20000, MsgSysTimer_main__11MsgSysTimer,  0,0,0,0,0)
+
+readConfigCDS
+
+#
+#  GUI stuff
+#
+ld < gui/bin/fontdefs.o
+ld < gui/bin/ugl_SIMNT.o
+#ld < gui/bin/guilib1.out
+#ld < gui/bin/guilib.out
+cd "gui/bin"
+ld < gui.out
+
+#ld < ../../service/bin/service.out
+
+cd ".."
+
+# We no longer need to spawn GUI as a separate task, since
+# the GUI routine's main goal now is to launch the WindML
+# winapp task.  So, hooray for that.
+guimain
+
+cd ".."
+
+ 
+#
+#  Procedure stuff
+#
+#ld < proc/bin/procarchive.out
+#ld < proc/bin/retoccmon.out
+#taskSpawn ("retoccmon", 50, 0, 32000, ReturnOccMon_main,  0,0,0,0,0)
+#ld < proc/bin/alarmhandler.out
+#taskSpawn ("alarm_h", 50, 0, 32000, AlarmHandler_main,  0,0,0,0,0)
+#ld < proc/bin/proc.out
+#taskSpawn ("proc", 50, 0, 32000, Proc_main,  0,0,0,0,0)
+
+
+
+#
+#
+#  Prediction stuff
+#
+ld < proc/bin/predict.out
+taskSpawn ("predict", 150, 0, 100000, Predict_main,  0,0,0,0,0)
+
+#
+#
+#    Debug / testing commands
+#
+
+#ld < unit_test/bin/predict_test.out
+# valid predict_test commands: (sp) predict_test fill_in_cds repredict next
+
+#fill_in_cds
+
+ld < unit_test/bin/gui_responder.out
+ld < unit_test/bin/gui_screenshots.out
+
+*newTime = 3
+nanosleep(newTime)
+
+#lang suffix for screenshot name
+#add_lang_suffix(" EN")
+
+#snap ("splash")
+
+
+#ld < unit_test/bin/gui_test.out
+# valid gui_test commands: systemState(n) (sp)TBVReply (sp)TBVSafetyReply
+sp TBVSafetyReply
+sp TBVReply
+*newTime = 5
+nanosleep(newTime)
+
+#put screen name on display
+set_screen_name(0)
+
+#enable vista screens
+#test_cds()
+
+#sysdonor screen
+systemState(2)
+
+#enable load btn
+enable_load_btn()
+
+#setAlarm(78)
+#set_alarm(32788)
+
+
+#enable vista donor button
+#vista_donor_data
+
+# RECEIVED_FROM_SAFETY = 10,
+# RECEIVED_FROM_AP2AGENT = 20
+#donor_data(20)
+
+# Start the responder unit test stuff
+taskSpawn ("responder", 100, 0, 100000, responderLoop);
+
+# Give the responder task time to start up.
+nanosleep(newTime);
+
+# Start the screenshot grabber unit test stuff
+taskSpawn ("screenshotGrabber", 100, 0, 100000, screenshotGrabberLoop);
+
+# Don't give up the command prompt 'til the screenshot grabber task has
+# had a chance to get started up.
+nanosleep(newTime);
+
+

@@ -1,0 +1,14 @@
+# FILENAME: run02.dat
+# PURPOSE: test .dat file for std (simple test driver)
+# CHANGELOG:
+#   11/19/99 - dyes - initial version
+
+
+SUITE run02_suite
+TEST run02_test
+# execute RUN command that will exit 0
+# but test expects exitcode of 1 so should fail
+RUN ls
+EXIT 1
+
+

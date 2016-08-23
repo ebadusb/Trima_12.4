@@ -1,0 +1,89 @@
+#
+# Config File.
+# # = comment
+#
+# Legal syntax
+# LABEL VALUE
+# LABEL = VALUE
+# LABEL , VALUE
+#
+#
+# Days Of Week
+#   0 = NONE
+#   1 = MONDAY
+#   2 = TUESDAY
+#   4 = WEDNESDAY
+#   8 = THURSDAY
+#  16 = FRIDAY
+#  32 = SATURDAY
+#  64 = SUNDAY
+# 127 = ALL_DAYS
+#
+# MON + WED + FRI = 1 + 4 + 16 = 21
+#
+#
+# file_version=11.0.0.0
+#
+#
+DAYS_OF_WEEK 127
+
+
+#
+# Time Window
+# 0 - 23 hours
+BEGIN_WINDOW  0
+END_WINDOW   23
+
+
+#
+# Number of Attempts
+#
+# 1 - 10
+#
+NUMBER_OF_ATTEMPTS 5
+
+
+#
+# Number of Timeouts
+#
+# 1 - 100
+#
+NUMBER_OF_TIMEOUTS 5
+
+
+#
+# Feature On / Off
+#
+# 0 = OFF 1 = ON
+#
+FEATURE 1
+
+
+#
+# Control Server IP Address
+#
+# 172.22.5.1
+#
+CONTROL_IP 172.21.255.251
+
+
+#
+# Control Server Port Number
+#
+# 0 - 32767
+#
+CONTROL_PORT 80
+
+
+#
+# Request Delay 
+#
+# 0 - 30
+#
+# Number of seconds to delay between Cadence commands.
+#
+#
+REQUEST_DELAY 20
+
+
+

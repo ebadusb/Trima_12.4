@@ -1,0 +1,1 @@
+cat bitmap.info | sed -n '/\s.*bmp/s/.*\s\(.*\.bmp[ \t]*$\)/..\/focgui\/newart\/\1/p' > bitmap_dependencies.include

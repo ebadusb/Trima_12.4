@@ -1,0 +1,17 @@
+# FILENAME: setup02.dat
+# PURPOSE: test's std's SETUP failure aborts the test
+# CHANGELOG:
+#   01/12/2000 - dyes - also verify that subsequent SETUP commands do not run
+#   11/24/99 - dyes - initial version
+
+
+SUITE setup02_suite
+
+
+TEST setup02_test
+SETUP echo foobar1
+SETUP ls bogusfile
+SETUP echo foobar2
+RUN echo foobar3
+
+

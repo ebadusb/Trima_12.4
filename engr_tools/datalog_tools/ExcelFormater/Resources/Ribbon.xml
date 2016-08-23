@@ -1,0 +1,13 @@
+﻿<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" xmlns:x="CaridianBCT" onLoad="RibbonLoaded" loadImage="GetImage">
+	<ribbon>
+		<tabs>
+			<tab idQ="x:Analysis" label="Analysis">
+				<group id="DatalogImporter" label="Datalog Formater">
+					<button id="FormatButton" label="Format" image="format-48x48.png" size="large" onAction="FormatDatalog" />
+					<button id="ManagerButton" label="Manager" image="manage-48x48.png" size="large" onAction="FormatManager" />
+					<button id="SettingsButton" label="Settings" image="settings-48x48.png" size="large" onAction="FormatSettings" />
+				</group>
+			</tab>	
+		</tabs>
+	</ribbon>
+</customUI>

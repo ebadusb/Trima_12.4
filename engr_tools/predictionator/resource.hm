@@ -1,0 +1,4 @@
+// Microsoft Developer Studio generated Help ID include file.
+// Used by AP2 predictionater.rc
+//
+#define HIDC_PRODUCT_YIELD_1            0x808803fe    // IDD_CFG_MAIN

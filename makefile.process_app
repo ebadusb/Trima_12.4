@@ -1,0 +1,10 @@
+# @(#) $Header$
+#
+# $Log$
+#
+# This file simply includes the common makefile.process_app.  If Trima
+# specific modifications are later needed, they can be put here.
+#
+
+include $(COMDIR)/makefile.process_app
+

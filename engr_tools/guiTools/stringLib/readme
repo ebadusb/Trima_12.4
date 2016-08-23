@@ -1,0 +1,57 @@
+$Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/stringLib/rcs/readme 1.1 2009/05/20 18:40:44Z dslausb Exp dslausb $
+
+************************> ENGINEER TOOLS DOMAIN <****************************
+
+     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+
+     Author:      Dan Slauson x4664
+
+     Class name:  N/A
+
+     File name:   readme
+
+     Description: Readme file for string lib tool.
+
+*************************< ENGINEER TOOLS DOMAIN >*****************************
+
+ $Log: readme $
+
+*******************************************************************************
+
+This folder generates an archive library that can be linked
+against in order to get strings from the string tables.  It
+uses sed in order to convert the string.info files into
+source code, and compiles that source code into a binary.
+
+If you want to see how this is used, take a look at the
+reason table code or the alarm table code in engineering
+tools.  Both make good use of this library.
+
+Because the binary depends on compiles in Trima source code, we
+can't just drop in a static executable, because it would defeat
+the purpose.  We would have to re-generate that binary each
+time a code change was made.  So, the binary must be both
+compiled and executed at Trima compile time in order to
+incorporate the newest source code.
+
+Thus, there is a need for an external compiler.  I chose g++
+since it's free and it's pretty common for other developers
+and engineers to have cygwin on their computer.  The makefile
+is set up so that if g++ is not in the path, it will fail,
+but the build will ignore the failure and continue.
+
+Thus, in order for this all to work, it is necessary to have
+Cygwin (or some other Windows implementation of g++) installed,
+and in your path.  In order to work correctly, it's a good idea
+to have Tornado first in your path, and cygwin last, so that if
+there is any overlap, the Tornado utilities are drawn from first.
+
+For example, the path in my build environment looks like this:
+PATH=D:\Tornado\host\x86-win32\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;D:\cygwin\bin;
+
+For questions, contact
+
+Dan Slauson
+x4664
+daniel.slauson@caridianbct.com
+

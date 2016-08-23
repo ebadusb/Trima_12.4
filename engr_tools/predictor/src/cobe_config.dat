@@ -1,0 +1,884 @@
+# 1.) This file must have lines that are less than 255 characters long in order
+#     for the name/value to be read properly.
+#
+# 2.) Each entry (or VALUE) is completely specified by SECTION_NAME and NAME.
+#     The format for data which is to be seen by the computer is as follows:
+#
+# [SECTION_NAME]
+# name0=value0
+# name1=value1
+# name2=value2
+# ...
+# [SECTION_NAME1]
+# name0=value0
+# ...
+
+[SYSTEM]
+control_minimum_memory=32380.0
+safety_minimum_memory=3712.0
+
+minimum_pump_rpm=0.5
+
+rbc_volume_kluge=1.0
+
+#
+#    APS auto-zero settings
+#
+# aps_auto_zero_average   - count of readings to be averaged for auto-zero
+# aps_auto_zero_range	  - range allowed across readings averaged for auto-zero
+# aps_auto_zero_min	  - min allowed auto-zero value (mmHg)
+# aps_auto_zero_max       - max allowed auto-zero value (mmHg)
+# aps_auto_zero_max_diff  - max difference allowed from previous auto-zero value (mmHg)
+#
+aps_auto_zero_average=3
+aps_auto_zero_range=20.0
+aps_auto_zero_min=-200.0
+aps_auto_zero_max=200.0
+aps_auto_zero_max_diff=100.0
+
+#
+#
+#    Reservoir related limits
+#
+reservoir_volume=55.0
+draw_too_large_warning=67.0
+draw_too_large_limit=134.0
+draw_too_small_warning=45.0
+return_too_small_warning=-38.0
+return_too_large_warning=-65.0
+return_first_cycle_margin=0.0
+reservoir_mix_volume=6.0
+
+#
+#
+#  Disposable set related limits
+#
+#   First cycle limits for V5 from IT4844
+#   First cycle and nominal volumes include return prime volume.
+#
+pltplsrbc_first_cycle_too_soon = 168.17
+pltplsrbc_first_cycle_too_late = 226.57
+pltplsrbc_extracorporeal_volume=188.17
+pltplsrbc_nominal_fill_volume=188.17
+
+rbcpls_first_cycle_too_soon = 150.41
+rbcpls_first_cycle_too_late = 206.81
+rbcpls_extracorporeal_volume=170.41
+rbcpls_nominal_fill_volume=170.41
+
+#
+#
+#   Miscellaneous volume constants
+#
+nominal_return_line_volume=28.0
+low_level_too_soon_limit = -17.0
+low_level_too_late_limit = -45.0
+sample_volume=20
+ako_volume=4.0
+qrp_ako=20.0
+ac_prime_volume=18.0
+
+# V5 residual values as measured by Linda Taylor
+#
+pltplsrbc_total_residual_volume=51.0
+rbcpls_total_residual_volume=45.0
+pltplsrbc_residual_rbc_volume=30.0
+rbcpls_residual_rbc_volume=23.0
+#
+# V5 residual using plasma rinseback from Todd Green -
+# based on clinical tests (mean plus 2 sigma)
+pltplsrbc_plsrinseback_residual_rbc_volume=13.0
+
+#
+# The following system parameters control the centrifuge shutdown
+# test.  The maximum_centrifuge_stop_current value specifies maximum
+# current value (in mAmps) expected with the centrifuge stopped.  The
+# maximum_centrifuge_error_time specifies the maximum time (in seconds)
+# allowed for the error signal received from the centrifuge motor
+# controller to be cleared after the inhibit bit is cleared (with
+# power already applied).  The centrifuge_shutdown_test_duration
+# value specifies the total length of time (in seconds) for the
+# centrifuge shutdown test.
+#
+maximum_centrifuge_stop_current=50.0
+maximum_centrifuge_error_time=1.0
+centrifuge_shutdown_test_duration=2.0
+
+#
+#  The prediction task is monitored to ensure that it is still responding.
+#  This number is the duration (in seconds) that the predict task is allowed
+#  to complete a reprediction for a single procedure and respond.  A value
+#  of zero disables the check.  Multiple procedure requests are half the
+#  config value (e.g. if the timeout is specified as 20 seconds, the allowed
+#  time for 15 procedures would be 20*15/2, or 150 seconds).
+#
+predict_timeout=30.0
+
+[HYPOVOLEMIA]
+# constants related to the hypovolemia condition and alarm monitor for the same
+# hypovolemia_adjust is the volume allowed (in ml) for proc to close the
+# valves and transition to rinseback when a potential hypovolemia condition
+# is detected.  This amount eats into the margins.
+#
+hypovolemia_adjust=5.0
+
+#
+#  These numbers are the margins for hypovolemia monitoring
+#
+hypovolemia_control_current=15.0
+hypovolemia_control_other=20.0
+hypovolemia_safety_current=25.0
+hypovolemia_safety_other=30.0
+#
+#
+#  AMAP procedures aim for this amount of additional margin
+#
+hypovolemia_amap_margin=20.0
+
+[LRS]
+collect_minimum_flow=0.5
+collect_ramp_rate=0.20
+
+#_standard for standard conc. collection <= 2100
+#_high for Higher conc. collection > 2100
+collect_maximum_flow_high=4.0
+collect_maximum_flow_standard=5.0
+first_max_pir_chamber_flow_high=2.0
+first_max_pir_chamber_flow_standard=2.5
+first_pir_flow_limit_high=1.0
+first_pir_flow_limit_standard=1.5
+second_max_pir_chamber_flow_high=3.0
+second_max_pir_chamber_flow_standard=3.8
+
+second_pir_flow_limit=2.0
+post_purge_wbc_in_chamber=6.5
+post_purge_wbc_in_chamber_large_bmi=6.0
+plasma_minimum_flow=0.5
+bmi_for_increased_purges=30.0
+
+[QIN]
+qin_limit_min=20.0
+qrp_limit_min=20.0
+qin_limit_max=142.0
+qin_flow_limit_slow=100.0
+qin_flow_limit_medium=120.0
+qin_flow_limit_fast=142.0
+qneedle_limit_max=302.5
+max_instant_qreturn=400
+tbv_qin_max_coefficient=0.030
+tbv_qnret_max_coefficient=0.075
+inlet_flow_ramp_constant=0.95
+inlet_flow_ramp_max_start_qin=45.0
+max_qin_plasma_collect=120.0
+max_qin_pc=120.0
+max_qin_pcae=100.0
+max_qin_pce=120.0
+max_qch_for_qin_during_pc=4.5
+
+[VIN]
+vin_max_target=10000
+vin_min_target=1000
+vin_plasma_start=200
+vin_end_of_qin_ramp=600
+vin_collect_start_constant=0.90
+min_vin_collect_start=400
+max_vin_collect_start=2000
+vin_interface_setup=50
+
+#
+# Constants used for Ydpur (yield decrement due to WBC purge) 
+# calculation (Ydpur is used to calculate VinTarg)
+#
+[PURGE]
+purge_loss_plt_in_chamber=0.40
+purge_loss_max_fraction_ytarg=0.50
+purge_scale_variable=0.1
+purge_max_total_volume=10.0
+vin_chamber_pack=15.0
+qplasma_purge=6.0
+vplasma_purge_cycle=1.1
+vin_clear_channel=15.0
+min_num_of_purge_cycles=5.0
+
+[CLEAR_LINE]
+#In addition to adjusting the length of clear line
+#after RBC spillover recovery, this variable
+#implicitly accelerates/delays valve opening.
+spillover_clear_line_vcollect=15.0
+
+#Same as above, but standard WBC purges
+clear_line_vcollect=15.0
+
+clear_line_qin=45.0
+clear_line_qplasma=10.0
+clear_line_qcollect=15.0
+
+[AIR_BLOCK]
+air_block_centrifuge_rpm=550.0
+air_block_start_rpm_target=750.0
+air_block_qplasma=10.0
+air_block_qchamber=2.5
+air_block_vplasma_target=4.0
+
+[PUMPS_PAUSE]
+pause_vin_processed_target=15.0
+pause_qplasma=0.0
+pause_qcollect=0.0
+
+[CENTRIFUGE_SLOW]
+centslow_rpm_trigger=2650.0
+centslow_rpm_target=2700.0
+centslow_interface_setup_time=15.0
+centslow_num_expected=0.0
+
+[CENTRIFUGE_STOP]
+centstop_rpm_trigger=1650.0
+centstop_rpm_target=2700.0
+centstop_interface_setup_time=60.0
+centstop_qplasma=5.0
+centstop_qcollect=5.0
+centstop_num_expected=0.0
+
+[RBC_PURGE]
+rbcpurge_qplasma=15.0
+rbcpurge_qcollect=0.0
+rbcpurge_vplasma=0.0
+rbcpurge_num_expected=1.0
+
+[PLASMA_VALVE_MOTION]
+pumps_stop_wait_time=1.0
+
+[SETTLE_CHANNEL]
+settle_channel_vin=50.0
+settle_channel_qin=70.0
+
+
+#
+# Constants used to calculate return flows
+#
+[RECIRCULATE]
+min_recirculate_platelet_collect=0.5
+max_recirculate_platelet_collect=0.75
+recirculate_platelet_collect=1.0
+recirculate_concentration=2100
+recirculate_pce_prerbc=1.0
+recirculate_sn_draw_vol=3
+plt_pls_crr=1.0
+rbc_pl_recirc_constant=1.0
+
+#
+#
+#  Constants for collections utilizing the RBC/Plasma protocols
+#
+[RBC_PLASMA]
+rbc_plasma_prime_volume=165.0
+rbc_plasma_prime_time=5.7
+max_rbc_plasma_hrbc=0.65
+rbc_plasma_qinmaxr=90.0
+rbc_plasma_qmaxr=90.0
+rbc_hct_delta=0.15
+
+#adjustments for PTF with rbc_hct_delta > 0.0
+rbc_hct_delta_IR_adjustment=1  
+rbc_hct_delta_IR_harmonizer=1.0 
+minimum_IR_adjustment_ratio=0.3
+apply_adjustment_safetyIR=1.2
+apply_adjustment_controlIR=1.2
+safety_IR_multiplier=2.0
+rachet_adjustment_ratio=0
+
+
+[RBC_COLLECTION]
+rbc_qch=5.0
+
+#  Max inlet flow for rbc collection is defined as average Qin
+max_qin_rbc_collection=90.0
+
+[WBC]
+wbc_aw_saturation_constant=112
+wbc_bw_saturation_constant=0.062
+wbc_channel_inventory=2.0
+
+[MNC]
+mnc_precount_for_purge=2.6
+mnc_precount_for_purge_large_bmi=3.1
+mnc_precount_for_plt_loss=1.7
+
+[PIR]
+pir_min_fraction_of_ytarg_loss=0.30
+
+[PLATELET]
+platelet_plasma_prime_volume=181.0
+platelet_plasma_prime_time=6.0
+max_platelet_plasma_hrbc=0.65
+platelet_saturation_ap=3.43
+platelet_saturation_bp=0.086
+channel_platelet_inventory=0.2
+chamber_flow_avg_time=5.0
+maximum_epca_volume=250.0
+epca_chamber_flow=2.0
+platelet_delta_vin_yield=200.0
+minimum_collect_volume=50.0
+platelet_mobilization_factor=0.80
+
+[CENTRIFUGE]
+#
+#
+#   These ramp rates are enforced during normal 
+#   sequencing unless overridden by pause or recovery rates.
+#
+standard_low_centrifuge_ramp=100.0
+standard_high_centrifuge_ramp=20.0
+standard_centrifuge_ramp_transition=2500.0
+ramp_down_rate=50.0
+#
+#
+#   This ramp rate is enforced during centrifuge slow and
+#   centrifuge stop recoveries.
+#
+stop_recovery_low_centrifuge_ramp=100.0
+#
+cent_min_cmd_run_spd=200.0
+cent_open_speed=50.0
+cent_pumps_paused_speed=1800.0
+cent_speed_error=50.0
+#
+#  This number is used for determination of speed at which we will
+#  transition to the air_block_centrifuge_rpm during a pause to
+#  avoid resonant frequencies.  If the current centrifuge speed is
+#  greater than this number we will hold that speed; between 
+#  cent_min_cmd_run_spd and cent_resonant_rpm we will run at the
+#  air_block_centrifuge_rpm speed.
+#
+cent_resonant_rpm=1000.0
+#
+#  These are the pressure sensor alarm limits
+cent_pres_limit_low=1350.0
+cent_pres_limit_high=1800.0
+
+[DISPOSABLE_TEST]
+#
+# evacuation_volume = return pump volume for air evacuation in product bags
+# evacuation_delta_pressure_limit = max APS pressure rise during evacuation
+# evacuation_abs_pressure_limit = max absolute APS pressure for continue allowed after
+#                                  evacuation pressure alarm
+# evacuation_startup_delay = delay before starting evacuation after cassette load
+#                             to allow pressure to equalize (seconds) 
+# evacuation_valve_open_dwell = time for which valves should remain open during
+#                                  evacendsetvalves state (seconds)
+# evacuation_return_speed = speed for return pump during air evacuation
+#
+# Note that if evacuation volume is 0, all evacuation related states are
+# effectively disabled.
+#
+evacuation_volume=140.0
+evacuation_delta_pressure_limit=25.0
+evacuation_abs_pressure_limit=40.0
+evacuation_startup_delay=6.0
+evacuation_valve_open_dwell=5.0
+evacuation_return_speed=90.0
+
+#
+#  Disposable test check limits for unclamped sample line
+#
+disptest_volume_fail=50.0
+disptest_volume_check=10.0
+disptest_delta_aps=51.0
+disptest_aps_threshold=30.0
+disptest_volume_fail2=115.0
+disptest_return_speed1=300.0
+disptest_samplebag_vol=15.0
+disptest_aps_max=500.0
+disptest_crossover_low=100.0
+disptest_crossover_high=300.0
+disptest_crossover_delta=10.0
+disptest_crackpressure_volm=115.0
+disptest_aps_min=-350.0
+
+
+
+
+[STARTUP]
+#
+#  Graphical limits for the first cycle pressure meter
+#
+pressure_meter_min_limit=-150.0
+pressure_meter_max_limit=150.0
+
+# Inlet flow rate limit for startup in ml/min
+# Collect flow rate limit for startup in ml/min
+# RPM limits for startup in RPM
+# Vin limits for startup in ml
+# Hrbc limits for startup as percent crit
+#
+rpm_blood_prime=200.0
+qin_blood_prime=40.0
+qrp_blood_prime=40.0
+vin_blood_prime_inlet=24.0
+
+qrp_startup=155.0
+qin_startup=45.0
+#
+#
+#   cps_startup overrides the CPS alarm limit for substates
+#   prime_channel, prime_channel2, and prime_channel3
+#
+cps_startup=1800.0
+
+qin_prime_channel=35.0
+qcol_prime_channel=30.0
+qp_prime_channel_pltplsrbc=5.0
+qp_prime_channel_rbcpls=30.0
+rpm_prime_channel=2000.0
+vin_prime_channel=70.0
+
+qin_prime_channel2=35.0
+qcol_prime_channel2=30.0
+qp_prime_channel2=5.0
+rpm_prime_channel2=2500.0
+vin_prime_channel2=80.0
+
+qin_prime_channel2a=13.0
+qcol_prime_channel2a=11.0
+qp_prime_channel2a=2.0
+rpm_prime_channel2a=2500.0
+vin_prime_channel2a=80.0
+hct_trigger_channel2a=32.0
+
+qin_prime_channel3=35.0
+qcol_prime_channel3=0.0
+qp_prime_channel3=0.0
+rpm_prime_channel3=2500.0
+vin_prime_channel3=110.0
+
+qin_prime_channel4=45.0
+qcol_prime_channel4=15.0
+qp_prime_channel4=15.0
+rpm_prime_channel4=2500.0
+vin_prime_channel4=118.0
+
+qin_prime_vent=45.0
+qcol_prime_vent=15.0
+qp_prime_vent=15.0
+rpm_prime_vent=2500.0
+vin_prime_vent=126.0
+
+#
+#
+#  Note: The ramp centrifuge state continues until the first return.  If
+#  no RPM decrease is programmed for the prime airout 1 substate, the value
+#  for return_first_cycle_margin should be set to zero.
+#
+qin_ramp_centrifuge=45.0
+qcol_ramp_centrifuge=0.0
+qp_ramp_centrifuge=12.0
+rpm_ramp_centrifuge=3000.0
+
+qin_prime_airout_1=0.0
+qcol_prime_airout_1=0.0
+qp_prime_airout_1=0.0
+rpm_prime_airout_1=3200.0
+
+qin_prime_airout_2=45.0
+qcol_prime_airout_2=10.0
+qp_prime_airout_2=5.0
+rpm_prime_airout_2=3000.0
+# This number should be less than 55.0 mls to maintain proper behavior
+delta_vin_prime_airout_2=50.0
+
+#percent increase to watch for Prime Spillover Signature
+rbc_prime_spillover_rise_percent = 10.0
+prime_spillover_sample_threshold = 6
+hct_to_hgb_conversion_factor = 3.01
+
+[COLLECT]
+rpm_collect=3000.0
+duty_cycle_limit=0.73
+rbc_duty_cycle_limit=0.9
+qneedle_ramp_coefficient=1.00
+
+
+[RINSEBACK]
+rinseback_i_rbmin=0.6
+rinseback_q_chrb1=20.0
+rinseback_q_chrb2=20.0
+rinseback_q_cspill=20.0
+rinseback_q_cpurge=100.0
+rinseback_q_crinse=100.0
+rinseback_q_inrb=100.0
+rinseback_q_inrec=100.0
+rinseback_q_pm=5.0
+rinseback_q_pmev=5.0
+rinseback_q_pmrb1=0.0
+rinseback_q_pmrb2=0.0
+rinseback_q_rrec=100.0
+rinseback_q_cdecel=20.0
+rinseback_v_plsdecel=1.5
+rinseback_v_cpurge=19.0
+rinseback_v_crb1=40.0
+rinseback_v_crinse1=37.0
+rinseback_v_crinse2=37.0
+rinseback_v_inrec=125.0
+rinseback_v_pevhold=15.0
+rinseback_v_plrb=60.0
+rinseback_v_prec=20.0
+rinseback_v_pvalve=20.0
+rinseback_v_r=18.0
+rinseback_v_rpevmin=2.0
+rinseback_v_s=20.0
+rinseback_v_trplt=51.0
+rinseback_v_trrbc=45.0
+rpm_rinseback_spillandpurge=550.0
+rpm_rinseback_threshold=2000.0
+
+##################################################
+# Old v5 values
+rinseback_qin_recirculate=100.0
+rinseback_qchamber_recirculate=20.0
+rinseback_vp_recirculate=20.0
+rinseback_qcol_margin=5.0
+rinseback_qchamber=20.0
+rinseback_min_infusion=0.6
+rinseback_vret_lower=18.0
+##################################################
+
+#
+#  Rinseback evacuation parameters: continue rinseback after the low level
+#  sensor reads empty.  At that point, the return pump will be paused for
+#  the hold_volume.  Once the hold volume has been accrued by the plasma
+#  pump, the return pump will restart.  If the return pump then accrues less
+#  than the min_volume before the low level sensor indicates empty then
+#  rinseback will be terminated.
+#
+rinseback_evacuation_hold_volume=20.0
+rinseback_evacuation_min_volume=2.0
+#
+#
+#   During rinseback the RBC valve will be thrown to the collect position
+#   if no RBC product has been collected.  The rinseback_valve_volume
+#   parameter describes the plasma volume needed before the valve will
+#   move.  A value of zero disables the valve motion.
+#
+rinseback_valve_volume=20.0
+
+[YIELD]
+yield_qin_constant=0.68
+yield_vin_constant=-0.67
+platelet_efficiency_multiplier=0.98
+yield_startup_volume=500
+
+[APS_PAUSE]
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#   The following configuration variables are used to control the
+#   APS pause function.
+#
+#
+#   Define the period during which we keep track of pauses.  This
+#   quantity is in MINUTES.  For example, if it is set to 1.5 then
+#   the APS alarm will occur if MORE than aps_max_pauses_in_period
+#   occur within any 90-second timeframe.
+#
+aps_pause_period=3.0
+aps_max_pauses_in_period=3.0
+#
+#
+#
+#  A pause is only allowed to last this long before the alarm is
+#  generated.  This quantity is in SECONDS.  This value may be set to
+#  zero, in which case the APS pause function is inactive (the alarm
+#  will occur immediately when the APS is detected out of range).
+#
+aps_pause_time_before_alarm=6.0
+#
+#
+#  Once we have paused, the pumps will not resume until the pressure reaches
+#  both the nominal range and we have paused for the minimum amount of time. To
+#  disable these you can set the minimum pause time to 0.0 and/or the pressure
+#  to a large value.  The nominal pressure should always be POSITIVE since we
+#  compare absolute values.  The minimum pause time is specified in SECONDS;
+#  the nominal pressure is in mmHg.
+#
+aps_minimum_pause_time=1.0
+aps_nominal_pressure=50.0
+#
+#
+#  This value specifies the flow reduction factor for APS alarm handling
+#  as a multiplier (i.e., 0.5 = 50% of nominal speed)
+#
+aps_flow_reduction_factor=0.5
+
+#   
+#  Additional delay to allow vein to inflate
+#    in seconds
+#  
+aps_additional_delay=3.0
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+[VERIFY_FLAGS]
+# Maximum platelet concentration before a HIGH_PLATELET_CONCENTRATION reason
+# to verify platelets is declared.
+maximum_concentration_for_no_verify_flag=4200.0
+
+# Minimum donor hematocrit change that will trigger a HIGH_DELTA_HCT
+# reason to verify platelets.
+minimum_donor_hematocrit_change_for_no_verify_flag=5.0
+
+# Donor hematocrit above which a HIGH_HCT reason to verify platelets is declared.
+maximum_donor_hematocrit_for_no_verify_flag=52.0
+
+# Percentage of target volume from which actual platelet volume must deviate
+# before a PLATELET_VOLUME_ERROR reason is declared.
+maximum_percentage_volume_deviation_for_no_verify_flag=5.0
+
+# Minimum LRS chamber flow before a HIGH_PLATELET_CONCENTRATION
+# or LOW_CHAMBER_FLOW reason to verify platelets is declared.
+minimum_chamber_flow_rate_for_no_verify_flag=1.2
+
+# Platelet collecting time after which to start checking for high
+# donor hematocrit or an excessive change in donor hematocrit.
+initial_platelet_collecting_time_for_no_verify_flag=0.0
+
+# Milliliters of Inlet that must pass after a "disturbance" before which
+# Steady State Platelet collection is assumed to be reestablished.
+steady_state_inlet_volume=320.0
+
+# Milliliters of deviation from the target that the actual platelet volume is allowed
+# before a PLATELET_VOLUME_ERROR reason is declared.
+maximum_plt_volume_deviation_for_no_verify_flag=10.0
+
+# Milliliters of deviation from the target that the actual plasma volume is allowed
+# before a PLASMA_VOLUME_ERROR reason is declared.
+maximum_plasma_volume_deviation_for_no_verify_flag=10.0
+
+# Milliliters of deviation from the target that the actual RBC volume is allowed
+# before a RBC_VOLUME_ERROR reason is declared.
+maximum_rbc_volume_deviation_for_no_verify_flag=10.0
+
+[RETURN_OCCLUSION]
+#
+# Parameters for return line occlusion
+#
+# stabilization_delay - length of time (in seconds) for which inlet and return
+#                       pump RPM must be stable before starting to collect APS
+#                       data
+#
+# alarm_power_limit   - minimum computed return power (scaled to a nominal 100
+#                       RPM) allowed without raising alarm.  Nominally, the
+#                       return pump power should be approximately 100.0
+#
+# alarm_type          - set to 1 for normal operation (R1 alarm), 2 for A1
+#                       alarm, 0 to disable alarm entirely.
+#
+# inlet_first_harmonic_scale
+# inlet_second_harmonic_scale
+#                     - ratio between squared inlet power at fundamental and
+#                       first and second harmonics
+#
+stabilization_delay=2.0
+alarm_power_limit=39.0
+alarm_type=0
+inlet_first_harmonic_scale=0.30
+inlet_second_harmonic_scale=0.07
+
+[CHAMBER_SATURATION]
+chamber_sat_vs3a=900.0
+chamber_sat_ts3b=5.0
+chamber_sat_ts3a_aps=30.0
+chamber_sat_ts3b_aps=10.0
+chamber_sat_ts4_aps=4.0
+chamber_sat_fs3a=2.07
+chamber_sat_fs3b=3.10
+chamber_sat_dur_3a=6.0
+chamber_sat_drgrmd_3a=1.013
+chamber_sat_dur_3b=6.0
+chamber_sat_drgrmd_3b=1.005
+chamber_sat_rgpmd_4a=0.032
+chamber_sat_rgpmd_4b=0.023
+
+[PTF]
+# to ease the return APS during setup 
+ptf_setup_return_pump_multiple= 0.60
+
+# PltPlsRBC setup/prime state
+ptf_pltplsrbc_setup_1_volume=50.0
+ptf_pltplsrbc_setup_1_hrbc=99.9
+
+ptf_pltplsrbc_setup_2_volume=50.0
+ptf_pltplsrbc_setup_2_hrbc=60.0
+
+ptf_pltplsrbc_prime_volume=0.0
+ptf_pltplsrbc_prime_hrbc=80.0
+ptf_pltplsrbc_prime_qrbc=30.0
+
+
+# Rbcpls setup/prime state
+ptf_rbcpls_setup_1_volume=0.0;
+ptf_rbcpls_setup_1_hrbc=99.9;
+
+ptf_rbcpls_setup_2_volume=0.0
+
+
+#double state
+ptf_rbcpls_setup_1B_volume=0.0;
+ptf_rbcpls_setup_1B_hrbc=99.9;
+
+ptf_rbcpls_setup_2B_volume=80.0
+ptf_rbcpls_setup_2B_plasma_ramp_volume=50.0
+
+#HCT scalar at inlet pump for setup2 A&B
+ptf_hct_scaling_factor=1.0
+
+
+# RBC flow during PTF RBC collection
+ptf_qrbc=30.0   
+
+# valid range for the CPS zero-ing
+ptf_cps_load_low=-350.0
+ptf_cps_load_high=350.0
+
+# Delta for CPS test during channel prime
+ptf_cps_test_change=500.0
+#500.0
+						     
+# amount of RBC collected to establish the CPS baseline pressure
+ptf_vrbc_collect_point=50.0
+
+#Initial CPS alarm point during RBC collection before baseline calculation
+ptf_rbc_initial_cps_limit=1000.0
+
+# Delta CPS pressure from calculated baseline for alarm point
+ptf_rbc_collect_delta=430.0
+
+# Max RBC PTF collection CPS limit
+ptf_rbc_collect_limit=1000.0
+
+
+[MSS]
+mss_cvl_white               = 37
+mss_cvl_black               = 25
+mss_cps_high                = 1350
+mss_cassette_vol_max        = 6
+mss_prime_return_vol        = 2.0
+mss_aps_backPressure        = 200
+mss_aps_high                = 500
+mss_plt_mss_min_prime_vol   = 13
+mss_plt_mss_max_prime_vol   = 27
+mss_vacuum_cycles           = 4
+mss_vac_1_collect_speed     = 100.0f
+mss_vac_1_plasma_speed      =   9.0f
+mss_vac_2_collect_speed     =   0.0f
+mss_vac_2_plasma_speed      =  50.0f
+mss_vac_3_collect_speed     = 110.0f
+mss_vac_3_plasma_speed      = 110.0f
+mss_vac_1_collect_vol       =  15.0f
+mss_vac_1_plasma_vol        =   1.3f
+mss_vac_2_plasma_vol        =   2.6f
+mss_vac_3_plasma_vol        =   6.0f
+mss_vac_4_collect_speed     = 110.0f
+mss_vac_4_plasma_speed      = 110.0f
+mss_vac_4_plasma_vol        =   5.0f
+mss_plt_ss_add_speed        = 100
+mss_plt_valve_timer         = 1.0 
+mss_plt_second_order_const  =  -9.0e-06
+mss_plt_linear_const        =   1.0e-04
+mss_plt_offset              =   0.7733
+mss_ac_second_order_const   =  -6.0e-06
+mss_ac_linear_const         =   1.0e-04
+mss_ac_offset               =   0.8103
+mss_pls_second_order_const  =  -9.0e-06
+mss_pls_linear_const        =   1.0e-04
+mss_pls_offset              =   0.7733
+mss_prime_speed_percent     =   0.9
+mss_plt_prime_speed         =  60.0
+mss_plt_prime_final_speed   =  30.0
+mss_plt_prime_final_vol     =   1.3
+mss_return_inlet_match_speed         =  27.0
+mss_return_acdisco_match_speed       =  60.0
+mss_channel_check1_collect_speed     =  18.38
+mss_channel_check1_collect_vol       =  10.0
+mss_channel_check2_collect_speed     = 100.0
+mss_channel_check2_plasma_speed      =  80.0                                  
+mss_channel_check2_plasma_vol        =  8.0
+
+mss_post_purge_fill_plasma_speed     = 110.0
+mss_post_purge_fill_collect_speed    = 110.0
+mss_post_purge_fill_plasma_volume    = 10.0
+
+# 100 - this number for % :
+mss_plt_ss_empty_percentage          =   5.0  
+mss_rbc_ss_empty_percentage          =   5.0
+
+mss_rbc_detector_offset_from_avg     =   4.0
+mss_rbc_detector_trigger_samples     =   1.0
+mss_rbc_detector_z_samples           =   10.0
+mss_connection_samples               =   50.0
+
+mss_channel_volume_w                   = 70.0
+mss_channel_volume_b                   = 60.0
+mss_rinseback_success_w                = 50.0
+mss_rinseback_success_b                = 50.0
+
+mss_rbc_ss_min_prime_vol    = 8.0
+mss_rbc_ss_max_prime_vol    = 25
+mss_rbc_ss_add_ac_speed     = 90
+mss_rbc_ss_add_prime1_speed = 15
+mss_rbc_ss_add_prime2_speed = 30
+mss_rbc_ss_add_prime3_speed = 50
+mss_rbc_ss_add_meter_speed  = 75
+mss_rbc_ss_add_prime1_vol   = 4.5
+mss_rbc_ss_add_prime2_vol   = 15.0
+mss_rbc_ss_add_prime3_vol   = 12.5
+mss_rbc_prime_speed         =  50.0
+
+# Filter and Line Volm:
+mss_ptf_ss_volume           = 59.0
+
+mss_ptf_filter_no           = 2
+mss_acprime_pause           = 1.0
+mss_ptf_aps_high            = 500
+
+mss_ac_closure_aps          = -250
+
+
+mss_ac_closure_max_vol      = 11
+mss_connection_deltaRGmax  = 0.5
+mss_connection_RGmax_vol   = 30.0
+mss_ptf_filter_loss        = 13.0
+
+[PRIME_HEMOLYSIS]
+prime_hemolysis_rg_trigger          = 50.0
+prime_hemolysis_rg_return_level     =  1.1
+prime_hemolysis_green_return_limit  = 1000.0
+
+
+[SALINE_RINSEBACK]
+sr_recirc1_qin   = 70.0
+sr_recirc1_qp    = 0.0
+sr_recirc1_mod   = 30.0
+sr_recirc1_vr    = 15.0
+sr_recirc1_vin   = 35.0
+
+sr_evac1_qp       = 70.0
+sr_evac1_vr_limit = 2.0
+sr_evac1_vp_limit = 35.0
+
+sr_draw_qc  = 50.0
+sr_draw_qr  = 24.0
+sr_draw_vr  = 28.0
+
+sr_recirc2_qin   = 70.0
+sr_recirc2_qp    = 70.0
+sr_recirc2_qr    = 70.0
+sr_recirc2_vin   = 33.0
+
+sr_evac2_qp       = 70.0
+sr_evac2_vr_limit = 2.0
+sr_evac2_vp_limit = 35.0
+
+sr_flush_qc = 50.0
+sr_flush_qr = 50.0
+sr_flush_vr = 32.0
+
+
+

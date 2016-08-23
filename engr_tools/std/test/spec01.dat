@@ -1,0 +1,21 @@
+# FILENAME: spec01.dat
+# PURPOSE: verify -specs lists all test specs
+# CHANGELOG:
+#   01/12/99 - dyes - initial version
+
+
+SUITE spec01_suite
+
+TEST spec01_test1  # 1 spec
+SPEC test1 spec1
+RUN echo foobar
+
+TEST spec01_test2  # 2 specs
+SPEC test2 spec1
+SPEC test2 spec2
+RUN echo foobar
+
+TEST spec01_test3  # no spec
+RUN echo foobar
+
+

@@ -1,0 +1,39 @@
+# @(#) $Header: E:/BCT_Development/Trima5.R/Trima/engr_tools/guiTools/reasonTable/rcs/makefile.vx 1.1 2009/05/20 22:08:31Z dslausb Exp dslausb $
+#
+#************************> ENGINEER TOOLS DOMAIN <****************************
+#
+#     Copyright(c) 2009 CaridianBCT, Inc. All rights reserved
+#
+#     Author:      Dan Slauson x4664
+#
+#     Class name:  N/A
+#
+#     File name:   makefile.vx
+#
+#     Description:
+#
+#	This is the makefile.vx to generate a program that outputs
+#	all the relevant information on all the Trima reason codes
+#	into a nicely formatted CSV table.
+#
+#*************************< ENGINEER TOOLS DOMAIN >*****************************
+#
+# $Log: makefile.vx $
+# Revision 1.1  2009/05/20 22:08:31Z  dslausb
+# Initial revision
+# Revision 1.2  2009/03/09 22:31:32Z  dslausb
+# Update clean target
+# Revision 1.1  2009/03/09 22:15:18Z  dslausb
+# Initial revision
+#
+#*******************************************************************************
+
+# REQUIRED PATH DEFINITIONS
+TRIMA_ROOT=../../..
+CPP_FILES=genReasonTable.cpp reasonMap.cpp reasonToString.cpp
+FILENAME=reasonTable
+
+include ../makefile_defs.vx
+
+build:table_output
+

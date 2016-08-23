@@ -1,0 +1,65 @@
+# $Header: H:/BCT_Development/Trima5.R/Trima/safety/rcs/makefile.vx 1.11.1.2 2009/10/05 16:03:30Z dslausb Exp $
+#
+# Makefile - makefile for safety executive apps
+#
+# $Log$
+#
+
+#
+# Define include directories needed for apps built in this directory
+#
+ADDN_INCDIR = -I$(MAINDIR)\trima_common -I$(MAINDIR)\service
+
+#
+# Define location for Trima libraries
+#
+LIBDIR = $(MAINDIR)/lib
+
+#
+# MAINDIR should be set to the relative path from this makefile directory
+# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
+# style) directory separators if they are needed.
+#
+MAINDIR = ..
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all: clean
+else
+.PHONY: all
+all: check_opt_change apps
+endif
+
+include $(MAINDIR)/makefile.vxc
+
+#
+# Definitions required for building saf_exec.out
+#
+vpath %.cpp . $(MAINDIR)/trima_common
+OPTFLAGS := $(OPTFLAGS) -Os
+APP_NAME := saf_exec
+saf_exec_dir = bin
+saf_exec_map = saf_exec.map
+saf_exec_libs = 
+saf_exec_c_files =
+saf_exec_cxx_files = s_dev.cpp s_donor.cpp s_res.cpp s_glob.cpp s_exec.cpp s_disc.cpp \
+                     s_module.cpp s_proc_group.cpp s_monitor.cpp s_monitor_group.cpp \
+                     pump_monitor.cpp stroke_calc.cpp s_set.cpp \
+                     delta_vol_calc.cpp cassette_monitor.cpp s_main.cpp \
+                     s_power.cpp s_state.cpp s_bag.cpp s_cntdefault.cpp \
+                     s_cntac.cpp s_cntplt.cpp s_cntpls.cpp s_cntrbc.cpp s_cntinl.cpp \
+                     s_cntrtn.cpp acratioa.cpp acratiop.cpp acratioi.cpp \
+                     acinfusc.cpp acinfusr.cpp acinfusa.cpp hypovolc.cpp \
+                     hypovold.cpp compdepl.cpp s_pfr.cpp needle.cpp\
+                     s_valve.cpp s_door.cpp pwr_test.cpp dat_fnof.cpp s_pmsg.cpp \
+                     trima_assert.cpp
+include $(MAINDIR)/makefile.process_app
+
+
+.PHONY: libs
+libs:
+	;	
+
+apps: $(APP_LIST)
+include $(MAINDIR)/makefile.build_apps
+

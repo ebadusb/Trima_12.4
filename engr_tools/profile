@@ -1,0 +1,10 @@
+# Trima System development profile
+# startup profile executed by shell during login
+export PATH=$PATH:.:/d/tools:/bin32:/usr/ucb:/d/tools:/usr/bin::./ TMPDIR=${TMPDIR:-/tmp}
+export TERM=ansi
+export VIM=/d/tools
+alias vi=vim
+. /d/machine/globvars
+stty quit ^\\
+umask 2
+LANG=C

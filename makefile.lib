@@ -1,0 +1,12 @@
+# @(#) $Header$
+#
+# Makefile.lib - common makefile for libraries
+#
+# $Log$
+#
+# This file simply includes the common makefile.lib.  If Trima
+# specific modifications are later needed, they can be put here.
+#
+
+include $(COMDIR)/makefile.lib
+
