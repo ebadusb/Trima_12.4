@@ -1,10 +1,13 @@
-/* pc386/config.h - PC [34]86/Pentium/Pentium[234] configuration header */
+/* pc386/config.h - PC {3,4}86/Pentium{,2,3,4} configuration header */
 
 /* Copyright 1984-2003 Wind River Systems, Inc. */
 
 /*
 modification history
 --------------------
+04r,23nov15,hem  Added BENGAL_DEBUG, SYSTEM_RAM_SIZE set to 64MB
+04q,23nov15,hem  Disabled INCLUDE_CPU_PROBE, LOCAL_MEM_AUTOSIZE
+04p,23nov15,hem  atom_bengal derived from pcpentium4 bsp
 04o,30apr03,jtp  Update BSP Revision to reflect changes
 04n,17apr03,zmm  Disable memory auto-sizing for 486 CPU only. Undef
                  LOCAL_MEM_AUTOSIZE.
@@ -170,10 +173,10 @@ extern "C" {
 #define BSP_VERSION	"1.2"	/* Tornado 2.2 is 1.2 */
 #define BSP_REV		"/3"	/* increment by whole numbers */
 
-/*
-#include "configAll.h"
-*/     
+#define BENGAL_BSP
+#define BENGAL_DEBUG  (2)
 
+#include "configAll.h"
 #include "pc.h"
 
 
@@ -191,21 +194,23 @@ extern "C" {
 
 /* CPU auto detection with sysCpuProbe() that support Intel CPUs for now */
 
-#define	INCLUDE_CPU_PROBE		/* define to perform sysCpuProbe() */
+#undef	INCLUDE_CPU_PROBE		/* define to perform sysCpuProbe() */
 #ifndef	INCLUDE_CPU_PROBE
 #   undef  CPU
-#   define CPU		PENTIUM		/* for CPU conditionals in BSP */
+#   define CPU		PENTIUM4		/* for CPU conditionals in BSP */
 #endif	/* INCLUDE_CPU_PROBE */
 #define X86CPU_DEFAULT	X86CPU_PENTIUM	/* for sysProcessor set in BSP */
 
 /* Default boot line */
+#define DEFAULT_BOOT_LINE "ata=0,0(0,0)host:/ata0:1/vxWorks"
 
-#include "../../config/password.h"
-#if (!defined(INTFTPUSER) || !defined(INTFTPPASS))
-#error "No internal FTP user/password defined"
-#endif
-#define DEFAULT_BOOT_LINE \
-"ene(0,0)control_safety:/trima/safety/boot/vxWorks e=10.0.0.1:ffffff00 h=10.0.0.2 tn=safety u=" INTFTPUSER " pw=" INTFTPPASS " f=0"
+#if (BENGAL_DEBUG >= 1)
+  /* Boot from ATA drive */
+  #define INCLUDE_ATA
+  #define INCLUDE_ATA_SHOW
+  #undef  DEFAULT_BOOT_LINE
+  #define DEFAULT_BOOT_LINE "ata=0,0(0,0)host:/ata0:1/vxWorks h=90.0.0.3 e=90.0.0.50 u=target"
+#endif /* BENGAL_DEBUG */
 
 /* Warm boot (reboot) devices and parameters */
 
@@ -256,19 +261,24 @@ extern "C" {
 
 /* included components */
 
-#define INCLUDE_ANSI_ALL         
-
-#define INCLUDE_ARP
+#define INCLUDE_ANSI_ASSERT
+#define INCLUDE_ANSI_CTYPE
+#define INCLUDE_ANSI_MATH
+#define INCLUDE_ANSI_STDIO
+#define INCLUDE_ANSI_STDIO_EXTRA
+#define INCLUDE_ANSI_STDLIB
+#define INCLUDE_ANSI_STRING
+#define INCLUDE_ANSI_TIME
 #define INCLUDE_ARP_API
-
-#define INCLUDE_BOOTP
-
+#define INCLUDE_AUX_CLK
+#define INCLUDE_BOOT_LINE_INIT
 #define INCLUDE_BSD
 #define INCLUDE_BSD_SOCKET
-
+#define INCLUDE_BUF_MGR
 #define INCLUDE_CACHE_ENABLE
 #define INCLUDE_CACHE_SUPPORT
-
+#define INCLUDE_CBIO
+#define INCLUDE_CLASS_SHOW
 #define INCLUDE_CPLUS
 #define INCLUDE_CPLUS_DEMANGLER
 #define INCLUDE_CPLUS_IOSTREAMS
@@ -276,70 +286,139 @@ extern "C" {
 #define INCLUDE_CPLUS_LANG
 #define INCLUDE_CPLUS_STL
 #define INCLUDE_CPLUS_STRING
-
-#define INCLUDE_ELF 
-
+#define INCLUDE_CPLUS_STRING_IO
+#define INCLUDE_CTORS_DTORS
+#define INCLUDE_DEBUG
+#define INCLUDE_DISK_CACHE
+#define INCLUDE_DISK_UTIL
+#define INCLUDE_DLL
+#define INCLUDE_DOSFS
+#define INCLUDE_DOSFS_DIR_FIXED
+#define INCLUDE_DOSFS_DIR_VFAT
+#define INCLUDE_DOSFS_FAT
+#define INCLUDE_DOSFS_MAIN
 #define INCLUDE_END
-
+#define INCLUDE_ENV_VARS
 #define INCLUDE_EXC_HANDLING
 #define INCLUDE_EXC_SHOW
 #define INCLUDE_EXC_TASK
-
 #define INCLUDE_FLOATING_POINT
+#define INCLUDE_FORMATTED_IO
+#define INCLUDE_GNU_INTRINSICS
+#define INCLUDE_HASH
+#define INCLUDE_HOST_TBL
 #define INCLUDE_HW_FP
-
-#define INCLUDE_IO_SYSTEM
-
+#define INCLUDE_HW_FP_SHOW
 #define INCLUDE_ICMP
+#define INCLUDE_ICMP_SHOW
 #define INCLUDE_IGMP
-
-/*For debugging ESMC END Driver*/
-/*
-#define INCLUDE_LOGGING
-#define INCLUDE_LOG_STARTUP
-*/
-
+#define INCLUDE_IGMP_SHOW
+#define INCLUDE_INTEL_CPU_SHOW
+#define INCLUDE_IO_SYSTEM
+#define INCLUDE_IP
+#define INCLUDE_KERNEL
 #define INCLUDE_LOADER
-
+#define INCLUDE_LOGGING
+#define INCLUDE_LOOPBACK
+#define INCLUDE_LSTLIB
 #define INCLUDE_MEMORY_CONFIG
 #define INCLUDE_MEM_MGR_BASIC
+#define INCLUDE_MEM_MGR_FULL
 #define INCLUDE_MEM_SHOW
-
 #define INCLUDE_MMU_BASIC
 #define INCLUDE_MODULE_MANAGER
-
 #define INCLUDE_MSG_Q
-
-#define INCLUDE_NET_SHOW
-
+#define INCLUDE_MSG_Q_SHOW
+#define INCLUDE_MUX
+#define INCLUDE_NETDEV_CONFIG
+#define INCLUDE_NETDEV_NAMEGET
+#define INCLUDE_NETINET_IF_ETHER
+#define INCLUDE_NETMASK_GET
 #define INCLUDE_NETWORK
-
+#define INCLUDE_NETWRS_IFINDEXLIB
+#define INCLUDE_NETWRS_REMLIB
+#define INCLUDE_NET_HOST_SETUP
+#define INCLUDE_NET_INIT
+#define INCLUDE_NET_LIB
+#define INCLUDE_NET_SETUP
+#define INCLUDE_NET_SHOW
 #define INCLUDE_NFS
-#define INCLUDE_NFS_MOUNT_ALL
-
+#define INCLUDE_PCI
+#define INCLUDE_PCI_CFGSHOW
+#define INCLUDE_PCPENTIUM_PARAMS
 #define INCLUDE_PC_CONSOLE
 #define INCLUDE_PING
 #define INCLUDE_PIPES
-
 #define INCLUDE_POSIX_CLOCKS
 #define INCLUDE_POSIX_FTRUNC
 #define INCLUDE_POSIX_MQ
+#define INCLUDE_POSIX_MQ_SHOW
 #define INCLUDE_POSIX_TIMERS
-
+#define INCLUDE_RBUFF
+#define INCLUDE_RNG_BUF
 #define INCLUDE_RPC
-
 #define INCLUDE_SELECT
-		      
+#define INCLUDE_SELECT_SUPPORT
+#define INCLUDE_SEM_BINARY
 #define INCLUDE_SEM_COUNTING
-    
+#define INCLUDE_SEM_MUTEX
+#define INCLUDE_SEM_SHOW
+#define INCLUDE_SIGNALS
+#define INCLUDE_SPY
+#define INCLUDE_STANDALONE_SYM_TBL
+#define INCLUDE_STAT_SYM_TBL
+#define INCLUDE_STDIO
+#define INCLUDE_STDIO_SHOW
+#define INCLUDE_SYM_TBL
+#define INCLUDE_SYM_TBL_INIT
+#define INCLUDE_SYM_TBL_SHOW
+#define INCLUDE_SYM_TBL_SYNC
+#define INCLUDE_SYSCLK_INIT
+#define INCLUDE_SYSHW_INIT
+#define INCLUDE_SYS_START
+#define INCLUDE_SYS_TIMESTAMP
+#define INCLUDE_TASK_HOOKS
+#define INCLUDE_TASK_SHOW
+#define INCLUDE_TASK_VARS
 #define INCLUDE_TCP
-
+#define INCLUDE_TCP_SHOW
+#define INCLUDE_TFTP_CLIENT
 #define INCLUDE_TIMESTAMP
-
-#define INCLUDE_TTY_DEV		      
-
+#define INCLUDE_TIMEX
+#define INCLUDE_TRIGGERING
+#define INCLUDE_TRIGGER_SHOW
 #define INCLUDE_UDP
+#define INCLUDE_UDP_SHOW
 #define INCLUDE_UNLOADER
+#define INCLUDE_VXEVENTS
+#define INCLUDE_WATCHDOGS
+#define INCLUDE_WDB
+#define INCLUDE_WDB_BP
+#define INCLUDE_WDB_COMM_NETWORK
+#define INCLUDE_WDB_CTXT
+#define INCLUDE_WDB_DIRECT_CALL
+#define INCLUDE_WDB_EVENTPOINTS
+#define INCLUDE_WDB_EVENTS
+#define INCLUDE_WDB_EXC_NOTIFY
+#define INCLUDE_WDB_EXIT_NOTIFY
+#define INCLUDE_WDB_FUNC_CALL
+#define INCLUDE_WDB_GOPHER
+#define INCLUDE_WDB_HW_FP
+#define INCLUDE_WDB_MEM
+#define INCLUDE_WDB_REG
+#define INCLUDE_WDB_START_NOTIFY
+#define INCLUDE_WDB_TASK
+#define INCLUDE_WDB_TASK_BP
+#define INCLUDE_WDB_TASK_HW_FP
+#define INCLUDE_WDB_TSFS
+#define INCLUDE_WDB_USER_EVENT
+#define INCLUDE_WDB_VIO
+#define INCLUDE_WDB_VIO_LIB
+#define INCLUDE_WINDVIEW
+#define INCLUDE_WINDVIEW_CLASS
+#define INCLUDE_WVNET
+#define INCLUDE_WVUPLOAD_FILE
+#define INCLUDE_WVUPLOAD_TSFSSOCK
 
 #define STANDALONE
 #define STANDALONE_NET
@@ -351,10 +430,9 @@ extern "C" {
 #undef  INCLUDE_DEC21X40_END    /* (END) DEC 21x4x PCI interface */
 #undef  INCLUDE_EL_3C90X_END    /* (END) 3Com Fast EtherLink XL PCI */
 #undef  INCLUDE_ELT_3C509_END   /* (END) 3Com EtherLink III interface */
-#define  INCLUDE_ENE_END         /* (END) Eagle/Novell NE2000 interface */
-#define INCLUDE_ESMC_END        /* (END) SMC 91c9x Ethernet interface */
+#undef  INCLUDE_ENE_END         /* (END) Eagle/Novell NE2000 interface */
 #undef  INCLUDE_FEI_END         /* (END) Intel 8255[7/8/9] PCI interface */
-#undef  INCLUDE_GEI8254X_END    /* (END) Intel 82543/82544 PCI interface */
+#define INCLUDE_GEI8254X_END    /* (END) Intel 82543/82544 PCI interface */
 #undef  INCLUDE_LN_97X_END      /* (END) AMD 79C97x PCI interface */
 #undef  INCLUDE_ULTRA_END       /* (END) SMC Elite16 Ultra interface */
 
@@ -365,6 +443,7 @@ extern "C" {
 
 /* default MMU options and PHYS_MEM_DESC type state constants */
 
+#define INCLUDE_MMU_BASIC       /* bundled MMU support TODO: include??? */
 #undef  VM_PAGE_SIZE		/* page size */
 #define VM_PAGE_SIZE		PAGE_SIZE_4KB	/* default page size */
 
@@ -394,35 +473,10 @@ extern "C" {
 
 /* CPU family/type-specific macros and options */
 
-#if	(CPU == I80386) || (CPU == I80486) /* [34]86 specific macros */
-
 /*
- * software floating point emulation support. DO NOT undefine hardware fp
- * support in configAll.h as it is required for software fp emulation.
+ * Pentium4 options
  */
-
-#define INCLUDE_SW_FP		/* enable emulator if there is no FPU */
-#define SYS_CLK_RATE_MAX	(PIT_CLOCK/32) /* max system clock rate */
-
-#ifdef	INCLUDE_TIMESTAMP
-#   define INCLUDE_TIMESTAMP_PIT2 /* include PIT2 for timestamp */
-#endif	/* INCLUDE_TIMESTAMP */
-
-#elif	(CPU == PENTIUM)	/* P5 specific macros */
-
-#undef	INCLUDE_SW_FP		/* Pentium has hardware FPP */
-#undef	USER_D_CACHE_MODE	/* Pentium write-back data cache support */
-#define	USER_D_CACHE_MODE	(CACHE_COPYBACK | CACHE_SNOOP_ENABLE)
-#undef	INCLUDE_PMC		/* include PMC */
-#define SYS_CLK_RATE_MAX	(PIT_CLOCK/32) /* max system clock rate */
-
-#ifdef	INCLUDE_TIMESTAMP	/* select TSC(default) or PIT2 */
-#   undef  INCLUDE_TIMESTAMP_PIT2 /* include PIT2 for timestamp */
-#   define INCLUDE_TIMESTAMP_TSC  /* include TSC for timestamp */
-#   define PENTIUMPRO_TSC_FREQ	0 /* TSC freq, 0 for auto detect */
-#endif	/* INCLUDE_TIMESTAMP */
-
-#elif	(CPU == PENTIUM2) || (CPU == PENTIUM3) || (CPU == PENTIUM4) /* P6,P7 */
+#if	(CPU == PENTIUM2) || (CPU == PENTIUM3) || (CPU == PENTIUM4)     /* P6,P7 */
 
 #undef	INCLUDE_SW_FP		/* Pentium[234] has hardware FPP */
 #undef	USER_D_CACHE_MODE	/* Pentium[234] write-back data cache support */
@@ -433,7 +487,7 @@ extern "C" {
 #undef	SYMMETRIC_IO_MODE	/* Interrupt Mode: Symmetric IO Mode */
 #define SYS_CLK_RATE_MAX	(PIT_CLOCK/16) /* max system clock rate */
 
-#ifdef	INCLUDE_TIMESTAMP         /* select TSC(default) or PIT2 */
+#ifdef	INCLUDE_TIMESTAMP	/* select TSC(default) or PIT2 */
 #   undef  INCLUDE_TIMESTAMP_PIT2 /* include PIT2 for timestamp */
 #   define INCLUDE_TIMESTAMP_TSC  /* include TSC for timestamp */
 #   define PENTIUMPRO_TSC_FREQ	0 /* TSC freq, 0 for auto detect */
@@ -449,7 +503,7 @@ extern "C" {
 #   define VM_PAGE_SIZE		PAGE_SIZE_4KB	/* PAGE_SIZE_2MB */
 #endif	/* INCLUDE_MMU_P6_32BIT */
 
-#if	defined (INCLUDE_MMU_P6_32BIT) || defined (INCLUDE_MMU_P6_36BIT) 
+#if	defined (INCLUDE_MMU_P6_32BIT) || defined (INCLUDE_MMU_P6_36BIT)
 #   undef  VM_STATE_MASK_FOR_ALL
 #   undef  VM_STATE_FOR_IO
 #   undef  VM_STATE_FOR_MEM_OS
@@ -472,9 +526,9 @@ extern "C" {
 	   VM_STATE_CACHEABLE_NOT | VM_STATE_WBACK_NOT | VM_STATE_GLOBAL_NOT
 #endif	/* defined (INCLUDE_MMU_P6_32BIT) || defined (INCLUDE_MMU_P6_36BIT) */
 
-/* 
+/*
  * To enable the IOAPIC, define the mother board from the following list.
- * If the IOAPIC is already enabled, defining the mother board is not 
+ * If the IOAPIC is already enabled, defining the mother board is not
  * needed.  Related code locates in pciCfgIntStub.c.
  *   D815EEA = Pentium3 + i815e + ICH2(i82801BA)
  *   D850GB  = Pentium4 + i850  + ICH2(i82801BA)
@@ -516,8 +570,7 @@ extern "C" {
 
 #endif	/* (CPU == PENTIUM4) */
 
-#endif	/* (CPU == I80386) || (CPU == I80486) */
-
+#endif	/* (CPU == PENTIUM2) || (CPU == PENTIUM3) || (CPU == PENTIUM4) */
 
 #define IO_ADRS_ELC	0x240
 #define INT_LVL_ELC	0x0b
@@ -647,9 +700,9 @@ extern "C" {
 #define ATA1_MEM_WAITS    (0)          /* ATA 1 memory extra wait states */
 #define ATA1_MEM_OFFSET   (0)          /* ATA 1 memory offset */
 #define ATA1_MEM_LENGTH   (0)          /* ATA 1 memory offset */
-#define ATA1_CTRL_TYPE    (ATA_PCMCIA)  /* ATA 1 logical type */
+#define ATA1_CTRL_TYPE    (IDE_LOCAL)  /* ATA 1 logical type */
 #define ATA1_NUM_DRIVES   (1)          /* ATA 1 number drives present */
-#define ATA1_INT_LVL      (0x09)       /* ATA 1 interrupt level */
+#define ATA1_INT_LVL      (0x0F)       /* ATA 1 interrupt level */
 
 #define ATA1_CONFIG       (ATA_GEO_CURRENT | ATA_PIO_AUTO | \
                            ATA_BITS_16     | ATA_PIO_MULTI)
@@ -684,7 +737,7 @@ extern "C" {
 #endif
 
 #define USER_RESERVED_MEM       (0x200000)      /* user reserved memory */
-#define LOCAL_MEM_LOCAL_ADRS    (0x00000000)    /* on-board memory base */
+#define LOCAL_MEM_LOCAL_ADRS    (0x00100000)    /* on-board memory base */
 
 /*
  * LOCAL_MEM_SIZE is the offset from the start of on-board memory to the
@@ -695,19 +748,17 @@ extern "C" {
  */
 
 #if  (VM_PAGE_SIZE == PAGE_SIZE_4KB)            /* 4KB page */
-#   define SYSTEM_RAM_SIZE      (0x03E00000)    /* minimum 8MB system RAM */
+#   define SYSTEM_RAM_SIZE      (0x00800000)    /* minimum 8MB system RAM */
 #else   /* PAGE_SIZE_[2/4]MB */                 /* [2/4]MB page */
 #   define SYSTEM_RAM_SIZE      (0x02000000)    /* minimum 32MB system RAM */
 #endif  /* (VM_PAGE_SIZE == PAGE_SIZE_4KB) */
 
-#define LOCAL_MEM_SIZE          (SYSTEM_RAM_SIZE - LOCAL_MEM_LOCAL_ADRS)
-
-
 /*
- * Memory auto-sizing is supported when this option is defined.
- * See sysyPhysMemTop() in the BSP sysLib.c file.
+ * Force system to use only 64 MB RAM
  */
-
+#undef  SYSTEM_RAM_SIZE
+#define SYSTEM_RAM_SIZE         (0x04000000)    /* 64MB system RAM */
+#define LOCAL_MEM_SIZE          (SYSTEM_RAM_SIZE - LOCAL_MEM_LOCAL_ADRS)
 #undef  LOCAL_MEM_AUTOSIZE
 
 /*
@@ -717,12 +768,12 @@ extern "C" {
  */
 
 #undef  ROMSTART_BOOT_CLEAR
-#define ROM_BASE_ADRS        (0x00010000)    /* base address of ROM */
+#define ROM_BASE_ADRS        (0x00008000)    /* base address of ROM */
 #define ROM_TEXT_ADRS        (ROM_BASE_ADRS) /* booting from A: or C: */
 #define ROM_SIZE             (0x00090000)    /* size of ROM */
 
-#define RAM_LOW_ADRS         (0x00108000)    /* VxWorks image entry point */
-#define RAM_HIGH_ADRS        (0x00010000)    /* Boot image entry point */
+#define RAM_LOW_ADRS         (0x00308000)    /* VxWorks image entry point */
+#define RAM_HIGH_ADRS        (0x00108000)    /* Boot image entry point */
 
 /*
  * The INCLUDE_ADD_BOOTMEM configuration option enables runtime code which
@@ -744,12 +795,18 @@ extern "C" {
  */
 
 #undef  INCLUDE_ADD_BOOTMEM     /* Add upper memory to low memory bootrom */
-#define ADDED_BOOTMEM_SIZE      (0x00100000)     /* 2MB additional memory */
+#define ADDED_BOOTMEM_SIZE      (0x00000000)     /* no additional memory */
 
 /* power management definitions */
 
 #undef  VX_POWER_MANAGEMENT	/* define to enable */
 #define VX_POWER_MODE_DEFAULT   VX_POWER_MODE_AUTOHALT  /* set mode */
+
+/* AMP (asymmetric multi processor) definitions */
+
+#ifdef	TGT_CPU
+#   include "configAmp.h"
+#endif	/* TGT_CPU */
 
 /* interrupt mode/number definitions */
 
@@ -769,39 +826,34 @@ extern "C" {
  */
 
 #define _WRS_BSP_VM_PAGE_OFFSET	(VM_PAGE_SIZE)
-
 #define _WRS_BSP_DEBUG_NULL_ACCESS
 
-#ifdef _WRS_BSP_DEBUG_NULL_ACCESS  /* protect NULL access with MMU */
+#if (VM_PAGE_SIZE != PAGE_SIZE_4KB) /* works when page size is 4KB */
+#  error PAGE_SIZE_4KB required to use _WRS_BSP_DEBUG_NULL_ACCESS
+#endif /* (VM_PAGE_SIZE == PAGE_SIZE_4KB) */
 
-#   if (VM_PAGE_SIZE != PAGE_SIZE_4KB) /* works when page size is 4KB */
-#       error PAGE_SIZE_4KB required to use _WRS_BSP_DEBUG_NULL_ACCESS
-#   endif /* (VM_PAGE_SIZE == PAGE_SIZE_4KB) */
+#if (LOCAL_MEM_LOCAL_ADRS == 0x0)
+#  undef VEC_BASE_ADRS
+#  define VEC_BASE_ADRS	((char *) (_WRS_BSP_VM_PAGE_OFFSET * 2))
 
-#   if (LOCAL_MEM_LOCAL_ADRS == 0x0)
-#       undef VEC_BASE_ADRS
-#       define VEC_BASE_ADRS	((char *) (_WRS_BSP_VM_PAGE_OFFSET * 2))
+#  undef GDT_BASE_OFFSET
+#  define GDT_BASE_OFFSET	(0x1000 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
 
-#       undef GDT_BASE_OFFSET
-#       define GDT_BASE_OFFSET	(0x1000 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
+#  undef SM_ANCHOR_OFFSET
+#  define SM_ANCHOR_OFFSET	(0x1100 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
 
-#       undef SM_ANCHOR_OFFSET
-#       define SM_ANCHOR_OFFSET	(0x1100 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
+#  undef EXC_MSG_OFFSET
+#  define EXC_MSG_OFFSET	(0x1300 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
 
-#       undef EXC_MSG_OFFSET
-#       define EXC_MSG_OFFSET	(0x1300 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
+#  undef FD_DMA_BUF_ADDR
+#  define FD_DMA_BUF_ADDR	(0x2000 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
 
-#       undef FD_DMA_BUF_ADDR
-#       define FD_DMA_BUF_ADDR	(0x2000 + (_WRS_BSP_VM_PAGE_OFFSET * 2))
+#  undef FD_DMA_BUF_SIZE
+#  define FD_DMA_BUF_SIZE	(0x1000)
 
-#       undef FD_DMA_BUF_SIZE
-#       define FD_DMA_BUF_SIZE	(0x1000)
-
-#       undef BOOT_LINE_ADRS
-#       define BOOT_LINE_ADRS	((char *) (0x1200))
-#   endif /* (LOCAL_MEM_LOCAL_ADRS == 0x0) */
-
-#endif /* _WRS_BSP_DEBUG_NULL_ACCESS */
+#  undef BOOT_LINE_ADRS
+#  define BOOT_LINE_ADRS	((char *) (0x1200))
+#endif /* (LOCAL_MEM_LOCAL_ADRS == 0x0) */
 
 #ifdef __cplusplus
 }
@@ -812,25 +864,18 @@ extern "C" {
 /*** PARAMETERS ***/
 
 /* Clear boot line defaults */
-#undef HOST_NAME_DEFAULT
+#undef  HOST_NAME_DEFAULT
 #define HOST_NAME_DEFAULT		""
-#undef TARGET_NAME_DEFAULT
-#define TARGET_NAME_DEFAULT	""
-#undef HOST_USER_DEFAULT
+#undef  TARGET_NAME_DEFAULT
+#define TARGET_NAME_DEFAULT	    ""
+#undef  HOST_USER_DEFAULT
 #define HOST_USER_DEFAULT		""
-#undef HOST_PASSWORD_DEFAULT
+#undef  HOST_PASSWORD_DEFAULT
 #define HOST_PASSWORD_DEFAULT	""
-#undef SCRIPT_DEFAULT
+#undef  SCRIPT_DEFAULT
 #define SCRIPT_DEFAULT			""
-#undef OTHER_DEFAULT
+#undef  OTHER_DEFAULT
 #define OTHER_DEFAULT			""
-
-#define BOOT_LINE_SIZE	  255	/* use 255 bytes for bootline */
-#undef  CONSOLE_TTY
-#define CONSOLE_TTY 0
-
-#undef  EXC_MSG_ADRS
-#define EXC_MSG_ADRS ((char *) (LOCAL_MEM_LOCAL_ADRS+EXC_MSG_OFFSET))
 
 #undef  FREE_RAM_ADRS
 #define FREE_RAM_ADRS (end)
@@ -863,7 +908,7 @@ extern "C" {
 #define END_POLL_STATS_ROUTINE_HOOK m2PollStatsIfPoll
 
 #undef  IP_FLAGS_DFLT
-#define IP_FLAGS_DFLT (IP_DO_FORWARDING | IP_DO_REDIRECT | IP_DO_CHECKSUM_SND | IP_DO_CHECKSUM_RCV)
+#define IP_FLAGS_DFLT (IP_DO_FORWARDING | IP_DO_REDIRECT |                          IP_DO_CHECKSUM_SND | IP_DO_CHECKSUM_RCV)
 #undef  IP_TTL_DFLT
 #define IP_TTL_DFLT 64
 #undef  IP_QLEN_DFLT
@@ -905,7 +950,7 @@ extern "C" {
 #define TCP_MSL_CFG 30
 
 #undef  NUM_FILES
-#define NUM_FILES 256
+#define NUM_FILES 100
 
 #undef  FTP_TRANSIENT_MAX_RETRY_COUNT
 #define FTP_TRANSIENT_MAX_RETRY_COUNT 100
@@ -928,25 +973,26 @@ extern "C" {
 #undef  NUM_NET_MBLKS
 #define NUM_NET_MBLKS 400
 #undef  NUM_CL_BLKS
-#define NUM_CL_BLKS (NUM_64 + NUM_128 + NUM_256 + NUM_512 + NUM_1024 + NUM_2048)
+#define NUM_CL_BLKS (NUM_64 + NUM_128 + NUM_256 +      					 NUM_512 + NUM_1024 + NUM_2048)
 
+/* TerumoBCT: tweaked to improve FTP and NFS throughput, especially during initialization */
 #undef  NUM_64
-#define NUM_64 100
+#define NUM_64   (100+50)
 #undef  NUM_128
-#define NUM_128 100
+#define NUM_128   (100*2)
 #undef  NUM_256
-#define NUM_256 40
+#define NUM_256    (40*2)
 #undef  NUM_512
-#define NUM_512 40
+#define NUM_512    (40*5)
 #undef  NUM_1024
-#define NUM_1024 25
+#define NUM_1024   (25)
 #undef  NUM_2048
-#define NUM_2048 25
+#define NUM_2048   (25)
 
 #undef  NUM_SYS_MBLKS
 #define NUM_SYS_MBLKS (2 * NUM_SYS_CL_BLKS)
 #undef  NUM_SYS_CL_BLKS
-#define NUM_SYS_CL_BLKS (NUM_SYS_64 + NUM_SYS_128 + NUM_SYS_256 + NUM_SYS_512)
+#define NUM_SYS_CL_BLKS (NUM_SYS_64  + NUM_SYS_128 + 					 NUM_SYS_256 + NUM_SYS_512)
 #undef  NUM_SYS_64
 #define NUM_SYS_64 64
 #undef  NUM_SYS_128
@@ -1025,8 +1071,10 @@ extern "C" {
 #define WV_DEFAULT_BUF_MIN 4
 #undef  WV_DEFAULT_BUF_MAX
 #define WV_DEFAULT_BUF_MAX 10
+/* WV_DEFAULT_BUF_MAX get overriden by usrWindView.c
 #undef  WV_DEFAULT_BUF_SIZE
 #define WV_DEFAULT_BUF_SIZE 0x8000
+*/
 #undef  WV_DEFAULT_BUF_THRESH
 #define WV_DEFAULT_BUF_THRESH 0x4000
 #undef  WV_DEFAULT_BUF_OPTIONS
@@ -1054,4 +1102,22 @@ extern "C" {
 #define NUM_32768 0
 #undef  NUM_65536
 #define NUM_65536 0
+
+#undef  PROXY_ARP_DEFAULT
+#define PROXY_ARP_DEFAULT FALSE
+
+#undef  DOSFS_NAMES_ATA_PRIMARY_MASTER
+#define DOSFS_NAMES_ATA_PRIMARY_MASTER "/vxboot,/trima,/config,/machine"
+#undef  DOSFS_NAMES_ATA_PRIMARY_SLAVE
+#define DOSFS_NAMES_ATA_PRIMARY_SLAVE ""
+#undef  DOSFS_NAMES_ATA_SECONDARY_MASTER
+#define DOSFS_NAMES_ATA_SECONDARY_MASTER ""
+#undef  DOSFS_NAMES_ATA_SECONDARY_SLAVE
+#define DOSFS_NAMES_ATA_SECONDARY_SLAVE ""
+
+#undef  ATA_CACHE_SIZE
+#define ATA_CACHE_SIZE (128*1024)
+
+#undef  PENTIUMPRO_TSC_FREQ
+#define PENTIUMPRO_TSC_FREQ (0)
 

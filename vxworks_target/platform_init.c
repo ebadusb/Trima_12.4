@@ -56,6 +56,13 @@ extern void trimaSysReceiveTimeSync(int serverSocket);    /* in safety */
 extern void trimaSysSendSafetyTimeSync(void); /* in control */
 extern void trimaSysRequestSafetytimeSync(void);         /* in safety */
 
+#ifdef INCLUDE_PCI
+/* Common */
+#include "os/cca_pci_intf.c"
+#else
+#include "cca_pci_stubs.c"
+#endif
+
 #include "crc.c"
 #include "load_driver.c"
 #include "load_module.c"
@@ -178,11 +185,11 @@ void usrShellInit()
 void platformInit(void)
 {
    BOOT_PARAMS params;
-/* Recover memory for safety from the bootrom space */
 
 #ifndef CONTROL_BUILD
 
-   if ( memPartAddToPool( memSysPartId, (char *)(0x00010000), 0x00090000 ) != 0 )
+   /* Recover memory for safety from the bootrom space */
+   if ( memPartAddToPool( memSysPartId, (char *)RAM_HIGH_ADRS, ROM_SIZE ) != 0 )
    {
       printf("Unable to Add to Memory Pool\n");
    }

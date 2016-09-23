@@ -141,10 +141,8 @@ void ProcPFRHandler::Initialize ()
       //
       // Read and validate the control PFR file
       //
-      _pfDataBufferPtr                    = _pfDataBuffer;
-      trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-      trimaSysControlPFSaveArea.direction = 0;
-      ataRawio(0, 0, &trimaSysControlPFSaveArea);
+      _pfDataBufferPtr = _pfDataBuffer;
+      trimaSysReadControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
 
       if ( LogPFFileInfo() )
       {
@@ -370,9 +368,7 @@ void ProcPFRHandler::EnablePFSave (void)
       //
       // Clear any saved data on disk
       //
-      trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-      trimaSysControlPFSaveArea.direction = 1;
-      ataRawio(0, 0, &trimaSysControlPFSaveArea);
+      trimaSysSaveControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
 
       DataLog(log_level_proc_pfr_info) << "power fail save enabled" << endmsg;
    }
@@ -396,9 +392,7 @@ void ProcPFRHandler::DisablePFSave (void)
    //
    // Clear any saved data on disk
    //
-   trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-   trimaSysControlPFSaveArea.direction = 1;
-   ataRawio(0, 0, &trimaSysControlPFSaveArea);
+   trimaSysSaveControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
 
    DataLog(log_level_proc_pfr_info) << "power fail save disabled" << endmsg;
 }
@@ -434,9 +428,7 @@ void ProcPFRHandler::EnablePFUpdate (void)
       //
       // Clear any saved data on disk
       //
-      trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-      trimaSysControlPFSaveArea.direction = 1;
-      ataRawio(0, 0, &trimaSysControlPFSaveArea);
+      trimaSysSaveControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
    }
 }
 
@@ -516,9 +508,7 @@ void ProcPFRHandler::DoPFSave (void)
          crcgen32(&crc, &_pfDataBuffer[sizeof(PowerFailSaveHeader)], dataSize);
          memcpy(&_pfDataBuffer[dataSize + sizeof(PowerFailSaveHeader)], &crc, sizeof(unsigned long));
 
-         trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-         trimaSysControlPFSaveArea.direction = 1;
-         ataRawio(0, 0, &trimaSysControlPFSaveArea);
+         trimaSysSaveControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
 
          DataLog(log_level_proc_pfr_info) << "power fail save complete.  Saved "
                                           << dataSize << " bytes.  " << _pfDataBufferSize - sizeof(PowerFailSaveHeader)
@@ -588,9 +578,7 @@ void ProcPFRHandler::DoPFSave (void)
          crcgen32(&crc, &_pfDataBuffer[sizeof(PowerFailSaveHeader)], newDataSize);
          memcpy(&_pfDataBuffer[newDataSize + sizeof(PowerFailSaveHeader)], &crc, sizeof(unsigned long));
 
-         trimaSysControlPFSaveArea.pBuf      = (char*)_pfDataBuffer;
-         trimaSysControlPFSaveArea.direction = 1;
-         ataRawio(0, 0, &trimaSysControlPFSaveArea);
+         trimaSysSaveControlPFData((char*)_pfDataBuffer, _pfDataBufferSize);
 
          DataLog(log_level_proc_pfr_info) << "power fail alarm update complete" << endmsg;
       }
@@ -774,7 +762,7 @@ bool ProcPFRHandler::LogPFFileInfo ()
    {
       struct tm localTimeData;
       enum  { timeStringSize = 30 };
-      char      timeString[timeStringSize];
+      char timeString[timeStringSize];
 
       localtime_r(&header.writeTime, &localTimeData);
       strftime(timeString, timeStringSize, "%b %d %Y %X", &localTimeData);
@@ -811,4 +799,4 @@ void ProcPFRHandler::VerifyDataAvailable (int line) const
    }
 }
 
-/* FORMAT HASH 3aec3b7882d2f71e58d953389d1c41b1 */
+/* FORMAT HASH 81d0486d678b7201e78f2b4dbe16f569 */

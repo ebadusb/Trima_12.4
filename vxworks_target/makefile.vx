@@ -24,6 +24,7 @@ endif
 # List of sub-directories to be built
 #
 DIR_LIST := control_versalogic safety_versalogic safety_versalogic_pxe
+DIR_LIST += control_fox safety_bengal
 
 .PHONY: dirs
 dirs : $(DIR_LIST)

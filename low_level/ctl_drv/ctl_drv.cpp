@@ -19,6 +19,9 @@
 #include <sigLib.h>
 #include <sysLib.h>
 
+/* Common */
+#include "hw_intf.h"    /* hwGetPortRegister() */
+
 #include "ctl_drv.hpp"
 #include "crc_util.h"
 #include "c_ultra.h"
@@ -36,15 +39,15 @@ static const float    MAX_PUMP_SPEED_ORDER = 250.0f; // max pump speed, rpm
 static const unsigned DEBOUNCE_COUNT       = 5;      // debounce count
 
 // set above 3000 as absolute max limit
-static const float    MAX_CENT_SPEED_ORDER = 3100.0f;
+static const float MAX_CENT_SPEED_ORDER = 3100.0f;
 
-static const int      MUX_SETTLING_TIME    =    5; // mux settling time, ms
-static const unsigned FLUIDS_SEEN_TIME     = 1400; // fluid at low sensor, 1.4 sec
-static const unsigned CENTRIFUGE_TIMER     =   95; // centrifuge order, ms
-static const unsigned STATUS_RATE          =  500; // status msg rate, ms
-static const unsigned RBC_RESEND_COUNT     =   10; // rbc count
-static const long     MIN_CENT_POWER       =   50; // min centrifuge power, volts
-static const long     MIN_PUMP_POWER       =   18; // min pump power, volts
+static const int      MUX_SETTLING_TIME =    5;    // mux settling time, ms
+static const unsigned FLUIDS_SEEN_TIME  = 1400;    // fluid at low sensor, 1.4 sec
+static const unsigned CENTRIFUGE_TIMER  =   95;    // centrifuge order, ms
+static const unsigned STATUS_RATE       =  500;    // status msg rate, ms
+static const unsigned RBC_RESEND_COUNT  =   10;    // rbc count
+static const long     MIN_CENT_POWER    =   50;    // min centrifuge power, volts
+static const long     MIN_PUMP_POWER    =   18;    // min pump power, volts
 
 #define APS_MUX  8                           // access presssure sen
 #define LOW_AGC_MUX 19                       // low AGC sensor
@@ -53,30 +56,30 @@ static const long     MIN_PUMP_POWER       =   18; // min pump power, volts
 static const int MAX_DOG_LIMIT = 50;         // if 10 ms loop exceeds 50 ms, log it
 static const int MIN_DOG_LIMIT =  5;         // if 10 ms loop is less than 5 ms, ignore it
 
-static const int MAX_SOFT_WATCHDOG_FATAL_ERROR_TIME     = 8000;  // soft watchdog timer expires in 9 seconds
-static const int MAX_SOFT_WATCHDOG_TIME                 = 2000;  // soft watchdog timer expires in 2 seconds
-static const int SOFT_WATCHDOG_WARNING_TIME             = 1000;  // soft watchdog timer expires in 1 seconds
+static const int MAX_SOFT_WATCHDOG_FATAL_ERROR_TIME = 8000;      // soft watchdog timer expires in 9 seconds
+static const int MAX_SOFT_WATCHDOG_TIME             = 2000;      // soft watchdog timer expires in 2 seconds
+static const int SOFT_WATCHDOG_WARNING_TIME         = 1000;      // soft watchdog timer expires in 1 seconds
 
 static const int HOLD_CENTRIFUGE_DURING_DOOR_RETRY_TIME = 3000;  // hold centrifuge for 3 seconds
                                                                  // while retrying the door solenoid
 
 // local data
 
-static CHwOrders     _orderData;                           // order data
-static CHwStates     _statusData;                          // status data
-static HW_ORDERS     _forceAirToDonorMonitor;              // HW_ENABLE if control driver should enable air to donor monitoring during PFR
-static fastpack      _aps(CONTROL_ACCESS_PRESSURE, "aps"); // access pressure data
-static fastfilter    _apsFilter("apsFilter");              // access pressure data
+static CHwOrders  _orderData;                              // order data
+static CHwStates  _statusData;                             // status data
+static HW_ORDERS  _forceAirToDonorMonitor;                 // HW_ENABLE if control driver should enable air to donor monitoring during PFR
+static fastpack   _aps(CONTROL_ACCESS_PRESSURE, "aps");    // access pressure data
+static fastfilter _apsFilter("apsFilter");                 // access pressure data
 
-static SHwOrders*    _safetyOrders             = NULL;
+static SHwOrders* _safetyOrders = NULL;
 
-static short         _oldSixtyFourVoltSwitched = 0;       // from previous read
-static bool          _oldSixtyFourVoltsOk      = false;   // from previous read
+static short _oldSixtyFourVoltSwitched = 0;               // from previous read
+static bool  _oldSixtyFourVoltsOk      = false;           // from previous read
 
-static bool          _shutdownInProgress       = false;
-static bool          _safeState                = false;
+static bool _shutdownInProgress = false;
+static bool _safeState          = false;
 
-static rawTime       shutdownTime              = {0, 0};
+static rawTime shutdownTime = {0, 0};
 
 static unsigned char atodCycleCount = 0;
 
@@ -394,16 +397,19 @@ static void signal_handler (int sig)
 
 
 
-static void readback_failed (const char* file,       // source file name where error was detected
-                             int line,               // source file line where error was detected
-                             const char* type,       // type of readback (e.g. "byte", "word")
-                             unsigned short port,    // I/O port address
-                             unsigned short value,   // value read back from I/O port
-                             unsigned short expected // value expected to be read back
+static void readback_failed (const char* file,      // source file name where error was detected
+                             int line,              // source file line where error was detected
+                             const char* type,      // type of readback (e.g. "byte", "word")
+                             unsigned long port,    // I/O port address
+                             unsigned long value,   // value read back from I/O port
+                             unsigned long expected // value expected to be read back
                              )
 {
-   DataLog(log_level_critical) << "I/O " << type << " readback failed: port " << hex << port
-                               << " value " << value << " expected " << expected << dec << endmsg;
+   DataLog(log_level_critical) << "I/O " << type << " readback failed: portId " << hex << port
+                               << " portReg " << hwGetPortRegister(port)
+                               << " value " << value << " expected " << expected << dec
+                               << " @ " << file << ":" << line
+                               << endmsg;
 
    _FATAL_ERROR(file, line, "I/O readback failed");
 
@@ -443,10 +449,10 @@ extern "C" void ctl_drv (const char* options)
    //
    // by default, interrupt vector 6 is used, and ride-thru is disabled
    //
-   const char* separators  = " \t";
-   int         optIndex    = strspn(options, separators);
+   const char* separators = " \t";
+   int         optIndex   = strspn(options, separators);
 
-   bool        pfwRidethru = false;
+   bool pfwRidethru = false;
 
    DataLog_Default << "ctl_drv started with command line: \"" << options << "\"" << endmsg;
 
@@ -625,14 +631,21 @@ void processAnalog (bool& blockPumps, bool& blockMessages, bool& atodError)
       22,   &_statusData.sixtyFourVoltCurrent,     // +64V current
    };
 
-   static unsigned short tableCounter          = 0; // table counter
+   static rawTime startTime             = {0, 0};
+   static bool    errorRetryDelayActive = false;
 
-   static rawTime        startTime             = {0, 0};
-   static bool           errorRetryDelayActive = false;
+   int           dt;                           // delta time, ms
+   int           filterSize = 5;
+   unsigned char muxAddress = 0;
 
-   int                   dt;                   // delta time, ms
-   int                   filterSize = 5;
-   unsigned char         muxAddress = 0;
+   static unsigned short tableCounter = 0xFF;           // table counter
+   if (tableCounter == 0xFF)
+   {
+      // Set the initial mux address before starting the ADC
+      tableCounter = 0;
+      muxAddress   = muxTable[tableCounter].mux;
+      chw_adcSetMux(muxAddress);
+   }
 
    // check time to insure mux settles
    dt = osTime::howLongMilliSec(startTime);
@@ -1989,7 +2002,7 @@ void updateTimer::checkTheDog ()
          // Tell ctl_msg to generate the alarm.
          _CHSPtr->controlOrdersPastMaxThreshold = true;
 
-         _softWatchdogActive                    = true; // Block new Orders
+         _softWatchdogActive = true;                    // Block new Orders
 
          // Pumps should all be off but re-issue order just in case
          _acPump.order(0.0);
@@ -2042,8 +2055,8 @@ void updateTimer::checkTheDog ()
             const rawTime&  enqueued = entry.timeOrdersEnqueued;
             const rawTime&  dequeued = entry.timeOrdersDequeued;
 
-            const int       delta1   = ( (enqueued.sec - created.sec) * 1000) + ( (enqueued.nanosec - created.nanosec) / 1000000);
-            const int       delta2   = ( (dequeued.sec - enqueued.sec) * 1000) + ( (dequeued.nanosec - enqueued.nanosec) / 1000000);
+            const int delta1 = ( (enqueued.sec - created.sec) * 1000) + ( (enqueued.nanosec - created.nanosec) / 1000000);
+            const int delta2 = ( (dequeued.sec - enqueued.sec) * 1000) + ( (dequeued.nanosec - enqueued.nanosec) / 1000000);
 
             DataLog_Default << "CHO entry " << j << " count " << entry.count << " CtoE " << delta1 << " ms EtoD " << delta2 << " ms " << endmsg;
 
@@ -2156,4 +2169,4 @@ void updateTimer::monitorTickTiming (void)
    }
 }
 
-/* FORMAT HASH 4123d26e228a02fdbadbf00181971968 */
+/* FORMAT HASH 83179b07a89013d2cf97f98a4d00fe61 */

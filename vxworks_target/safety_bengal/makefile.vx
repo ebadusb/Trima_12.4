@@ -1,0 +1,132 @@
+################################################################################
+#
+# Makefile for Trima Safety OS image for a Atom Bentgal board (E-Box 2016)
+#
+################################################################################
+
+# Bengal BSP is based on PENTIUM4; override what may be passed via command-line
+override CPU := PENTIUM4
+
+OUTPUT = vxWorks_bengal
+
+RAM_LOW_ADRS = 00308000			# VxWorks image entry point
+
+.PHONY: all clean
+
+ifeq ($(BUILD_TYPE),CLEAN)
+all: clean
+else
+all: check_opt_change $(OUTPUT)
+endif
+
+# Some files needed for build are in the Common and/or Tornado installation trees
+#
+WIND_BASE      := $(subst \,/,$(WIND_BASE))
+BENGAL_BSP_SRC  = $(COMDIR)/vxworks/kernel/atom_bengal
+#VX_BENGAL_SRC  = $(WIND_BASE)/target/config/atom_bengal
+VX_DRV_INC	    = $(WIND_BASE)/target/h/drv
+VX_DRV_SRC      = $(WIND_BASE)/target/src/drv
+VX_CONFIG_SRC   = $(WIND_BASE)/target/src/config
+VX_CONFIG_ALL   = $(WIND_BASE)/target/config/all
+VX_CONFIG_COMPS = $(WIND_BASE)/target/config/comps/src
+
+# MAINDIR should be set to the relative path from this makefile directory
+# to the project's root directory.
+#
+MAINDIR = ../..
+
+# Order of precedence for source and include files:
+# 1) board specific (BENGAL_BSP_SRC) 
+# 2) product specific (Trima/Optia)
+# 3) OS support common to all products (COMDIR/os)
+# 4) generic OS (WIND_BASE)
+#
+# Note that some source files get compiled via #include "somesrc.c", so make
+# sure this include path correctly satisfies the precedence described above.
+#
+ADDN_INCDIR   = -I$(MAINDIR) -I$(MAINDIR)/trima_common -I$(MAINDIR)/os \
+                -I$(BENGAL_BSP_SRC) -I$(VX_CONFIG_ALL) -I$(VX_DRV_SRC) -I$(VX_CONFIG_SRC) \
+                -I$(MAINDIR)/vxworks_target -I$(MAINDIR)/config \
+                -I$(COMDIR)/os
+ADDN_CPPFLAGS = -DSAFETY_BUILD
+ADDN_CCFLAGS  = -DSAFETY_BUILD
+ADDN_CXXFLAGS = -DSAFETY_BUILD
+
+vpath %.s   $(BENGAL_BSP_SRC)
+vpath %.c	$(BENGAL_BSP_SRC) .. $(COMDIR)/os $(VX_CONFIG_ALL) $(VX_CONFIG_COMPS)
+
+#
+# Include build rules and find common project.  The common project
+# location is used to generate additional include paths.
+#
+include $(MAINDIR)/makefile.vxc
+
+#
+# Exclude warnings for missing declarations and prototypes (VxWorks is bad about this)
+#
+WARNFLAGS := $(filter-out -Wmissing-declarations,$(WARNFLAGS))
+WARNFLAGS := $(filter-out -Wmissing-prototypes,$(WARNFLAGS))
+
+SYS_S_FILES = sysALib.s
+SYS_C_FILES = sysLib.c \
+              usrConfig.c nfsTable.c node_data_local.c node_init.c platform_init.c \
+              version.c
+SYS_CXX_FILES =
+
+#
+# Need to build dependency file list for all source files
+#
+SYS_DEPEND := $(addprefix .dfile/, $(notdir $(SYS_S_FILES:.s=.d))) \
+              $(addprefix .dfile/, $(notdir $(SYS_C_FILES:.c=.d))) \
+              $(addprefix .dfile/, $(notdir $(SYS_CXX_FILES:.cpp=.d)))
+
+PRIMARY_OBJS = $(addprefix $(CPU)/, $(notdir $(SYS_S_FILES:.s=.o))) \
+               $(addprefix $(CPU)/, $(notdir $(SYS_C_FILES:.c=.o))) \
+               $(addprefix $(CPU)/, $(notdir $(SYS_CXX_FILES:.cpp=.o)))
+
+LIB_DIRS = -L$(WIND_BASE)/target/lib/pentium/$(CPU)/gnu \
+           -L$(WIND_BASE)/target/lib/pentium/$(CPU)/common
+
+# Trima uses:
+LIB_LIST_T = -lcplus -ldcom -lgnucplus -larch -lcommoncc -ldrv \
+             -lgcc -lnet -los -lrpc -ltffs -lusb -lvxvmi \
+             -lwdb -lwind -lwindview
+
+LIB_LIST := $(LIB_LIST_T)
+
+$(SYS_DEPEND)   : | .dfile
+$(PRIMARY_OBJS) : | $(CPU)
+
+LINK_OBJS = $(addprefix $(CPU)/, .partialImage.o .ctdt.o .symTbl.o)
+
+$(CPU)/.partialImage.o : $(PRIMARY_OBJS)
+	@echo x Linking: $(BASEDIR)/$@
+	$(Q)$(LD) $(LDFLAGS) $(PRIMARY_OBJS) $(LIB_DIRS) --start-group $(LIB_LIST) --end-group -o $@
+
+$(CPU)/.ctdt.o : $(CPU)/.partialImage.o
+	@echo x Generating: $(BASEDIR)/$@
+	$(Q)$(NM) $(CPU)/.partialImage.o | $(MUNCH) > $(CPU)/.ctdt.c
+	$(Q)$(CC) -fdollars-in-identifiers $(CCFLAGS) $(CPU)/.ctdt.c -o $@
+
+$(CPU)/.symTbl.o : $(CPU)/.partialImage.o
+	@echo x Generating: $(BASEDIR)/$@
+	$(Q)makeSymTbl pentium $(CPU)/.partialImage.o $(CPU)/.symTbl.c
+	$(Q)$(CC) -fdollars-in-identifiers $(CCFLAGS) $(CPU)/.symTbl.c -o $@
+
+$(OUTPUT) : $(SYS_DEPEND) $(LINK_OBJS)
+	@echo x Linking: $(BASEDIR)/$@
+	$(LD) -X -N -T $(WIND_BASE)/target/h/tool/gnu/ldscripts/link.RAM \
+    -e _sysInit -Ttext $(RAM_LOW_ADRS) \
+    $(LINK_OBJS) -o $@
+
+clean:
+	rm -fr $(CPU) .dfile
+	rm -f $(OUTPUT)
+
+ifneq ($(BUILD_TYPE),CLEAN)
+  ifndef FORCE_REBUILD
+   -include $(SYS_DEPEND)
+  else
+    include $(MAINDIR)/makefile.rules
+  endif
+endif

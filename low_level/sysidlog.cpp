@@ -375,8 +375,8 @@ static void LogAMDCPUInfo (void)
    int         model       = CPU_GetModel();
    int         steppingID  = CPU_GetSteppingID();
 
-   int         idx         = 0;
-   bool        found       = false;
+   int  idx   = 0;
+   bool found = false;
    while (amdProcessorData[idx].idString && !found)
    {
       if (family == amdProcessorData[idx].family &&
@@ -417,8 +417,8 @@ static void LogIntelCPUInfo (void)
    int         model       = CPU_GetModel();
    int         steppingID  = CPU_GetSteppingID();
 
-   int         idx         = 0;
-   bool        found       = false;
+   int  idx   = 0;
+   bool found = false;
    while (intelProcessorData[idx].idString && !found)
    {
       if (type == intelProcessorData[idx].type &&
@@ -610,7 +610,7 @@ static void LogBIOSInfo (void)
    const unsigned int BIOSLength  = 0x10000;
    char               logData[MaxIDStringLength];
 
-   const char*        romPtr = (const char*)(BIOSAddress);
+   const char* romPtr = (const char*)(BIOSAddress);
    LogROMChecksum(romPtr, BIOSLength, "BIOS CRC");
 
    int stringIdx = 0;
@@ -618,7 +618,7 @@ static void LogBIOSInfo (void)
    {
       unsigned int searchStartIdx = 0;
       unsigned int stringLength;
-      const char*  stringInfo     = FindIDString(romPtr, BIOSLength, romIDString[stringIdx], searchStartIdx, stringLength);
+      const char*  stringInfo = FindIDString(romPtr, BIOSLength, romIDString[stringIdx], searchStartIdx, stringLength);
 
       while (stringInfo)
       {
@@ -666,7 +666,7 @@ static void LogExpansionROMInfo (unsigned int romAddr)
       {
          unsigned int searchStartIdx = 0;
          unsigned int stringLength;
-         const char*  stringInfo     = FindIDString(romPtr, ROMLength, romIDString[stringIdx], searchStartIdx, stringLength);
+         const char*  stringInfo = FindIDString(romPtr, ROMLength, romIDString[stringIdx], searchStartIdx, stringLength);
 
          while (stringInfo)
          {
@@ -709,6 +709,9 @@ static void LogBoardRev (void)
          LogItem(__FILE__, __LINE__, "Control2 FPGA Firmware Revision", hw_fpgaFwRevision(hw_control2Fpga) );
          LogItem(__FILE__, __LINE__, "Control2 FPGA Interface Revision", hw_fpgaIntfRevision(hw_control2Fpga));
          LogItem(__FILE__, __LINE__, "Control2 FPGA ID Revision", hw_fpgaIdRevision(hw_control2Fpga));
+         LogItem(__FILE__, __LINE__, "Control3 FPGA Firmware Revision", hw_fpgaFwRevision(hw_control3Fpga) );
+         LogItem(__FILE__, __LINE__, "Control3 FPGA Interface Revision", hw_fpgaIntfRevision(hw_control3Fpga));
+         LogItem(__FILE__, __LINE__, "Control3 FPGA ID Revision", hw_fpgaIdRevision(hw_control3Fpga));
          LogItem(__FILE__, __LINE__, "Control CCA Revision", hw_ccaRevision());
       }
       else if (hw_getBoardType() == hw_safetyBoard)
@@ -863,4 +866,4 @@ extern "C" void sysidlog (void)
    return;
 }
 
-/* FORMAT HASH 63fb25a14e3975823f9eab0855016912 */
+/* FORMAT HASH d616aed2aeb81c98ec5884a44091df0f */

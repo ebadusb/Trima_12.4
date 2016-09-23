@@ -139,7 +139,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
@@ -212,9 +211,9 @@ void aPFR_Safety::init (aDonor* paDonor, aReservoir_Safety* paReservoir)
    DataLog(log_level_safe_exec_debug) << "aPFR_Safety::aPFR_Safety() opening PF data file ("
                                       << sizeof(SPFRecovery) << ") byte(s)"  << endmsg;
 
-   // open file
-   int fd;
-   if ( (fd = open(SAFETY_PFSAVE_FILE, O_RDONLY | O_NONBLOCK, S_IRUSR | S_IRGRP | S_IROTH) ) == -1)
+   int size = trimaSysReadSafetyPFData((char*)&_SafetyPFRData, sizeof(_SafetyPFRData));
+
+   if (size == ERROR)
    {
       // can't open file.  PFR not allowed.
       int error_no = errno;
@@ -225,9 +224,7 @@ void aPFR_Safety::init (aDonor* paDonor, aReservoir_Safety* paReservoir)
    }
    else
    {
-      // we have a PF data file so read it in to the member variable space
-      int size = read(fd, (char*)&_SafetyPFRData, sizeof(SPFRecovery));
-
+      // we have a PF data file and read it in to the member variable space
       DataLog(log_level_safe_exec_debug) << "aPFR_Safety::aPFR_Safety() first read on PF data file." << endmsg;
 
       if (size <= 0)
@@ -334,8 +331,6 @@ void aPFR_Safety::init (aDonor* paDonor, aReservoir_Safety* paReservoir)
          }
       }
 
-      close(fd);
-      remove(SAFETY_PFSAVE_FILE);
    }
 
    // create a file to save to if power fails again
@@ -349,8 +344,8 @@ void aPFR_Safety::init (aDonor* paDonor, aReservoir_Safety* paReservoir)
 
 void aPFR_Safety::saveFile ()
 {
-   int         size;
-   timespec    now, real;
+   int      size;
+   timespec now, real;
 
    SysNodeData control;
    sysGetNodeData(ControlNode, &control);
@@ -404,7 +399,7 @@ void aPFR_Safety::initializePFRFile (void)
    // put in a bad CRC just to be on the safe side
    _SafetyPFRData.PFRDataCRC = 0x1;
 
-   _pfSaveEnabled            = true;
+   _pfSaveEnabled = true;
 }
 
 // SPECIFICATION:    Determine if the checksum of the power
@@ -630,8 +625,8 @@ void aPFR_Safety::ifPFRTimerNeeded (needleMonitor* Needle)
    {
       timespec now;
       clock_gettime(CLOCK_REALTIME, &now);
-      long     duration = PFR_MAX_DURATION
-                          - (now.tv_sec - SafetyPFRDataFromRestore.PFTimeOfFailure);
+      long duration = PFR_MAX_DURATION
+                      - (now.tv_sec - SafetyPFRDataFromRestore.PFTimeOfFailure);
       Needle->turnOnTimer(duration);
    }
 }
@@ -649,4 +644,4 @@ void aPFR_Safety::SendPFRStatusMsg (void)
    theSafetyPFRFileStatusMsg.send(_PFRChecksumOK ? 1 : 0);
 }
 
-/* FORMAT HASH 798d8c0db1129fe7355dab6192e06199 */
+/* FORMAT HASH 0fa48968e9d805e53e48b40d279c8067 */

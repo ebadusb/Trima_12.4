@@ -76,15 +76,6 @@ static void usrInitGateway(const char *baseIP);
 static void usrSetupSerialPort(void);
 static STATUS internalFTPAuthorize(int checkPassword, const char * user, const char * password);
 
-/* END driver support */
-#include <end.h>
-END_OBJ * esmcEndLoad(char *, void *);
-END_OBJ * ne2000EndLoad( char * , void *);
-END_OBJ * sysEsmcEndLoad(char *);
-STATUS esmcattach(int unit, int ioAddr, int intVec, int intLevel, int config, int mode);
-
-/* Import the END table for auto network detection */
-IMPORT END_TBL_ENTRY  endDevTbl[];
 
 /* main entry point */
 void nodeInit(void);
@@ -262,8 +253,8 @@ static void usrSetupDisk(void)
     /*
      * Create a device for reading/writing entire disk
      */
-   hdDevRO = ataDevCreate(0, 0, 0, 0);
-   hdDevRW = ataDevCreate(0, 0, 0, 0);
+   hdDevRO = ataDevCreate(TRIMA_ATA_CTRL_NUM, 0, 0, 0);
+   hdDevRW = ataDevCreate(TRIMA_ATA_CTRL_NUM, 0, 0, 0);
    dcacheCbioRO = dcacheDevCreate((CBIO_DEV_ID)hdDevRO, 0, 4096*1024, "hdro");
    dcacheCbioRW = dcacheDevCreate((CBIO_DEV_ID)hdDevRW, 0, TOTAL_CACHE_BLOCKS*512, "hdrw");
    dcacheDevTune(dcacheCbioRW, WRITE_CACHE_BLOCKS, 0, 0, 1);
@@ -602,7 +593,7 @@ static void usrHandleSafetyPFSaveFile(void)
 
    trimaSysSafetyPFSaveArea.pBuf = data;
    trimaSysSafetyPFSaveArea.direction = 0;
-   ataRawio(0, 0, &trimaSysSafetyPFSaveArea);
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysSafetyPFSaveArea);
 
    if (*dataLength > 0 && *dataLength < trimaSysSafetyPFSaveArea.nSecs * 512)
    {
@@ -666,9 +657,10 @@ static void usrSetupSerialPort(void)
 {
    const char *serialPortOption;
    const int serialPort[4] = { 0x3f8, 0x2f8, 0x3e8, 0x2e8};
-   const int serialInt[4] = { 4, 3, 4, 3};
+   const int serialInt[4]  = { 4, 3, 11, 7};
    int port;
 
+   // Pull serial port interrupt mapping from config/hw.dat settings
    serialPortOption = trimaSysGetHardwareSetting("control_serial_driver");
 
    if (serialPortOption)
@@ -684,10 +676,10 @@ static void usrSetupSerialPort(void)
       }
    }
 
-   // Already initialized in usrConfig.c
-   // ttyDrv();
+   // Already initialized in usrConfig.c when NUM_TTY > 0
+   if (NUM_TTY == 0) ttyDrv();
 
-   // Initialize ports 2 and 3 as port 0 and 1 are already initialized in usrConfig.c
+   // Initialize remaining ports not already initialized in usrConfig.c
    for (port = NUM_TTY; port < 4; port++)
    {
       setupSerialPort(serialPort[port], serialInt[port], port);

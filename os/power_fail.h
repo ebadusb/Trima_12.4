@@ -33,6 +33,10 @@
 extern "C" {
 #endif /* ifdef __cplusplus */
 
+void trimaSysReadControlPFData (char* data, unsigned int dataLength);  /* control-side only function */
+void trimaSysSaveControlPFData (char* data, unsigned int dataLength);  /* control-side only function */
+
+int  trimaSysReadSafetyPFData (char* data, unsigned int dataLength); /* safety-side only function */
 void trimaSysSaveSafetyPFData (char* data, unsigned int dataLength); /* safety-side only function */
 void trimaSysClearAllPFData (void);                                  /* control-side only function */
 
@@ -50,6 +54,10 @@ void trimaSysRequestSafetytimeSync (void);       /* in safety */
  */
 extern ATA_RAW trimaSysControlPFSaveArea;
 extern ATA_RAW trimaSysSafetyPFSaveArea;
+
+/* Kernel sets sysWarmAtaCtrl via sysLib.c */
+IMPORT int sysWarmAtaCtrl;
+#define TRIMA_ATA_CTRL_NUM  (sysWarmAtaCtrl)
 
 #ifdef OS_BUILD
 
@@ -85,4 +93,4 @@ ATA_RAW trimaSysSafetyPFSaveArea =
 
 #endif
 
-/* FORMAT HASH d5ed21f728eeb3f38d96251de59bc01a */
+/* FORMAT HASH 1f0216485a75e325c9d876bb6a906288 */

@@ -45,7 +45,8 @@ typedef enum
 {
    hw_control1Fpga = 0x01,
    hw_control2Fpga = 0x02,
-   hw_safetyFpga   = 0x03
+   hw_safetyFpga   = 0x03,
+   hw_control3Fpga = 0x04   // EBox 2016
 } HWFpgaType;
 
 typedef enum
@@ -214,4 +215,4 @@ unsigned short hw_cassetteGetStatus (void);
 
 #endif /* ifndef _COMMON_HW_INCLUDE */
 
-/* FORMAT HASH 7c9bc50a40d8d00e0a7e2d5dfc184fcf */
+/* FORMAT HASH 80e2eacf8db9e28a35d4e9a5663bdc97 */

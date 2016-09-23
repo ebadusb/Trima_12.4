@@ -1,0 +1,3 @@
+# The Common build label to be used with Jenkins' QA builds
+common_build_7.84.1
+

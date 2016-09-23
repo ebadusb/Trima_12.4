@@ -31,6 +31,7 @@ include $(MAINDIR)/makefile.vxc
 LIBDIR := $(shell cmd /c 'cd $(MAINDIR) && cd')\lib
 
 CONFIG_COMMON_LIBS := $(LIBDIR)\libtrima_datalog.a \
+                      $(COMDIR)\utility\lib\libutility.a \
                       $(COMDIR)\datalog\lib\libdatalog.a \
                       $(COMDIR)\zlib\lib\libzlib.a
 #

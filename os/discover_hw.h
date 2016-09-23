@@ -15,9 +15,11 @@ extern "C" {
 unsigned char isVersalogic (void);       /* 0-Not Versalogic 1-Versalogic */
 unsigned char isVersalogicVSBC6 (void);  /* 0-Not VSBC-6 1-VSBC-6*/
 unsigned char isVersalogicPython (void); /* 0-Not Python 1-Python */
+unsigned char isVersalogicFox (void);    /* 0-Not Fox    1-Fox    */
 
 unsigned char isCT655XXGraphics (void); /* 0-Not Chip & Tech. 1-Chips & Tech. */
 unsigned char isGeodeLXGraphics (void); /* 0-Not Geode LX Chip 1-Geode LX Chip */
+unsigned char isRDCGraphics (void);     /* 0-Not RDC Gfx       1-RDC Gfx       */
 
 unsigned int getGraphicsVendorID (void);
 
@@ -27,4 +29,4 @@ unsigned int getGraphicsVendorID (void);
 
 #endif /* ifndef _DISCOVER_HW_INCLUDE */
 
-/* FORMAT HASH 6f5414dba08a12a568a35b6359e712c0 */
+/* FORMAT HASH c541895b71192c7a11b7243603515120 */

@@ -1,0 +1,16 @@
+#
+# Jenkins uses these variables for e-mail notifications.
+# Recipient lists are a single line of comma-separated email addresses,
+# with optional whitespace after commas.
+#
+EMAIL_MGR=scott.butzke@terumobct.com, tim.dyes@terumobct.com
+
+EMAIL_DEV=mat.ramey@terumobct.com, allan.gallano@terumobct.com, christopher.hesser@terumobct.com, david.steffen@terumobct.com, jason.holdeman@terumobct.com, jerry.heintz@terumobct.com, michael.su@terumobct.com
+
+EMAIL_SQA=branndon.albert@terumobct.com, dennis.giblin@terumobct.com, hien.ngo@terumobct.com, kent.gorrell@terumobct.com, nicole.lewis@terumobct.com, rick.blackwell@terumobct.com, Ryan.Hartsfield@terumobct.com, Azim.Fatehi@terumobct.com, John.Vonachen@terumobct.com 
+
+EMAIL_SYS=logan.fender@terumobct.com, alexandra.zelinskaya@terumobct.com
+
+##EMAIL_ALL=$EMAIL_MGR,$EMAIL_DEV,$EMAIL_SQA,$EMAIL_SYS
+##TODO: remove this after testing is complete
+EMAIL_ALL=$EMAIL_DEV

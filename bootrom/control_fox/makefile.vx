@@ -1,0 +1,38 @@
+################################################################################
+#
+# Makefile for the bootrom image for Control on an Pentium Fox board
+#
+################################################################################
+
+# The bootrom to build:
+#
+BOOTROM = bootrom_fox.sys
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all : $(BOOTROM)
+endif
+
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+# Note that the bootrom source is under COMDIR
+#
+SRC_DIR  = $(COMDIR)/vxworks/bootrom/pcpentium_fox
+DST_DIR := $(subst \,/,$(shell cmd /c cd))
+
+# Note that we omit CPU, and exclude any parallel build -j options.
+#
+SUBMAKE_ARGS = DST_DIR=$(DST_DIR) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+$(BOOTROM):
+#	Build the common bootrom for trima (bootrom_fox_trima.sys) and then rename it
+	@$(MAKE) -C $(SRC_DIR) -f makefile.vx $(SUBMAKE_ARGS) trima
+	@mv bootrom_fox_trima.sys $@
+
+clean:
+	@$(MAKE) -C $(SRC_DIR) -f makefile.vx $(SUBMAKE_ARGS) clean
+	@rm -f $(BOOTROM) 

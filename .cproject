@@ -5,21 +5,21 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1173211508" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<macros>
 					<stringMacro name="JOBS" type="VALUE_TEXT" value="-j${NUMBER_OF_PROCESSORS}"/>
-					<stringMacro name="LANGDIR" type="VALUE_PATH_ANY" value="${P4_ROOT}\Trima\Trima_Languages\Main"/>
+					<stringMacro name="LANGDIR" type="VALUE_PATH_ANY" value="${P4_ROOT}\Trima\Trima_Languages\12.4"/>
 					<stringMacro name="RMSGDIR" type="VALUE_PATH_ANY" value="${P4_ROOT}\ReservedMessages"/>
 					<stringMacro name="P4_ROOT" type="VALUE_PATH_ANY" value="${workspace_loc}"/>
-					<stringMacro name="BLD_DIRS" type="VALUE_TEXT" value="COMDIR=${COMDIR} LANGDIR=${LANGDIR} RMSGDIR=${RMSGDIR}"/>
 					<stringMacro name="COMDIR" type="VALUE_PATH_ANY" value="${P4_ROOT}\Common"/>
+					<stringMacro name="BLD_DIRS" type="VALUE_TEXT" value="COMDIR=${COMDIR} LANGDIR=${LANGDIR} RMSGDIR=${RMSGDIR}"/>
 					<stringMacro name="MY_FLAGS" type="VALUE_TEXT" value="CPU=I80486 TERSE=true JOBS=${JOBS}"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -73,10 +73,10 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="TrimaMain.null.29712073" name="TrimaMain"/>
+		<project id="Trima124.null.29712073" name="Trima124"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/TrimaMain"/>
+		<resource resourceType="PROJECT" workspacePath="/Trima124"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
@@ -134,4 +134,5 @@
 			</target>
 		</buildTargets>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

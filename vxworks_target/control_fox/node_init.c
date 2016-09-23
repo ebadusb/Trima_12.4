@@ -1,5 +1,5 @@
 /*
- * $Header$
+ * $Header: //depot/main/embedded/Trima/Trima_6.0.6/vxworks_target/control_fox/node_init.c#5 $
  *
  * Trima control node initialization
  *
@@ -25,18 +25,6 @@ static void usrInitNetworkDevices(void);
 /* include the common node init function for Control */
 #include "controlFunctions.c"
 
-/* END driver support */
-#include <end.h>
-END_OBJ * esmcEndLoad(char *, void *);
-END_OBJ * ne2000EndLoad( char * , void *);
-/*
-END_OBJ * sysEsmcEndLoad(char *);
-STATUS esmcattach(int unit, int ioAddr, int intVec, int intLevel, int config, int mode);
-*/
-
-/* Import the END table for auto network detection */
-IMPORT END_TBL_ENTRY  endDevTbl[];
-
 static void usrSetupNetworkApps(void)
 {
    if (bootPromptSingleStep("initialize network software") == SingleStep_Abort)
@@ -50,12 +38,13 @@ static void usrSetupNetworkApps(void)
 
 static void usrInitNetworkDevices(void)
 {
-   char  *safetyIfStr = 0;
-   char  *externalIfStr = 0;
+   char *       safetyIfStr = 0;
+   char *       externalIfStr = 0;
    SysNodeData  controlNodeData, safetyNodeData;
    struct       in_addr ipAddress;
    char         inetAddr[INET_ADDR_LEN]; /* buffer for inet address */
    void         *cookie;
+   int          status = OK;
 
    sysGetNodeData( ControlNode, &controlNodeData );
    sysGetNodeData( SafetyNode, &safetyNodeData );
@@ -66,61 +55,44 @@ static void usrInitNetworkDevices(void)
       putenv("EXTERNALIP=172.21.127.255");
    }
 
-   /* Setup the first ethernet, control <-> safety */
-   if (endDevTbl[0].endLoadFunc == END_TBL_END)
-   {
-      /* Setup the external network interface */
-      cookie = muxDevLoad(1, esmcEndLoad, "0x360:0x2a:0x0a:3:0:0", TRUE, NULL);
-      muxDevStart(cookie);
+   /*
+    * Note: Ethernet drivers have been loaded during kernel initialization via
+    * the END table settings in configNet.h
+    */
 
-      externalIfStr = "esmc1";
-      ipAttach(1, "esmc");
-
-      /* Setup the internal ethernet, control <-> safety */
-      cookie = muxDevLoad(0, ne2000EndLoad, "0x320:0x25:0x05:0:1:0", TRUE, NULL);
-      muxDevStart(cookie);
-
-      safetyIfStr = "ene0";
-      ipAttach(0, "ene");
-   }
-   else
-   {
-      /* Setup the external network interface */
-      externalIfStr = "fei0";
-      ipAttach(0, "fei");
-
-      /* Setup the internal ethernet, control <-> safety */
-      safetyIfStr = "fei1";
-      ipAttach(1, "fei");
-   }
+   /* Setup the external network interface */
+   externalIfStr = "rdc0";
+   status = ipAttach(0, "rdc");
+   if (status != OK) perror("ipAttach(rdc0)");
 
    /* set up the external addr and mask */
-   ifMaskSet(externalIfStr, 0xffff0000);
    ifAddrSet(externalIfStr, getenv("EXTERNALIP"));
-
-   /* set up the internal addr and mask */
-   ifMaskSet(safetyIfStr, 0xffffff00);
+   ifMaskSet(externalIfStr, 0xffff0000);
 
    /* Get the address of control as seen by safety */
    ipAddress.s_addr = safetyNodeData.ipAddress[ControlNode];
    inet_ntoa_b(ipAddress, inetAddr); /* convert numeric IP to string */
+
+   /* Setup the internal ethernet, control <-> safety */
+   safetyIfStr = "gei0";
+   status = ipAttach(0, "gei");
+   if (status != OK) perror("ipAttach(gei0)");
+
+   /* set up the internal addr and mask */
+   ifMaskSet(safetyIfStr, 0xffffff00);
    ifAddrSet(safetyIfStr, inetAddr);
 
    printf("internal network using device %s at address %s\n", safetyIfStr, inetAddr);
-   printf("external network using device %s at address %s\n", safetyIfStr, getenv("EXTERNALIP"));
+   printf("external network using device %s at address %s\n", externalIfStr, getenv("EXTERNALIP"));
 
    /*
     *  Add host names
     */
    hostAdd("control_external", getenv("EXTERNALIP"));
    hostAdd("control", getenv("EXTERNALIP"));
-
-
-   /* Get the address of control as seen by safety */
-   ipAddress.s_addr = safetyNodeData.ipAddress[ControlNode];
-   inet_ntoa_b(ipAddress, inetAddr); /* convert numeric IP to string */
    hostAdd("control_safety", inetAddr);
 
+   /* Get the address of safety as seen by control */
    ipAddress.s_addr = controlNodeData.ipAddress[SafetyNode];
    inet_ntoa_b(ipAddress, inetAddr); /* convert numeric IP to string */
    hostAdd("safety", inetAddr);

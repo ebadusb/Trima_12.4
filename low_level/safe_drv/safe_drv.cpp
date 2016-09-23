@@ -23,6 +23,8 @@
 #include <tickLib.h>
 #include <signal.h>
 
+/* Common */
+#include "hw_intf.h"    /* hwGetPortRegister() */
 
 #include "safe_drv.hpp"
 #include "sh_mem.h"
@@ -69,29 +71,29 @@ static const int RPM_CONV           = 60 * 1000;
 
 static SHwOrders        _orderData;                                      // order data
 static SHwStates        _statusData;                                     // status data
-static HW_SWITCH_STATES oldPauseSwitch             = HW_SWITCH_DISABLED; // switch state
-static HW_SWITCH_STATES oldStopSwitch              = HW_SWITCH_DISABLED; // switch state
-static SHW_DIRECTION    oldReturnDirection         = SHW_RETURN;         // old return pump direction
+static HW_SWITCH_STATES oldPauseSwitch     = HW_SWITCH_DISABLED;         // switch state
+static HW_SWITCH_STATES oldStopSwitch      = HW_SWITCH_DISABLED;         // switch state
+static SHW_DIRECTION    oldReturnDirection = SHW_RETURN;                 // old return pump direction
 
-static bool             wasAir                     = true; // last us reading
-static const int        AC_PRIME_IN_PROGRESS_TIME  = 3000; // ms for which AC prime must persist before
+static bool      wasAir                    = true;         // last us reading
+static const int AC_PRIME_IN_PROGRESS_TIME = 3000;         // ms for which AC prime must persist before
                                                            // triggering air-to-donor monitoring
-static const int        MAX_DOG_LIMIT              = 50;   // if 10 ms loop exceeds 50 ms, log it
-static const int        MIN_DOG_LIMIT              =  5;   // if 10 ms loop is less than 5 ms, ignore it
+static const int MAX_DOG_LIMIT = 50;                       // if 10 ms loop exceeds 50 ms, log it
+static const int MIN_DOG_LIMIT =  5;                       // if 10 ms loop is less than 5 ms, ignore it
 
-static const int        SOFT_WATCHDOG_WARNING_TIME = 1000;
+static const int SOFT_WATCHDOG_WARNING_TIME = 1000;
 
-static const int        MAX_SOFT_WATCHDOG_TIME     = 8000; // soft watchdog timer expires in 8 seconds
+static const int MAX_SOFT_WATCHDOG_TIME = 8000;            // soft watchdog timer expires in 8 seconds
 
-static bool             shutdownInProgress         = false;
-static bool             safeState                  = false;
+static bool shutdownInProgress = false;
+static bool safeState          = false;
 
-static rawTime          shutdownTime               = {0, 0};
+static rawTime shutdownTime = {0, 0};
 
 #ifdef DRIVER_TESTING
-static DRV_TEST_STATE testPoint           = NOT_TESTED;
+static DRV_TEST_STATE testPoint = NOT_TESTED;
 
-static const long     EMPTY_RES_TEST_TIME = 30000;
+static const long EMPTY_RES_TEST_TIME = 30000;
 #endif
 
 inline SHW_DIRECTION returnDraw ()
@@ -495,17 +497,19 @@ static void signal_handler (int sig)
    osTime::snapshotRawTime(shutdownTime);
 }
 
-static void readback_failed (const char* file,       // source file name where error was detected
-                             int line,               // source file line where error was detected
-                             const char* type,       // type of readback (e.g. "byte", "word")
-                             unsigned short port,    // I/O port address
-                             unsigned short value,   // value read back from I/O port
-                             unsigned short expected // value expected to be read back
+static void readback_failed (const char* file,      // source file name where error was detected
+                             int line,              // source file line where error was detected
+                             const char* type,      // type of readback (e.g. "byte", "word")
+                             unsigned long port,    // I/O port address
+                             unsigned long value,   // value read back from I/O port
+                             unsigned long expected // value expected to be read back
                              )
 {
-
-   DataLog(log_level_critical) << "I/O " << type << " readback failed: port "
-                               << hex << port << " value " << value << " expected " << expected << dec << endmsg;
+   DataLog(log_level_critical) << "I/O " << type << " readback failed: portId " << hex << port
+                               << " portReg " << hwGetPortRegister(port)
+                               << " value " << value << " expected " << expected << dec
+                               << " @ " << file << ":" << line
+                               << endmsg;
 }
 
 // SPECIFICATION:    main entry point
@@ -545,10 +549,10 @@ void safe_drv (const char* options)
    //
    // by default, interrupt vector 6 is used, and ride-thru is disabled
    //
-   const char* separators  = " \t";
-   int         optIndex    = strspn(options, separators);
+   const char* separators = " \t";
+   int         optIndex   = strspn(options, separators);
 
-   bool        pfwRidethru = false;
+   bool pfwRidethru = false;
 
    DataLog_Default << "safe_drv started with command line: \"" << options << "\"" << endmsg;
    while (optIndex < strlen(options))
@@ -587,7 +591,7 @@ void safe_drv (const char* options)
    memset(&_statusData, 0, sizeof( _statusData));
    _statusData.valveLedTest = 1;          // start as OK
 
-   commands            c(powerFailFlag);
+   commands c(powerFailFlag);
 
    requestDriverStatus driverStatusMsg;
 
@@ -947,7 +951,7 @@ updateTimer::updateTimer(unsigned long dt,
    // Initialize the sentinel value
    _driverData->sentinel = 0xBABECAFE;
 
-   _softDogBite          = false;
+   _softDogBite = false;
 
    // Are the updated MX FPGAs Installed?
    if (hw_mxFpgaInstalled())
@@ -977,8 +981,8 @@ updateTimer::updateTimer(unsigned long dt,
    _mt_lastCheckTime.sec     = 0;
    _mt_lastCheckTime.nanosec = 0;
 
-   _lastFluidTime.sec        = 0;
-   _lastFluidTime.nanosec    = 0;
+   _lastFluidTime.sec     = 0;
+   _lastFluidTime.nanosec = 0;
 
    // initialize timer to look for AC Prime for air2donor monitor
    _acPrimeTime.sec     = 0;
@@ -1008,13 +1012,13 @@ updateTimer::~updateTimer()
 
 void updateTimer::notify ()
 {
-   long          acRPM;
-   long          aclastRPM;
-   long          inletRPM;
-   long          plasmaRPM;
-   long          plateletRPM;
-   long          returnRPM;
-   long          returnlastRPM;
+   long acRPM;
+   long aclastRPM;
+   long inletRPM;
+   long plasmaRPM;
+   long plateletRPM;
+   long returnRPM;
+   long returnlastRPM;
 
    unsigned char mode;
    bool          acPrime = false;
@@ -1180,7 +1184,7 @@ void updateTimer::notify ()
             _acPrimeTime.sec     = 0;                          // not AC Prime
             _acPrimeTime.nanosec = 0;
 
-            _driverData->here    = 13; // breadcrumb
+            _driverData->here = 13;    // breadcrumb
          }
       }
 
@@ -1244,7 +1248,7 @@ void updateTimer::notify ()
 
    _driverData->here = 20;   // breadcrumb
 
-   wasAir            = !_lowLevel.isFluid();
+   wasAir = !_lowLevel.isFluid();
 
    _driverData->here = 21;   // breadcrumb
 
@@ -1257,7 +1261,7 @@ void updateTimer::notify ()
       _airToDonor = false;
       _statusData.returnPumpDirChgTime = 0;
 
-      _driverData->here                = 22; // breadcrumb
+      _driverData->here = 22;                // breadcrumb
    }
 
    // air to donor checks
@@ -1376,7 +1380,7 @@ void updateTimer::notify ()
    {
       _driverData->here = 36;   // breadcrumb
 
-      oldPauseSwitch    = _statusData.pauseSwitch;
+      oldPauseSwitch = _statusData.pauseSwitch;
       if (_statusData.pauseSwitch == HW_SWITCH_ENABLED)
          sendStatus(SHW_PAUSE_EVENT);
    }
@@ -1387,7 +1391,7 @@ void updateTimer::notify ()
    {
       _driverData->here = 38;   // breadcrumb
 
-      oldStopSwitch     = _statusData.stopSwitch;
+      oldStopSwitch = _statusData.stopSwitch;
       if (_statusData.stopSwitch == HW_SWITCH_ENABLED)
          sendStatus(SHW_STOP_EVENT);
    }
@@ -1600,7 +1604,7 @@ void updateTimer::checkTheSoftwareDog ()
 {
    static unsigned int noOrderCounter = 0;
 
-   int                 dt;
+   int dt;
 
    // if we haven't got one message yet, don't evaluate
    if (_lastPetCounter >= 1)
@@ -1673,7 +1677,7 @@ void valveLedTest ()
                                           " RBC Valve Center;", " Cassette Unload;", " Cassette Load;", " Platelet Valve Counterclockwise;", \
                                           " Platelet Valve Clockwise;", " Platelet Valve Center;", " Door Lock;", " Door Close"};
 
-            int         bit = 1;
+            int bit = 1;
 
             DataLog(log_level_safety_alarm_detail) << "blink test failed: status=0x" << hex << rawStatus << dec << " Reason(s):";
             _statusData.valveLedTest = 0;
@@ -1705,7 +1709,7 @@ void updateTimer::monitorTiming (void)
       {
          _mt_updateCount = 0;
          osTime::snapshotRawTime(_mt_lastCheckTime);
-         previous        = tickGet();
+         previous = tickGet();
       }
    }
    else if (!shutdownInProgress)
@@ -1738,8 +1742,8 @@ void updateTimer::monitorTiming (void)
             _SHSPtr->timingError = true;
          }
 
-         unsigned long expectedMSec   = _mt_updateCount * 10;
-         unsigned long timerMSec      = osTime::howLongMilliSecAndUpdate(_mt_lastCheckTime);
+         unsigned long expectedMSec = _mt_updateCount * 10;
+         unsigned long timerMSec    = osTime::howLongMilliSecAndUpdate(_mt_lastCheckTime);
 
          unsigned long minAllowedMSec = (expectedMSec * 99) / 100;
          unsigned long maxAllowedMSec = (expectedMSec * 101) / 100;
@@ -1769,4 +1773,4 @@ void updateTimer::monitorTiming (void)
    }
 }
 
-/* FORMAT HASH 9e39524e0e6f86a38b29cca34f01bb04 */
+/* FORMAT HASH 843434fcd001680f7ca157d1b1e845d5 */

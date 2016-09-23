@@ -198,10 +198,14 @@ vxboot_files: force structure
 	@echo   - Copying bootrom output files ...
 	@$(XCOPY) /Y /R vxworks_target\control_versalogic\vxWorks_versalogic         current_build\vxboot
 	@$(XCOPY) /Y /R bootrom\control_versalogic\bootrom_versalogic.sys            current_build\vxboot
+	@$(XCOPY) /Y /R vxworks_target\control_fox\vxWorks_fox                       current_build\vxboot
+	@$(XCOPY) /Y /R bootrom\control_fox\bootrom_fox.sys                          current_build\vxboot
 	@$(XCOPY) /Y /R vxworks_target\safety_versalogic\vxWorks_versalogic          current_build\trima\safety\boot
 	@$(XCOPY) /Y /R bootrom\safety_versalogic\bootrom_versa_bootp.sys            current_build\trima\safety\boot
 	@$(XCOPY) /Y /R vxworks_target\safety_versalogic_pxe\vxWorks_versalogic_pxe  current_build\trima\safety\boot
 	@$(XCOPY) /Y /R bootrom\safety_pxe\bootrom_versa_pxe.sys                     current_build\trima\safety\boot
+	@$(XCOPY) /Y /R vxworks_target\safety_bengal\vxWorks_bengal                  current_build\trima\safety\boot
+	@$(XCOPY) /Y /R bootrom\safety_bengal\bootrom_bengal.pxe                     current_build\trima\safety\boot
 
 .PHONY: out_files
 out_files: force structure
@@ -227,6 +231,7 @@ out_files: force structure
 	@objcopypentium --discard-all gui\amd_geodelx_ugl\bin\amd_geodelx.o      current_build\trima\gui\ugl_20811022.o
 	@objcopypentium --discard-all gui\pentium_ct655fp_ugl\bin\ugl_CT655xx.o  current_build\trima\gui\ugl_00E0102C.o
 	@objcopypentium --discard-all gui\486_ct655fp_ugl\bin\ugl_CT65545.o      current_build\trima\gui\ugl_CT65545.o
+	@objcopypentium --discard-all $(COMDIR)/vxworks/ugl/bin/pentium_VGA_640x480_8bit.o current_build/trima/gui/ugl_201217F3.o
 	@echo   - Copying low-level output files ...
 	@objcopypentium --discard-all low_level\bin\ctl_drv.out      current_build\trima\low_level\ctl_drv.out
 	@objcopypentium --discard-all low_level\bin\ctl_hw.out       current_build\trima\low_level\ctl_hw.out

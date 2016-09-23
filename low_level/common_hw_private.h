@@ -95,9 +95,9 @@ typedef void hw_readbackFailedFunc (
    const char* file,                    // source file name where error was detected
    int line,                            // source file line where error was detected
    const char* type,                    // type of readback (e.g. "byte", "word")
-   unsigned short port,                 // I/O port address
-   unsigned short value,                // value read back from I/O port
-   unsigned short expected              // value expected to be read back
+   unsigned long port,                  // I/O port address
+   unsigned long value,                 // value read back from I/O port
+   unsigned long expected               // value expected to be read back
    );
 
 // Set function to be called on an I/O port readback failure
@@ -178,4 +178,4 @@ void hw_watchdogUpdate (void);
 
 #endif /* ifndef _COMMON_HW_PRIVATE_INCLUDE */
 
-/* FORMAT HASH 9a2d0b3f6f68066d92b066995c3e560d */
+/* FORMAT HASH bb98976a61612149cba47098d975bde9 */

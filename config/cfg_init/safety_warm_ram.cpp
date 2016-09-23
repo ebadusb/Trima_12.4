@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <ioLib.h>
 #include <string.h>
+#include <sysLib.h>
 
 #include "trima_assert.h"
 #include "safety_warm_ram.h"
@@ -18,17 +19,8 @@ static safetyRamSafetyApplicationData* safetyAppData    = NULL;
 static safetyRamSafetyDriverData*      safetyDriverData = NULL;
 
 
-// Need to have a small offset from the base of the area
-#define SAFETY_WARM_RAM_BASE 0x03E00100
-
-// The protected region is 0x200000 minus the offset
-#define SAFETY_WARM_RAM_SIZE 0x001FFF00
-
-const unsigned int AppDataSize    = sizeof(safetyRamSafetyApplicationData);
-const unsigned int DriverDataSize = sizeof(safetyRamSafetyDriverData);
-
-
-
+const size_t AppDataSize    = sizeof(safetyRamSafetyApplicationData);
+const size_t DriverDataSize = sizeof(safetyRamSafetyDriverData);
 
 /* Accessor functions for accessing/updating data */
 safetyRamSafetyApplicationData* safetyRamAppData (void)
@@ -47,16 +39,22 @@ safetyRamSafetyDriverData* safetyRamDriverData (void)
 /* functions for kernel level operations */
 void safetyRamInit (void)
 {
-   // Guard against overflowing the protected area.  For now, give them half each
-   const int memorySize = AppDataSize + DriverDataSize;
-   trima_assert(AppDataSize <= SAFETY_WARM_RAM_SIZE / 2);
-   trima_assert(DriverDataSize <= SAFETY_WARM_RAM_SIZE / 2);
+   /* Relies on kernel's USER_RESERVED_MEM (config.h) that will persist a warm boot */
+   const char*  pUserBeg = sysMemTop();
+   const char*  pUserEnd = sysPhysMemTop();
+   const size_t offset   = 0x100;
 
-   /* start off the app data at the beginning */
-   safetyAppData = (safetyRamSafetyApplicationData*)SAFETY_WARM_RAM_BASE;
+   /* put app data at an offset from start of user reserved memory */
+   safetyAppData = (safetyRamSafetyApplicationData*)(pUserBeg + offset);
 
-   /* start off the driver data at the mid point (why not) */
-   safetyDriverData = (safetyRamSafetyDriverData*)(SAFETY_WARM_RAM_BASE + 0x100000);
+   /* put driver data a little after the app data */
+   safetyDriverData = (safetyRamSafetyDriverData*)(pUserBeg + offset + offset);
+
+   /* Guard against overflowing the memory areas */
+   char* pEnd1 = (char*)safetyAppData + AppDataSize;
+   char* pEnd2 = (char*)safetyDriverData + DriverDataSize;
+   trima_assert(pEnd1 < (char*)safetyDriverData);
+   trima_assert(pEnd2 < pUserEnd);
 
    /* print off the data */
    safetyRamPrintData();
@@ -94,4 +92,4 @@ void safetyRamPrintData (void)
    }
 }
 
-/* FORMAT HASH 91ef84bb42889e6497372a3678715a7b */
+/* FORMAT HASH cf9b9681b8164183fdebff52d45dda8b */

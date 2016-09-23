@@ -1,0 +1,42 @@
+# A Perforce Client Specification.
+#
+#  Client:      The client name.
+#  Update:      The date this specification was last modified.
+#  Access:      The date this client was last used in any way.
+#  Owner:       The user who created this client.
+#  Host:        If set, restricts access to the named host.
+#  Description: A short description of the client (optional).
+#  Root:        The base directory of the client workspace.
+#  AltRoots:    Up to two alternate client workspace roots.
+#  Options:     Client options:
+#                      [no]allwrite [no]clobber [no]compress
+#                      [un]locked [no]modtime [no]rmdir
+#  SubmitOptions:
+#                      submitunchanged/submitunchanged+reopen
+#                      revertunchanged/revertunchanged+reopen
+#                      leaveunchanged/leaveunchanged+reopen
+#  LineEnd:     Text file line endings on client: local/unix/mac/win/share.
+#  View:        Lines to map depot files into the client workspace.
+#
+# Use 'p4 help client' to see more about client views and options.
+
+Client:	XXXX
+
+Owner:	UUUU
+
+Description:
+	Created by UUUU.
+
+Root:	WWWW
+
+Options:	noallwrite noclobber nocompress unlocked nomodtime normdir
+
+SubmitOptions:	revertunchanged
+
+LineEnd:	unix
+
+View:
+	//depot/main/embedded/Common/...                     //XXXX/Common/...
+	//depot/main/embedded/Trima/Trima_12.4/...           //XXXX/Trima/Trima_12.4/...
+	//depot/main/embedded/Trima/Install/...              //XXXX/Trima/Install/...
+	//depot/main/embedded/Trima/Trima_Languages/12.4/... //XXXX/Trima/Trima_Languages/12.4/...

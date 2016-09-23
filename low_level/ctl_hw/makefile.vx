@@ -5,14 +5,13 @@
 #
 # Define include directories needed for apps built in this directory
 #
-ADDN_INCDIR = -I.. -I..\..\trima_common
+ADDN_INCDIR = -I.. -I$(MAINDIR)/trima_common -I$(MAINDIR)/os
 
 #
 # MAINDIR should be set to the relative path from this makefile directory
-# to the base trima project directory.  MAINDIR must use \ (DOS/Windows
-# style) directory separators if they are needed.
+# to the base trima project directory.
 #
-MAINDIR = ..\..
+MAINDIR = ../..
 
 ifeq ($(BUILD_TYPE),CLEAN)
 .PHONY: all
@@ -22,16 +21,18 @@ else
 all: check_opt_change local_build
 endif
 
+vpath %.c $(COMDIR)/os
+
 include $(MAINDIR)/makefile.vxc
 
 #
 # Definitions required for building sysidlog.out
 #
 APP_NAME := ctl_hw
-ctl_hw_dir = ..\bin
-ctl_hw_map = ctl_hw.map
-ctl_hw_libs = 
-ctl_hw_c_files = ctl_hw.c
+ctl_hw_dir       = ..\bin
+ctl_hw_map       = ctl_hw.map
+ctl_hw_libs      = 
+ctl_hw_c_files   = ctl_hw.c hw_intf.c
 ctl_hw_cxx_files =
 include $(COMDIR)/makefile.process_app
 

@@ -636,7 +636,7 @@ extern "C" {
 #   define NV_RAM_SIZE          (0x1000)
 #endif
 
-#define USER_RESERVED_MEM       (0)             /* user reserved memory */
+#define USER_RESERVED_MEM       (0x200000)      /* user reserved memory */
 #define LOCAL_MEM_LOCAL_ADRS    (0x00000000)    /* on-board memory base */
 
 /*

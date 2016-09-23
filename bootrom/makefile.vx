@@ -4,6 +4,10 @@
 #
 ################################################################################
 
+# Note: don't set/pass CPU for submake as each bootrom's BSP defines it as necessary
+#
+unexport CPU
+
 .PHONY: all
 
 ifeq ($(BUILD_TYPE),CLEAN)
@@ -24,6 +28,7 @@ endif
 # List of sub-directories to be built
 #
 DIR_LIST := control_versalogic safety_pxe safety_versalogic
+DIR_LIST += control_fox safety_bengal
 
 .PHONY: dirs
 dirs : $(DIR_LIST)

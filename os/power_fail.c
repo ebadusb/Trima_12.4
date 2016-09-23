@@ -14,7 +14,45 @@
 #include "os_comm.h"
 #include "portnumbers.h"
 #include "in.h"
+#include "filenames.h"
 
+
+#ifdef CONTROL_BUILD
+void trimaSysSaveControlPFData (char* data, unsigned int dataLength)
+{
+   // Write to raw I/O file space
+   trimaSysControlPFSaveArea.pBuf      = data;
+   trimaSysControlPFSaveArea.direction = 1;
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysControlPFSaveArea);
+}
+
+void trimaSysReadControlPFData (char* data, unsigned int dataLength)
+{
+   // Read from raw I/O file space
+   trimaSysControlPFSaveArea.pBuf      = data;
+   trimaSysControlPFSaveArea.direction = 0;
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysControlPFSaveArea);
+}
+#endif /* CONTROL_BUILD */
+
+#ifdef SAFETY_BUILD
+int trimaSysReadSafetyPFData (char* data, unsigned int dataLength)
+{
+   int nbytes = ERROR;
+   // open file
+   int fd = open(SAFETY_PFSAVE_FILE, O_RDONLY|O_NONBLOCK, S_IRUSR|S_IRGRP|S_IROTH);
+   if (fd != ERROR)
+   {
+      // we have a PF data file so read it in to the member variable space
+      nbytes = read(fd, data, dataLength);
+      close(fd);
+      remove(SAFETY_PFSAVE_FILE);
+   }
+   return nbytes;
+}
+#else
+int trimaSysReadSafetyPFData (char* data, unsigned int dataLength) { printf("--Error-- CONTROL calling trimaSysRestoreSafetyPFData\n"); return ERROR; }
+#endif
 
 
 
@@ -49,9 +87,9 @@ void trimaSysWriteSafetyPFData (int serverSocket)
 {
 
 
-   int                rcvBytes;
-   unsigned int       dataLength;
-   char*              data;
+   int          rcvBytes;
+   unsigned int dataLength;
+   char*        data;
 
    struct sockaddr_in clientAddr;
    int                clientAddrSize = sizeof(clientAddr);
@@ -61,14 +99,14 @@ void trimaSysWriteSafetyPFData (int serverSocket)
    rcvBytes = recvfrom(serverSocket, (char*)&dataLength, sizeof(dataLength), 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
    if ( rcvBytes > 0 && dataLength <= trimaSysSafetyPFSaveArea.nSecs * 512 - sizeof(dataLength) )
    {
-      data     = (char*)malloc(trimaSysSafetyPFSaveArea.nSecs * 512);
+      data = (char*)malloc(trimaSysSafetyPFSaveArea.nSecs * 512);
       memcpy(data, &dataLength, sizeof(&dataLength));
       rcvBytes = recvfrom(serverSocket, (char*)&data[sizeof(dataLength)], dataLength, 0, (struct sockaddr*)&clientAddr, &clientAddrSize);
       if ( rcvBytes > 0 )
       {
          trimaSysSafetyPFSaveArea.pBuf      = data;
          trimaSysSafetyPFSaveArea.direction = 1;
-         ataRawio(0, 0, &trimaSysSafetyPFSaveArea);
+         ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysSafetyPFSaveArea);
       }
 
       free(data);
@@ -88,7 +126,7 @@ void trimaSysClearSafetyPFData (void)
 
    trimaSysSafetyPFSaveArea.pBuf      = data;
    trimaSysSafetyPFSaveArea.direction = 1;
-   ataRawio(0, 0, &trimaSysSafetyPFSaveArea);
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysSafetyPFSaveArea);
    free(data);
 }
 #else
@@ -105,7 +143,7 @@ void trimaSysClearAllPFData (void)
 
    trimaSysControlPFSaveArea.pBuf      = data;
    trimaSysControlPFSaveArea.direction = 1;
-   ataRawio(0, 0, &trimaSysControlPFSaveArea);
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysControlPFSaveArea);
    free(data);
 
    data = (char*)malloc(trimaSysSafetyPFSaveArea.nSecs * 512);
@@ -113,7 +151,7 @@ void trimaSysClearAllPFData (void)
 
    trimaSysSafetyPFSaveArea.pBuf      = data;
    trimaSysSafetyPFSaveArea.direction = 1;
-   ataRawio(0, 0, &trimaSysSafetyPFSaveArea);
+   ataRawio(TRIMA_ATA_CTRL_NUM, 0, &trimaSysSafetyPFSaveArea);
    free(data);
 }
 #endif /* ifdef CONTROL_BUILD */
@@ -186,4 +224,4 @@ void trimaSysRequestSafetytimeSync (void)    /* in safety */
 void trimaSysRequestSafetytimeSync (void) { printf("--Error-- CONTROL calling trimaSysSendSafetyTimeSync"); }
 #endif /* ifdef SAFETY_BUILD */
 
-/* FORMAT HASH 582f259ea1f990e12dd5499e2f0c1425 */
+/* FORMAT HASH 1c6274a656893a137d112247acf29c58 */

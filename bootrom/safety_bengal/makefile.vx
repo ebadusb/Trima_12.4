@@ -1,0 +1,41 @@
+################################################################################
+#
+# Makefile for the bootrom image for Safety on an Atom Bengal board
+#
+################################################################################
+# The bootrom to build:
+#
+BOOTROM = bootrom_bengal.pxe
+
+ifeq ($(BUILD_TYPE),CLEAN)
+.PHONY: all
+all : clean
+else
+.PHONY: all
+all : $(BOOTROM)
+endif
+
+MAINDIR = ../..
+include $(MAINDIR)/makefile.vxc
+
+# Note that the bootrom source is under COMDIR
+#
+SRC_DIR  = $(COMDIR)/vxworks/bootrom/atom_bengal
+DST_DIR := $(subst \,/,$(shell cmd /c cd))
+
+# Note that we omit CPU, and exclude any parallel build -j options.
+#
+SUBMAKE_ARGS = DST_DIR=$(DST_DIR) BUILD_TYPE=$(BUILD_TYPE) COMDIR=$(COMDIR)
+
+$(BOOTROM):
+#	Build the common bootrom for trima (bootrom_bengal_trima.pxe) and then rename it
+	@$(MAKE) -C $(SRC_DIR) -f makefile.vx $(SUBMAKE_ARGS) trima
+	@mv bootrom_bengal_trima.pxe $@
+
+clean:
+	@$(MAKE) -C $(SRC_DIR) -f makefile.vx $(SUBMAKE_ARGS) clean
+	@rm -f $(BOOTROM)
+
+cputest:
+	@echo From $(DST_DIR): CPU=$(CPU)
+	@$(MAKE) -C $(SRC_DIR) -f makefile.vx $(SUBMAKE_ARGS) cputest
