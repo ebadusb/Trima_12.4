@@ -241,7 +241,7 @@ for /f "tokens=* delims=.\ " %%a in ("%rmsgBuildLocation%") do set rmsgBuildLoca
 set localRmsgDir=%sandboxDir%\rmsg_%rmsgBuildLocation%
 if exist %localRmsgDir% rmdir /S /Q %localRmsgDir%
 mkdir %localRmsgDir%
-echo +++ Copying rmsg build from %rmsgDirNet%\%rmsgBuildLocation% to %localRmsgDir% ... >> %perforceLog% 2>&1
+echo +++ Copying rmsg build from %rmsgDirNet%\%rmsgBuildLocation% to %localRmsgDir% ... 2>&1 | tee -a %perforceLog%
 xcopy %rmsgDirNet%\%rmsgBuildLocation% %localRmsgDir% /E /V /F >> %perforceLog% 2>&1    
 echo %localRmsgDir% > %sandboxDir%\latest_rmsg_build_dir.mk
 
@@ -259,7 +259,7 @@ call %batchSub% XXXX %p4ClientName% %perforce_tools%\trima_workspace_template.tm
 call %batchSub% WWWW %sandboxDir% %myview%.1 > %myview%.2
 call %batchSub% UUUU %user_name% %myview%.2 > %myview%
 
-echo +++ Synching client %p4ClientName% using view in %myview% >> %perforceLog% 2>&1
+echo +++ Synching client %p4ClientName% using view in %myview% 2>&1 | tee -a %perforceLog%
 
 :: Setup and sync to the client. Here we use 'set P4CLIENT' vs. 'p4 set P4CLIENT' to
 :: resolve problem associated with concurrent Jenkins jobs using the p4 command-line API.
@@ -285,7 +285,7 @@ if exist %MAINDIR%\common_version (
 )
 
 :GetCommon
-echo +++ Synching with Common label %commonLabel% >> %perforceLog% 2>&1
+echo +++ Synching with Common label %commonLabel% 2>&1 | tee -a %perforceLog%
 mkdir %COMDIR%
 p4 sync -f %COMMON_DEPOT%/...@%commonLabel% >> %perforceLog% 2>&1    
 echo %COMDIR% > %sandboxDir%\latest_common_build_dir.mk
@@ -308,10 +308,10 @@ call %batchSub% UUUU %user_name% %labeltmp%.1 > %labeltmp%.2
 call %batchSub% BBB %build% %labeltmp%.2 > %labeltmp%.3
 call %batchSub% CCC %commonLabel% %labeltmp%.3 > %labeltmp%
 
-echo +++ Creating Perforce label %current_build_label% from %labeltmp% >> %perforceLog% 2>&1
+echo +++ Creating Perforce label %current_build_label% from %labeltmp% 2>&1 | tee -a %perforceLog%
 p4 label -i < %labeltmp%
 p4 label -o %current_build_label% >> %perforceLog% 2>&1
-echo +++ Tagging %current_build_label% ... >> %perforceLog% 2>&1
+echo +++ Tagging %current_build_label% ... 2>&1 | tee -a %perforceLog%
 p4 tag -l %current_build_label% //%p4ClientName%/... >> %perforceLog% 2>&1
 
 rem ----------------------------------------------------------------------------
@@ -321,8 +321,7 @@ rem
 rem ----------------------------------------------------------------------------
 
 if defined prev_build_label (
-   echo +++ Logging changes since %prev_build_label% ...
-   echo +++ Logging changes since %prev_build_label% to changes.log >> %perforceLog%
+   echo +++ Logging changes since %prev_build_label% to changes.log | tee -a %perforceLog%
    echo ++++ Changes between %current_build_label% and %prev_build_label% > %changesLog%
    p4 diff2 -q %PROJECT_DEPOT%/...@%current_build_label% %PROJECT_DEPOT%/...@%prev_build_label% >> %changesLog% 2>&1
 )
@@ -355,8 +354,7 @@ rem ----------------------------------------------------------------------------
 
 set buildLog=%sandboxDir%\build.log
 
-echo +++ Building Trima project ...
-echo +++ Building Trima project >> %buildLog%
+echo +++ Building Trima project ... | tee -a %buildLog%
 
 pushd %sandboxDir%
 
@@ -368,10 +366,10 @@ rem ----------------------------------------------------------------------------
 rem attrib -r *.* /s /d
 
 cd %COMDIR%
-call create_common.bat %JOBS% >> %buildLog% 2>&1 
+call create_common.bat %JOBS% 2>&1 | tee -a %buildLog%
 
 cd %MAINDIR%
-call create_trima.bat >> %buildLog% 2>&1 
+call create_trima.bat 2>&1 | tee -a %buildLog%
 
 set buildEndDate=%date%
 set buildEndTime=%time%
@@ -402,8 +400,7 @@ set buildDirCPU=%buildDir%\%CPU%
 :: Make sure the K: drive is *still* available
 if not exist K:\ net use K: %BCT_HOME%
 
-echo +++ Build %buildStatus%. Copying artifacts to %buildDirCPU%
-echo +++ Build %buildStatus%. Copying artifacts to %buildDirCPU% >> %buildLog% 2>&1
+echo +++ Build %buildStatus%. Copying artifacts to %buildDirCPU% 2>&1 | tee -a %buildLog%
 
 popd
 
@@ -434,29 +431,28 @@ echo \%SIMNT%\ >> %excludeDirs%
 echo \.dfile\ >> %excludeDirs%
 
 @echo on
-@echo +++ Copy current build ... >> %copyLog% 2>&1
-xcopy %MAINDIR%\current_build %buildDirCPU%\current_build /S /I /F /R /Y >> %copyLog% 2>&1
-:: if exist %buildDirTop%\updateTrima_55 copy %buildDirTop%\updateTrima_55 %buildDirCPU%\current_build\trima_ftp >> %copyLog% 2>&1
+@echo +++ Copy current build ... | tee -a %copyLog%
+xcopy %MAINDIR%\current_build %buildDirCPU%\current_build /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+:: if exist %buildDirTop%\updateTrima_55 copy %buildDirTop%\updateTrima_55 %buildDirCPU%\current_build\trima_ftp 2>&1 | tee -a %copyLog%
 
-@echo +++ Copy engr_tools and service ... >> %copyLog% 2>&1
-xcopy %MAINDIR%_%CPU%\engr_tools\bin\*.out %buildDirCPU%\engr_tools /S /I /F /R /Y >> %copyLog% 2>&1
-xcopy %MAINDIR%_%CPU%\service\bin %buildDirCPU%\Source\service\bin /S /I /F /R /Y >> %copyLog% 2>&1
+@echo +++ Copy engr_tools and service ... | tee -a %copyLog%
+xcopy %MAINDIR%_%CPU%\engr_tools\bin\*.out %buildDirCPU%\engr_tools /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %MAINDIR%_%CPU%\service\bin %buildDirCPU%\Source\service\bin /S /I /F /R /Y 2>&1 | tee -a %copyLog%
 
-@echo +++ Copy Alarms info files ... >> %copyLog% 2>&1
-xcopy %MAINDIR%\engr_tools\genAlarmList\*.xml %buildDir%\Alarms /I /F /R /Y >> %copyLog% 2>&1
-xcopy %MAINDIR%\engr_tools\genAlarmList\*.csv %buildDir%\Alarms /I /F /R /Y >> %copyLog% 2>&1
+@echo +++ Copy Alarms info files ... | tee -a %copyLog%
+xcopy %MAINDIR%\engr_tools\genAlarmList\*.xml %buildDir%\Alarms /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %MAINDIR%\engr_tools\genAlarmList\*.csv %buildDir%\Alarms /I /F /R /Y 2>&1 | tee -a %copyLog%
 
-@echo +++ Copy Trima source files ... >> %copyLog% 2>&1
-xcopy %MAINDIR% %buildDirCPU%\Source /EXCLUDE:%excludeDirs% /S /I /F /R /Y >> %copyLog% 2>&1
-xcopy %INSTDIR% %buildDirCPU%\Source_Install /EXCLUDE:%excludeDirs% /S /I /F /R /Y >> %copyLog% 2>&1
-xcopy %LANGDIR% %buildDirCPU%\Source_Languages /S /I /F /R /Y >> %copyLog% 2>&1
+@echo +++ Copy Trima source files ... | tee -a %copyLog%
+xcopy %MAINDIR% %buildDirCPU%\Source /EXCLUDE:%excludeDirs% /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %INSTDIR% %buildDirCPU%\Source_Install /EXCLUDE:%excludeDirs% /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %LANGDIR% %buildDirCPU%\Source_Languages /S /I /F /R /Y 2>&1 | tee -a %copyLog%
 
-if "%DO_COPY_COMMON%" == "false" goto PrintCopy 
-@echo +++ Copy Common source files ... >> %copyLog% 2>&1
-xcopy %COMDIR%  %buildDirCPU%\Source_%commonLabel% /EXCLUDE:%excludeDirs% /S /I /F /R /Y >> %copyLog% 2>&1
+if "%DO_COPY_COMMON%" == "false" goto CopyDone 
+@echo +++ Copy Common source files ... | tee -a %copyLog%
+xcopy %COMDIR%  %buildDirCPU%\Source_%commonLabel% /EXCLUDE:%excludeDirs% /S /I /F /R /Y 2>&1 | tee -a %copyLog%
 
-:PrintCopy
-type %copyLog% >> %buildLog%
+:CopyDone
 @echo off
 
 if %ERRORLEVEL% NEQ 0 (
@@ -470,16 +466,16 @@ rem	Summarize and copy logs
 rem ----------------------------------------------------------------------------
 :Summary
 
-echo. >> %buildLog%
-echo BUILD_SUMMARY_BEG >> %buildLog%
-echo +++ Trima Label     : %current_build_label% >> %buildLog%
-echo +++ Common Label    : %commonLabel% >> %buildLog%
-echo +++ Sandbox Start   : %startDate%, %startTime% >> %buildLog%
-echo +++ Build Start     : %buildStartDate%, %buildStartTime% >> %buildLog%
-echo +++ Build End       : %buildEndDate%, %buildEndTime% >> %buildLog%
-echo +++ Copy Complete   : %date%, %time% >> %buildLog%
-echo +++ Build Status    : %buildStatus% >> %buildLog%
-echo BUILD_SUMMARY_END >> %buildLog%
+echo. | tee -a %buildLog%
+echo BUILD_SUMMARY_BEG | tee -a %buildLog%
+echo +++ Trima Label     : %current_build_label% 2>&1 | tee -a %buildLog%
+echo +++ Common Label    : %commonLabel% 2>&1 | tee -a %buildLog%
+echo +++ Sandbox Start   : %startDate%, %startTime% 2>&1 | tee -a %buildLog%
+echo +++ Build Start     : %buildStartDate%, %buildStartTime% 2>&1 | tee -a %buildLog%
+echo +++ Build End       : %buildEndDate%, %buildEndTime% 2>&1 | tee -a %buildLog%
+echo +++ Copy Complete   : %date%, %time% 2>&1 | tee -a %buildLog%
+echo +++ Build Status    : %buildStatus% 2>&1 | tee -a %buildLog%
+echo BUILD_SUMMARY_END | tee -a %buildLog%
 
 @echo on
 @echo Copy logs: xcopy %sandboxDir%\*.log %buildDir%\_BuildLogs /I /F /R /Y
