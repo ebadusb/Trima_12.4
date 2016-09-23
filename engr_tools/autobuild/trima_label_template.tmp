@@ -16,8 +16,9 @@ Label:	LLLL
 Owner:	UUUU
 
 Description:
-	Trima Build: BBB
-	Using Common Build Label: CCC
+	Trima Build  : BBB
+	Common Label : CCC
+	Auto-Created : DDD
 
 Options:	unlocked
 

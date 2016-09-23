@@ -306,7 +306,8 @@ set labeltmp=%residue%\label.tmp
 call %batchSub% LLLL %current_build_label% %perforce_tools%\trima_label_template.tmp > %labeltmp%.1
 call %batchSub% UUUU %user_name% %labeltmp%.1 > %labeltmp%.2
 call %batchSub% BBB %build% %labeltmp%.2 > %labeltmp%.3
-call %batchSub% CCC %commonLabel% %labeltmp%.3 > %labeltmp%
+call %batchSub% CCC %commonLabel% %labeltmp%.3 > %labeltmp.4%
+call %batchSub% DDD "%date% %time%" %labeltmp%.4 > %labeltmp%
 
 echo +++ Creating Perforce label %current_build_label% from %labeltmp% 2>&1 | tee -a %perforceLog%
 p4 label -i < %labeltmp%
