@@ -58,7 +58,10 @@ class p4Cmd:
          # Get the latest label (filter out test label DevTest)
          latestLabel = labels[0]['label']
          if 'DevTest' in latestLabel:
-            latestLabel = labels[1]['label']
+            if len(labels) == 1:
+                latestLabel = ""
+            else:
+                latestLabel = labels[1]['label']
 
          # Break off the build number. Note that this strips out all instances of '.'
          newRev = latestLabel.replace(prefix, "").split('.')
