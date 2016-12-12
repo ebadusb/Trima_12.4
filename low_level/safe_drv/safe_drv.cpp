@@ -505,11 +505,24 @@ static void readback_failed (const char* file,      // source file name where er
                              unsigned long expected // value expected to be read back
                              )
 {
-   DataLog(log_level_critical) << "I/O " << type << " readback failed: portId " << hex << port
-                               << " portReg " << hwGetPortRegister(port)
-                               << " value " << value << " expected " << expected << dec
-                               << " @ " << file << ":" << line
-                               << endmsg;
+   log_level_critical(file, line) << "I/O " << type << " readback failed:"
+                                  << " portId=" << port << " => 0x" << hex << hwGetPortRegister(port)
+                                  << " value=" << value << " expected=" << expected << dec
+                                  << endmsg;
+}
+
+
+void logReadDiscrepancy (const char* file, int line,
+                         HwPortId portId,
+                         ULONG firstValue,
+                         ULONG secondValue,
+                         ULONG finalValue)
+{
+   log_level_safe_drv_error(file, line) << "SafDrv read discrepancy:"
+                                        << " portId=" << portId << " portReg=0x" << hex << hwGetPortRegister(portId)
+                                        << " hex[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]" << dec
+                                        << " dec[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]"
+                                        << endmsg;
 }
 
 // SPECIFICATION:    main entry point
@@ -542,6 +555,7 @@ void safe_drv (const char* options)
    // Initialize the hardware driver
    hw_init();
    hw_setReadbackFailedFunc(&readback_failed);
+   hw_setReadDiscrepancyLogFunc(&logReadDiscrepancy);
 
    // parse the command line - format is: "[-In] [-R]"
    //    -In specifies that interrupt vector n be used for the power fail interrupt
@@ -1773,4 +1787,4 @@ void updateTimer::monitorTiming (void)
    }
 }
 
-/* FORMAT HASH 843434fcd001680f7ca157d1b1e845d5 */
+/* FORMAT HASH da3caa78bc6a644fe14cbe347914c07a */

@@ -155,6 +155,10 @@ enum { SAFETY_FPGA_FIRST_FW_REV = 0x03 };
 // It starts at Revision 3.
 enum { SAFETY_FPGA_FIRST_INTF_REV = 0x03 };
 
+// These are the baseline revisions for EBox 2016 SafeP CCA
+enum { SAFETY_PCI_CCA_FIRST_FW_REV   = 0x06 };
+enum { SAFETY_PCI_CCA_FIRST_INTF_REV = 0x05 };
+
 enum { SAFETY_FPGA_ID_REV_INVALID = 0xFF };
 
 static int initializationComplete = 0;
@@ -170,6 +174,7 @@ static unsigned char  currentPowerStatus = 0x20;
 static unsigned short powerStatusSave    = 0;
 
 static hw_readbackFailedFunc* readbackFailedFunc = NULL;
+static HwLogDiscrepancyFunc*  logDiscrepancyFunc = NULL;
 
 // Safety FPGA Revision Numbers
 static unsigned char safetyFpgaFwRevision;    // Safety FPGA Firmware Revision
@@ -300,16 +305,31 @@ static int initForPCI (void)
          //
          // Set the various revision numbers and Base Address Register pointer
          //
-         safetyCcaRevision      = SafetyP_CCA_Info.vendorId;
          safetyFpgaIdRevision   = SafetyP_CCA_Info.deviceId;
          safetyFpgaFwRevision   = SafetyP_CCA_Info.subsystemId;
          safetyFpgaIntfRevision = SafetyP_CCA_Info.revisionId;
 
+         // Add 0x20 to indicate new generation
+         safetyCcaRevision = 0x20 + hwInByte(INP_CCA_ID);
+
+         // The FPGA package version that Chuck refers to in his release notes
+         hardwareVersion = (safetyFpgaFwRevision << 8) | (safetyFpgaIntfRevision);
+
          hasPciCCA       = TRUE;
          mxFpgaInstalled = 1;
 
-         initializationResult   = TRUE;
-         initializationComplete = TRUE;
+         if (safetyFpgaIntfRevision >= SAFETY_PCI_CCA_FIRST_INTF_REV)
+         {
+            initializationResult   = TRUE;
+            initializationComplete = TRUE;
+         }
+         else
+         {
+            printf("Invalid Safety FPGA Firmware  Revision %#x (expected %#x or greater)\n",
+                   safetyFpgaFwRevision, SAFETY_PCI_CCA_FIRST_FW_REV);
+            printf("Invalid Safety FPGA Interface Revision %#x (expected %#x or greater)\n",
+                   safetyFpgaIntfRevision, SAFETY_PCI_CCA_FIRST_INTF_REV);
+         }
       }
    }
 
@@ -512,6 +532,11 @@ void hw_setReadbackFailedFunc (hw_readbackFailedFunc* func)
    readbackFailedFunc = func;
 }
 
+void hw_setReadDiscrepancyLogFunc (HwLogDiscrepancyFunc* func)
+{
+   logDiscrepancyFunc = func;
+}
+
 void hw_alarmSetCommand (HWAlarmCommand command)
 {
    unsigned char portValue = hwInByte(IOP_POWER);
@@ -533,7 +558,7 @@ void hw_alarmSetCommand (HWAlarmCommand command)
 
 unsigned short hw_centGetCommutationCount (void)
 {
-   return hwInByte(INP_CENTRIFUGE);
+   return hwReadAndCheckByte(INP_CENTRIFUGE, 0, 1, centCountLimit, logDiscrepancyFunc, __FILE__, __LINE__);
 }
 
 unsigned short hw_centGetStatus (void)
@@ -825,15 +850,7 @@ unsigned short shw_pumpDirection (HWPump select)
 
 unsigned short shw_ultrasonicSensorGetCounter (void)
 {
-   unsigned short count = hwInWord(INPW_ULTRASONICS);
-
-   if (hasPciCCA)
-   {
-      /* Swap the bytes (grrr) */
-      count = ((count & 0x00FF) << 8) | ((count & 0xFF00) >> 8);
-   }
-
-   return count;
+   return hwReadAndCheckWord(INPW_ULTRASONICS, 0, 1, 256, logDiscrepancyFunc, __FILE__, __LINE__);
 }
 
 static void testInitialized (const char* funcName)
@@ -867,4 +884,4 @@ static void testReadbackWord (const char* file, int line, unsigned long port, un
    }
 }
 
-/* FORMAT HASH 15128f6fd04562f038150fd8507a3304 */
+/* FORMAT HASH 70f96cc3e53d5819ca7857dd0464c85b */

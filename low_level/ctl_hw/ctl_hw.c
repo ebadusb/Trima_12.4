@@ -289,6 +289,9 @@ enum { CONTROL2_FPGA_FIRST_FW_REV = 0x03 };
 enum { CONTROL1_FPGA_FIRST_INTF_REV = 0x03 };
 enum { CONTROL2_FPGA_FIRST_INTF_REV = 0x03 };
 
+// These are baseline revision numbers for Control 3 (EBox 2016)
+enum { CONTROL3_FPGA_FW_REV   = 0x0F };
+enum { CONTROL3_FPGA_INTF_REV = 0x06 };
 
 static int initializationComplete = 0;
 static int initializationResult   = 0;
@@ -323,6 +326,7 @@ static unsigned char c3FpgaIdRevision;   // Control3 FPGA ID Revision
 static BOOL          hasPciCCA = FALSE;
 
 static hw_readbackFailedFunc* readbackFailedFunc = NULL;
+static HwLogDiscrepancyFunc*  logDiscrepancyFunc = NULL;
 
 static void testInitialized (const char* funcName);
 static void testReadbackByte (const char* file, int line, unsigned long port, unsigned long expected);
@@ -468,17 +472,32 @@ static int initForPCI (void)
          //
          // Set the various revision numbers and Base Address Register pointer
          //
-         controlCcaRevision = (unsigned char)Control3_CCA_Info.vendorId;
          c3FpgaIdRevision   = (unsigned char)Control3_CCA_Info.deviceId;
          c3FpgaFwRevision   = (unsigned char)Control3_CCA_Info.subsystemId;
          c3FpgaIntfRevision = (unsigned char)Control3_CCA_Info.revisionId;
+
+         // Add 0x20 to indicate new generation
+         controlCcaRevision = 0x20 + hwInByte(INP_CCA_ID);
+
+         // The FPGA package version that Chuck refers to in his release notes
+         hardwareVersion = (c3FpgaFwRevision << 8) | (c3FpgaIntfRevision);
 
          hasPciCCA       = TRUE;
          hasArtysanPs    = TRUE;
          mxFpgaInstalled = TRUE;
 
-         initializationResult   = TRUE;
-         initializationComplete = TRUE;
+         if (c3FpgaIntfRevision >= CONTROL3_FPGA_INTF_REV)
+         {
+            initializationResult   = TRUE;
+            initializationComplete = TRUE;
+         }
+         else
+         {
+            printf("Invalid Control3 FPGA Firmware  Revision %#x (expected %#x or greater)\n",
+                   c3FpgaFwRevision,   CONTROL3_FPGA_FW_REV);
+            printf("Invalid Control3 FPGA Interface Revision %#x (expected %#x or greater)\n",
+                   c3FpgaIntfRevision, CONTROL3_FPGA_INTF_REV);
+         }
       }
    }
 
@@ -927,6 +946,11 @@ void hw_setReadbackFailedFunc (hw_readbackFailedFunc* func)
    readbackFailedFunc = func;
 }
 
+void hw_setReadDiscrepancyLogFunc (HwLogDiscrepancyFunc* func)
+{
+   logDiscrepancyFunc = func;
+}
+
 void hw_alarmSetCommand (HWAlarmCommand command)
 {
    unsigned char portValue = hwInByte(IOP_ALARM);
@@ -948,7 +972,7 @@ void hw_alarmSetCommand (HWAlarmCommand command)
 
 unsigned short hw_centGetCommutationCount (void)
 {
-   return hwInByte(INP_CENT_COMM);
+   return hwReadAndCheckByte(INP_CENT_COMM, 0, 1, centCountLimit, logDiscrepancyFunc, __FILE__, __LINE__);
 }
 
 unsigned short hw_centGetStatus (void)
@@ -1221,7 +1245,10 @@ unsigned short chw_pumpGetEncoder (HWPump select)
 {
    unsigned short addr = 0;
    unsigned short current;
-   unsigned short reRead;
+
+   UINT posChange  = 9;
+   UINT negChange  = 0;
+   UINT maxEncoder = 4096;
 
    switch (select)
    {
@@ -1242,7 +1269,8 @@ unsigned short chw_pumpGetEncoder (HWPump select)
          break;
 
       case hw_returnPump :
-         addr = INPW_RETURN_ENCODER;
+         addr      = INPW_RETURN_ENCODER;
+         negChange = posChange;
          break;
 
       default :
@@ -1250,8 +1278,11 @@ unsigned short chw_pumpGetEncoder (HWPump select)
          abort();
    }
 
-   current = hwInWord(addr);
-   reRead  = hwInWord(addr);
+   current = hwReadAndCheckWord(addr, negChange, posChange, maxEncoder,
+                                logDiscrepancyFunc, __FILE__, __LINE__);
+
+#if 0 /* Implemented via hwReadWordAndCheck() */
+   reRead = hwInWord(addr);
 
    //
    // The FPGA does not lock out changes to the upper encoder byte
@@ -1269,6 +1300,7 @@ unsigned short chw_pumpGetEncoder (HWPump select)
    {
       current = (short)hwInWord(addr);
    }
+#endif
 
    return current;
 }
@@ -1371,26 +1403,10 @@ unsigned short chw_soundGetLevel (void)
 
 unsigned short chw_ultrasonicSensorGetCounter (CtlHWUltrasonicSensor select)
 {
-   unsigned short result = 0;
+   HwPortId portId = (chw_upperUltrasonicSensor == select ? INPW_US_HIGH : INPW_US_LOW);
 
-   switch (select)
-   {
-      case chw_lowerUltrasonicSensor :
-         result = hwInWord(INPW_US_LOW);
-         break;
-
-      case chw_upperUltrasonicSensor :
-         result = hwInWord(INPW_US_HIGH);
-         break;
-   }
-
-   if (hasPciCCA)
-   {
-      /* Swap the bytes (grrr) */
-      result = ((result & 0x00FF) << 8) | ((result & 0xFF00) >> 8);
-   }
-
-   return result;
+   /* Note the log function is NULL because this is invoked from an ISR */
+   return hwReadAndCheckWord(portId, 0, 1, 256, NULL, __FILE__, __LINE__);
 }
 
 unsigned short chw_valveGetStatus (HWValve select)
@@ -1506,4 +1522,4 @@ static void testReadbackWord (const char* file, int line, unsigned long port, un
    }
 }
 
-/* FORMAT HASH 24dc4f7bf8cc865e4f0c6ede57da0f20 */
+/* FORMAT HASH e023a4f43a8a2d0fc294dd7709e1b37e */

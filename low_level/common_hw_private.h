@@ -105,6 +105,17 @@ typedef void hw_readbackFailedFunc (
 void hw_setReadbackFailedFunc (hw_readbackFailedFunc* func    // function to be called for readback failures
                                );
 
+// Prototype for read discrepancy function
+typedef void hw_readDiscrepancyLogFunc (
+   const char* file,                    // source file name where error was detected
+   int line,                            // source file line where error was detected
+   unsigned long portId,                // I/O port address identifier
+   unsigned long first,                 // 1st value read
+   unsigned long second,                // 2nd value read
+   unsigned long final);                // 3rd and final value read
+
+// Set the read discrepancy function
+void hw_setReadDiscrepancyLogFunc (hw_readDiscrepancyLogFunc* func);
 
 //// ALARM LIGHT RELATED FUNCTIONS ////
 
@@ -178,4 +189,4 @@ void hw_watchdogUpdate (void);
 
 #endif /* ifndef _COMMON_HW_PRIVATE_INCLUDE */
 
-/* FORMAT HASH bb98976a61612149cba47098d975bde9 */
+/* FORMAT HASH 912cc072820de27846048f30a59caa2c */

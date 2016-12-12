@@ -405,14 +405,26 @@ static void readback_failed (const char* file,      // source file name where er
                              unsigned long expected // value expected to be read back
                              )
 {
-   DataLog(log_level_critical) << "I/O " << type << " readback failed: portId " << hex << port
-                               << " portReg " << hwGetPortRegister(port)
-                               << " value " << value << " expected " << expected << dec
-                               << " @ " << file << ":" << line
-                               << endmsg;
+   log_level_critical(file, line) << "I/O " << type << " readback failed:"
+                                  << " portId=" << port << " => 0x" << hex << hwGetPortRegister(port)
+                                  << " value " << value << " expected " << expected << dec
+                                  << endmsg;
 
    _FATAL_ERROR(file, line, "I/O readback failed");
 
+}
+
+void logReadDiscrepancy (const char* file, int line,
+                         HwPortId portId,
+                         ULONG firstValue,
+                         ULONG secondValue,
+                         ULONG finalValue)
+{
+   log_level_ctl_drv_error(file, line) << "CtlDrv read discrepancy:"
+                                       << " portId=" << portId << " portReg=0x" << hex << hwGetPortRegister(portId)
+                                       << " hex[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]" << dec
+                                       << " dec[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]"
+                                       << endmsg;
 }
 
 
@@ -442,6 +454,7 @@ extern "C" void ctl_drv (const char* options)
    // Initialize the hardware driver
    hw_init();
    hw_setReadbackFailedFunc(&readback_failed);
+   hw_setReadDiscrepancyLogFunc(&logReadDiscrepancy);
 
    // parse the command line - format is: "[-In] [-R]"
    //    -In specifies that interrupt vector n be used for the power fail interrupt
@@ -2169,4 +2182,4 @@ void updateTimer::monitorTickTiming (void)
    }
 }
 
-/* FORMAT HASH 83179b07a89013d2cf97f98a4d00fe61 */
+/* FORMAT HASH 6c35e3919e04d62c29f43d699c8efa0b */
