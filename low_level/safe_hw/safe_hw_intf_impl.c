@@ -16,6 +16,10 @@
 #ifndef _SAF_HW_INTF_IMPL_
 #define _SAF_HW_INTF_IMPL_
 
+/* From Common */
+#include "hw_intf.h"
+#include "cca_pci_intf.h"
+
 #define CCA_0   0
 #define BAR_0   0
 
@@ -40,8 +44,9 @@ enum HwPortId_Safety_t
 
 typedef struct _HwIfMapItem
 {
-   HwPortReg isaPortReg;
-   HwPortReg ccaPortReg;
+   const char* portName;
+   HwPortReg   isaPortReg;
+   HwPortReg   ccaPortReg;
 } HwIfMapItem;
 
 /*
@@ -49,7 +54,7 @@ typedef struct _HwIfMapItem
  */
 #undef  HW_INTF_DB
 #define HW_INTF_DB(portName, isaPortReg, ccaIndx, barIndx, barOffset) \
-   {isaPortReg, CCA_IO_PORT(ccaIndx, barIndx, barOffset) },
+   {#portName,	isaPortReg, CCA_IO_PORT(ccaIndx, barIndx, barOffset) },
 
 static const HwIfMapItem theHwIfMap[] =
 {
@@ -57,6 +62,15 @@ static const HwIfMapItem theHwIfMap[] =
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+
+static const char* hwGetPortNameImpl (HwPortId portId)
+{
+   if (portId < HWIF_LAST_PORT_ID)
+   {
+      return theHwIfMap[portId].portName;
+   }
+   return "PortId_UNKNOWN";
+}
 
 static HwPortReg hwGetPortRegisterForISA (HwPortId portId)
 {
@@ -80,6 +94,7 @@ static BOOL hwSetHwIfImplForISA (void)
 {
    HwInterfaceImpl isaImpl = {};
 
+   isaImpl.GetPortName     = &hwGetPortNameImpl;
    isaImpl.GetPortRegister = &hwGetPortRegisterForISA;
    isaImpl.InByte          = &sysInByte;
    isaImpl.InWord          = &sysInWord;
@@ -97,6 +112,7 @@ static BOOL hwSetHwIfImplForPCI (void)
 {
    HwInterfaceImpl pciImpl = {};
 
+   pciImpl.GetPortName     = &hwGetPortNameImpl;
    pciImpl.GetPortRegister = &hwGetPortRegisterForPCI;
    pciImpl.InByte          = &ccaInByte;
    pciImpl.InWord          = &ccaInWord;
@@ -112,4 +128,4 @@ static BOOL hwSetHwIfImplForPCI (void)
 
 #endif /* _SAF_HW_INTF_IMPL_ */
 
-/* FORMAT HASH 6ee7450af16678d731e7c19d01609fc4 */
+/* FORMAT HASH 9dc2147f40e7bd631e6828a75a2d7d84 */

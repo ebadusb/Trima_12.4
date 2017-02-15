@@ -9,7 +9,7 @@ override CPU := PENTIUM
 
 OUTPUT = vxWorks_fox
 
-RAM_LOW_ADRS = 00308000			# VxWorks image entry point
+RAM_LOW_ADRS = 00108000         # VxWorks image entry point (legacy)
 
 .PHONY: all clean
 

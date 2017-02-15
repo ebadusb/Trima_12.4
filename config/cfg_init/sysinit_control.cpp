@@ -52,7 +52,7 @@ enum TFTPD_State
    TFTPD_BaseOSTransferCompleted
 };
 
-const int          safetyTimeOutSeconds = 90;
+const int          safetyTimeOutSeconds = 180;
 static TFTPD_State tftpdState           = TFTPD_Idle;
 
 static bool sysinit_tftpd_callback (TFTPD_CallBackStatus status, struct in_addr& clientAddr, const char* fileName)
@@ -109,8 +109,8 @@ void sysinit_setup_environment_variables (void)
    unsigned long trimaCRC  = 0;
    unsigned long safetyCRC = 0;
 
-   bool crcReadOK          = false;
-   FILE* fp                = fopen(TRIMA_CRC_FILE, "r");
+   bool crcReadOK = false;
+   FILE* fp       = fopen(TRIMA_CRC_FILE, "r");
 
    if (fp)
    {
@@ -153,7 +153,7 @@ void sysinit_setup_environment_variables (void)
    sprintf(envVarSet, "HW_REVISION=%d.%d", (version & 0xff00) >> 8, version & 0xff);
    putenv(envVarSet);
 
-   const int LineSize  = 60;
+   const int LineSize = 60;
 
    char line[LineSize] = "\0";
    char rev[LineSize];
@@ -191,8 +191,8 @@ void sysinit_prestart_node (void)
 {
     #if CPU!=SIMNT // Fix some undefined symbols in the simulator.
 
-   const int clkRatePerSec        = sysClkRateGet();
-   const int halfSecond           = clkRatePerSec / 2;
+   const int clkRatePerSec = sysClkRateGet();
+   const int halfSecond    = clkRatePerSec / 2;
 
    bool serviceModeButtonsPressed = false;
    bool timedOut                  = FALSE;
@@ -260,7 +260,7 @@ void sysinit_prestart_node (void)
 
    unsigned int delay = 0;
 
-   while (delay < safetyTimeOutSeconds)   // Delay up to 90 seconds waiting for safety to start
+   while (delay < safetyTimeOutSeconds)   // Delay up to N seconds waiting for safety to start
    {
       if (bootSafetyIsAlive())
       {
@@ -275,7 +275,7 @@ void sysinit_prestart_node (void)
 
    if ( (tftpdState < TFTPD_BaseOSTransferStarted) || !bootSafetyIsAlive())
    {
-      DataLog(log_level_critical) << "\n\nSafety failed to start within 90 seconds timeout period..." << endmsg;
+      DataLog(log_level_critical) << "\n\nSafety failed to start within " << safetyTimeOutSeconds << " seconds timeout period..." << endmsg;
 
       safetyBootFailed     = TRUE;
       safetyBootInProgress = FALSE;   // This identifies that Safety is timeouted
@@ -362,4 +362,4 @@ void sysinit_telnet_configuration (void)
 int bootKeyboardAttached (void){ return 0; }
 #endif
 
-/* FORMAT HASH 654413d1aa8d522cf0b24ab602157618 */
+/* FORMAT HASH 6205caaf972d77a73d6aea0a29e369ef */

@@ -155,9 +155,9 @@ enum { SAFETY_FPGA_FIRST_FW_REV = 0x03 };
 // It starts at Revision 3.
 enum { SAFETY_FPGA_FIRST_INTF_REV = 0x03 };
 
-// These are the baseline revisions for EBox 2016 SafeP CCA
-enum { SAFETY_PCI_CCA_FIRST_FW_REV   = 0x06 };
-enum { SAFETY_PCI_CCA_FIRST_INTF_REV = 0x05 };
+// These are the minimum/baseline revisions for EBox 2016 SafeP CCA
+enum { SAFETY_PCI_CCA_MIN_FW_REV   = 0x08 };
+enum { SAFETY_PCI_CCA_MIN_INTF_REV = 0x06 };
 
 enum { SAFETY_FPGA_ID_REV_INVALID = 0xFF };
 
@@ -242,6 +242,7 @@ static int initForISA (void)
                mxFpgaInstalled = 1;
 
                initializationResult = 1;
+               printf("Initialized Safety2 ISA CCA Interface: version=0x%04x\n", ((safetyFpgaFwRevision << 8)|safetyFpgaIntfRevision));
             }
             else
             {
@@ -267,6 +268,7 @@ static int initForISA (void)
                case 4 : // modified to hold processor reset line upon fan failure
                   hardwareVersion      = 0x0206;
                   initializationResult = 1;
+                  printf("Initialized Safety1 ISA CCA Interface: version=0x%04x\n", hardwareVersion);
                   break;
 
                default :
@@ -318,17 +320,19 @@ static int initForPCI (void)
          hasPciCCA       = TRUE;
          mxFpgaInstalled = 1;
 
-         if (safetyFpgaIntfRevision >= SAFETY_PCI_CCA_FIRST_INTF_REV)
+         if (safetyFpgaIntfRevision >= SAFETY_PCI_CCA_MIN_INTF_REV)
          {
             initializationResult   = TRUE;
             initializationComplete = TRUE;
+            printf("Initialized Safety PCI CCA Interface: version=0x%04x\n", hardwareVersion);
          }
          else
          {
             printf("Invalid Safety FPGA Firmware  Revision %#x (expected %#x or greater)\n",
-                   safetyFpgaFwRevision, SAFETY_PCI_CCA_FIRST_FW_REV);
+                   safetyFpgaFwRevision, SAFETY_PCI_CCA_MIN_FW_REV);
             printf("Invalid Safety FPGA Interface Revision %#x (expected %#x or greater)\n",
-                   safetyFpgaIntfRevision, SAFETY_PCI_CCA_FIRST_INTF_REV);
+                   safetyFpgaIntfRevision, SAFETY_PCI_CCA_MIN_INTF_REV);
+            abort();
          }
       }
    }
@@ -884,4 +888,4 @@ static void testReadbackWord (const char* file, int line, unsigned long port, un
    }
 }
 
-/* FORMAT HASH 70f96cc3e53d5819ca7857dd0464c85b */
+/* FORMAT HASH 5f38c98cd7b0e5713cec637f1f0ce9e0 */

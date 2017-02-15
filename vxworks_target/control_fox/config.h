@@ -252,6 +252,10 @@ extern "C" {
 
 /* included components */
 
+/* XXX-MFR: this is handy sometimes */
+/* #define INCLUDE_LOG_STARTUP */
+/* #define INCLUDE_LOGGING */
+
 #define INCLUDE_ANSI_ASSERT
 #define INCLUDE_ANSI_CTYPE
 #define INCLUDE_ANSI_MATH
@@ -318,13 +322,6 @@ extern "C" {
 #define INCLUDE_IP
 #define INCLUDE_KERNEL
 #define INCLUDE_LOADER
-
-/*For debugging ESMC end Driver*/
-/*
-#define INCLUDE_LOGGING
-#define INCLUDE_LOG_STARTUP
-*/
-
 #define INCLUDE_LOOPBACK
 #define INCLUDE_LSTLIB
 
@@ -351,7 +348,6 @@ extern "C" {
 #define INCLUDE_NET_LIB
 #define INCLUDE_NET_SETUP
 #define INCLUDE_NET_SHOW
-#define INCLUDE_NFS
 #define INCLUDE_NFS_SERVER
 #define INCLUDE_PCI
 #define INCLUDE_PCI_CFGSHOW
@@ -374,8 +370,6 @@ extern "C" {
 #define INCLUDE_SEM_COUNTING
 #define INCLUDE_SEM_MUTEX
 #define INCLUDE_SEM_SHOW
-#define INCLUDE_SHELL
-#define INCLUDE_SHELL_BANNER
 #define INCLUDE_SIGNALS
 #define INCLUDE_SPY
 #define INCLUDE_STANDALONE_SYM_TBL
@@ -406,7 +400,6 @@ extern "C" {
 #define INCLUDE_VXEVENTS
 #define INCLUDE_WATCHDOGS
 #define INCLUDE_WDB
-#define INCLUDE_WDB_BANNER
 #define INCLUDE_WDB_BP
 #define INCLUDE_WDB_COMM_NETWORK
 #define INCLUDE_WDB_CTXT
@@ -780,7 +773,7 @@ extern "C" {
 #endif
 
 #define USER_RESERVED_MEM       (0)             /* user reserved memory */
-#define LOCAL_MEM_LOCAL_ADRS    (0x00100000)    /* on-board memory base */
+#define LOCAL_MEM_LOCAL_ADRS    (0x00001000)    /* on-board memory base (preserve BIOS Data Area ~ 0x500) */
 
 /*
  * LOCAL_MEM_SIZE is the offset from the start of on-board memory to the
@@ -818,13 +811,9 @@ extern "C" {
 #define ROM_TEXT_ADRS        (ROM_BASE_ADRS) /* booting from A: or C: */
 #define ROM_SIZE             (0x00090000)    /* size of ROM */
 
-#if 1 /* From WiPro: */
-#define RAM_LOW_ADRS         (0x00308000)    /* VxWorks image entry point */
-#define RAM_HIGH_ADRS        (0x00108000)    /* Boot image entry point */
-#else /* Previous Trima/Optia */
+/* Previous Trima/Optia */
 #define RAM_LOW_ADRS         (0x00108000)    /* VxWorks image entry point */
 #define RAM_HIGH_ADRS        (0x00008000)    /* Boot image entry point */
-#endif
 
 /*
  * The INCLUDE_ADD_BOOTMEM configuration option enables runtime code which
@@ -1172,13 +1161,4 @@ extern "C" {
 
 #undef  PENTIUMPRO_TSC_FREQ
 #define PENTIUMPRO_TSC_FREQ (0)
-
-/* PSROB - Added windview support for debugging ESMC*/
-/*
-#define INCLUDE_WINDVIEW
-#define INCLUDE_WVUPLOAD_FILE
-#define INCLUDE_TIMESTAMP
-#define INCLUDE_SYS_TIMESTAMP
-#define INCLUDE_WVNET
-*/
 

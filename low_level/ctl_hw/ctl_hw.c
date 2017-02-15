@@ -289,9 +289,9 @@ enum { CONTROL2_FPGA_FIRST_FW_REV = 0x03 };
 enum { CONTROL1_FPGA_FIRST_INTF_REV = 0x03 };
 enum { CONTROL2_FPGA_FIRST_INTF_REV = 0x03 };
 
-// These are baseline revision numbers for Control 3 (EBox 2016)
-enum { CONTROL3_FPGA_FW_REV   = 0x0F };
-enum { CONTROL3_FPGA_INTF_REV = 0x06 };
+// These are minimum/baseline revision numbers for Control 3 (EBox 2016)
+enum { CONTROL3_FPGA_MIN_FW_REV   = 0x10 };
+enum { CONTROL3_FPGA_MIN_INTF_REV = 0x07 };
 
 static int initializationComplete = 0;
 static int initializationResult   = 0;
@@ -401,6 +401,8 @@ static int initForISA (void)
                mxFpgaInstalled = 1;
 
                initializationResult = 1;
+
+               printf("Initialized Control2 ISA CCA Interface: version=0x%04x\n", ((c2FpgaFwRevision << 8)|c2FpgaIntfRevision));
             }
             else
             {
@@ -435,6 +437,7 @@ static int initForISA (void)
                case 4 : // modified to hold processor reset line upon fan failure
                   hardwareVersion      = 0x0206;
                   initializationResult = 1;
+                  printf("Initialized Control1 ISA CCA Interface: version=0x%04x\n", hardwareVersion);
                   break;
 
                default :
@@ -486,17 +489,18 @@ static int initForPCI (void)
          hasArtysanPs    = TRUE;
          mxFpgaInstalled = TRUE;
 
-         if (c3FpgaIntfRevision >= CONTROL3_FPGA_INTF_REV)
+         if (c3FpgaIntfRevision >= CONTROL3_FPGA_MIN_INTF_REV)
          {
             initializationResult   = TRUE;
             initializationComplete = TRUE;
+            printf("Initialized Control PCI CCA Interface: version=0x%04x\n", hardwareVersion);
          }
          else
          {
             printf("Invalid Control3 FPGA Firmware  Revision %#x (expected %#x or greater)\n",
-                   c3FpgaFwRevision,   CONTROL3_FPGA_FW_REV);
+                   c3FpgaFwRevision,   CONTROL3_FPGA_MIN_FW_REV);
             printf("Invalid Control3 FPGA Interface Revision %#x (expected %#x or greater)\n",
-                   c3FpgaIntfRevision, CONTROL3_FPGA_INTF_REV);
+                   c3FpgaIntfRevision, CONTROL3_FPGA_MIN_INTF_REV);
          }
       }
    }
@@ -1088,12 +1092,10 @@ void hw_watchdogUpdate (void)
 
    if (state & 0x01)
    {
-
       hwOutByte(WATCHDOG_A5_REG, 0xA5);
    }
    else
    {
-
       hwOutByte(WATCHDOG_F0_REG, 0xF0);
    }
 
@@ -1522,4 +1524,4 @@ static void testReadbackWord (const char* file, int line, unsigned long port, un
    }
 }
 
-/* FORMAT HASH e023a4f43a8a2d0fc294dd7709e1b37e */
+/* FORMAT HASH 0a4b89a3e8fc8afb7056f75040c795f3 */

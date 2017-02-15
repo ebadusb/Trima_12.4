@@ -506,7 +506,7 @@ static void readback_failed (const char* file,      // source file name where er
                              )
 {
    log_level_critical(file, line) << "I/O " << type << " readback failed:"
-                                  << " portId=" << port << " => 0x" << hex << hwGetPortRegister(port)
+                                  << " portId=" << hwGetPortName(port) << " => 0x" << hex << hwGetPortRegister(port)
                                   << " value=" << value << " expected=" << expected << dec
                                   << endmsg;
 }
@@ -519,7 +519,7 @@ void logReadDiscrepancy (const char* file, int line,
                          ULONG finalValue)
 {
    log_level_safe_drv_error(file, line) << "SafDrv read discrepancy:"
-                                        << " portId=" << portId << " portReg=0x" << hex << hwGetPortRegister(portId)
+                                        << " portId=" << hwGetPortName(portId) << " portReg=0x" << hex << hwGetPortRegister(portId)
                                         << " hex[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]" << dec
                                         << " dec[1-3]=[" << firstValue << " " << secondValue << " " << finalValue << "]"
                                         << endmsg;
@@ -1787,4 +1787,4 @@ void updateTimer::monitorTiming (void)
    }
 }
 
-/* FORMAT HASH da3caa78bc6a644fe14cbe347914c07a */
+/* FORMAT HASH 75c03a6b3bf75c433e27d8e958aaa085 */
