@@ -437,8 +437,8 @@ xcopy %MAINDIR%\current_build %buildDirCPU%\current_build /S /I /F /R /Y 2>&1 | 
 :: if exist %buildDirTop%\updateTrima_55 copy %buildDirTop%\updateTrima_55 %buildDirCPU%\current_build\trima_ftp 2>&1 | tee -a %copyLog%
 
 @echo +++ Copy engr_tools and service ... | tee -a %copyLog%
-xcopy %MAINDIR%_%CPU%\engr_tools\bin\*.out %buildDirCPU%\engr_tools /S /I /F /R /Y 2>&1 | tee -a %copyLog%
-xcopy %MAINDIR%_%CPU%\service\bin %buildDirCPU%\Source\service\bin /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %MAINDIR%\engr_tools\bin\*.out %buildDirCPU%\engr_tools /S /I /F /R /Y 2>&1 | tee -a %copyLog%
+xcopy %MAINDIR%\service\bin %buildDirCPU%\Source\service\bin /S /I /F /R /Y 2>&1 | tee -a %copyLog%
 
 @echo +++ Copy Alarms info files ... | tee -a %copyLog%
 xcopy %MAINDIR%\engr_tools\genAlarmList\*.xml %buildDir%\Alarms /I /F /R /Y 2>&1 | tee -a %copyLog%

@@ -263,6 +263,9 @@ engr_tools_files: force structure
 	@cd current_build/tools/bin && $(TAR) -cf ../engr_tools.tar *
 	@cd current_build/tools && $(GZIP) -9fc engr_tools.tar > engr_tools.taz
 	@rm -f current_build/tools/engr_tools.tar
+#   Copy the remaining tools into bin
+	@$(XCOPY) /Y /R engr_tools\bin\\*.out           current_build\tools\bin
+	@$(XCOPY) /Y /R engr_tools\scripts\\*           current_build\tools\bin
 
 .PHONY: gui_support
 gui_support: force structure
