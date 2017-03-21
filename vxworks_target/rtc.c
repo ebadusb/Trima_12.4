@@ -19,15 +19,15 @@
  */
 enum
 {
-	RTC_Second = 0x00,	/* BCD seconds value */
-	RTC_Minute = 0x02,	/* BCD minutes value */
-	RTC_Hour = 0x04,		/* BCD hours value */
-	RTC_Day = 0x07,		/* BCD day of month value */
-	RTC_Month = 0x08,		/* BCD month value */
-	RTC_Year = 0x09,		/* BCD year value */
-	RTC_StatusA = 0x0a,	/* Status A register */
-	RTC_StatusB = 0x0b,	/* Status B register */
-	RTC_Century = 0x32,	/* BCD century value */
+   RTC_Second  = 0x00, /* BCD seconds value */
+   RTC_Minute  = 0x02, /* BCD minutes value */
+   RTC_Hour    = 0x04, /* BCD hours value */
+   RTC_Day     = 0x07, /* BCD day of month value */
+   RTC_Month   = 0x08, /* BCD month value */
+   RTC_Year    = 0x09, /* BCD year value */
+   RTC_StatusA = 0x0a, /* Status A register */
+   RTC_StatusB = 0x0b, /* Status B register */
+   RTC_Century = 0x32, /* BCD century value */
 };
 
 /*
@@ -162,19 +162,20 @@ STATUS getCurrentTimeFromRTC( struct timespec *clockTime)
 	int	 				retry;
 	int					rtcReadOK = 0;
 	
+	memset((void *)&rtcTime, 0, sizeof(rtcTime));
+
 	/*
 	 *	Get time data from RTC.  We try twice in case a clock update occurred
-	 * sometime during the read.  Since updates are once per second, we won't
-	 * get 
+	 * sometime during the read.  Since updates are once per second, we shouldn't
+	 * have to retry/delay more than once.
 	 */
 	for ( retry=0; retry<2 && !rtcReadOK; retry++ )
 	{
 		if ( checkRTCUpdating() )
 		{
-			taskDelay(5);
+		   taskDelay(5);   /* Make sure delay happens */
 		}
 
-		memset((void *)&rtcTime, 0, sizeof(rtcTime));
 		rtcTime.tm_sec  = getRTCReg(RTC_Second);
 		rtcTime.tm_min  = getRTCReg(RTC_Minute);
 		rtcTime.tm_hour = getRTCReg(RTC_Hour);
@@ -213,8 +214,14 @@ STATUS getCurrentTimeFromRTC( struct timespec *clockTime)
 	}
 
 	currTime = mktime(&rtcTime);
-   clockTime->tv_sec = currTime;
-   clockTime->tv_nsec = 0;
+	if (currTime == (time_t)-1)
+	{
+		currTime = 0;
+		rtcReadOK = 0;
+	}
+
+	clockTime->tv_sec = currTime;
+	clockTime->tv_nsec = 0;
 
 	return (rtcReadOK) ? OK : ERROR;
 }

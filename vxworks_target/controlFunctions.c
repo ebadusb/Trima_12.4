@@ -76,6 +76,7 @@ static void usrInitGateway(const char *baseIP);
 static void usrSetupSerialPort(void);
 static STATUS internalFTPAuthorize(int checkPassword, const char * user, const char * password);
 
+time_t usrMinAllowedClockDate(struct tm * pTmVal);
 
 /* main entry point */
 void nodeInit(void);
@@ -203,14 +204,43 @@ void nodeInit(void)
 static void usrSetTime(void)
 {
    struct timespec clockTime;
+   const time_t minAllowedTime = usrMinAllowedClockDate(NULL);
 
-   if (getCurrentTimeFromRTC(&clockTime) == OK)
+   STATUS status = getCurrentTimeFromRTC(&clockTime);
+   if (status != OK)
    {
-      clock_settime(CLOCK_REALTIME, &clockTime);
+      /* Retry once if the first read fails */
+      status = getCurrentTimeFromRTC(&clockTime);
    }
-   else
+
+   /*
+    * Check that that reading the clock succeeded, and that it is a sane value.
+    * Note the scenario when a drained/low BIOS battery may cause the BIOS to
+    * to reset to default settings. For EBox 2016, this default is 2008-08-08.
+    */
+   if (status != OK || clockTime.tv_sec < minAllowedTime)
    {
-      printf("Error setting RTC.  Error = %d\n", errnoGet());
+      /*
+       * Set to the sentinel date to clearly mark this failure and provide
+       * a clock date that may someday be used to trigger an alarm. Otherwise, the
+       * subsequent dosFsChk invoked by usrCHKPartition() will set time to the latest
+       * file creation time of /vxboot, which corresponds to the date of last install.
+       */
+      if (status != OK)
+      {
+         printf("usrSetTime: error reading RTC.\n");
+      }
+      /* ctime() provides new-line */
+      printf("usrSetTime: Real-Time Clock value is suspect: %s", ctime(&clockTime.tv_sec));
+      printf("usrSetTime: Setting clock to sentinel value : %s", ctime(&minAllowedTime));
+
+      clockTime.tv_sec  = minAllowedTime;
+      clockTime.tv_nsec = 0;
+   }
+
+   if (ERROR == clock_settime(CLOCK_REALTIME, &clockTime))
+   {
+      perror("clock_settime");
    }
 }
 
@@ -604,6 +634,9 @@ static void usrHandleSafetyPFSaveFile(void)
          fclose(fp);
       }
    }
+
+   trimaSysSafetyPFSaveArea.pBuf = NULL;
+   free(data);
 }
 
 
@@ -891,4 +924,24 @@ static STATUS internalFTPAuthorize(int checkPassword, const char * user, const c
          return ERROR;
       }
    }
+}
+
+/*
+ *  Returns a sentinel time value that represents the minimum date allowed
+ *  when initializing the system clock. This sentinel value will be used to set the
+ *  clock when an error is detected with the real-time clock. The sentinel value
+ *  is seconds since the epoch corresponding to 10/10/2010 00:00:00.
+ *
+ *  If pTmVal is non-null, it will be filled with the broken-down time data too.
+ */
+time_t usrMinAllowedClockDate(struct tm * pTmVal)
+{
+   /* Return time in seconds corresponding to: 10-Oct-2010 00:00:00 */
+   struct tm theEarliestDate;
+   memset(&theEarliestDate, 0, sizeof(theEarliestDate));
+   theEarliestDate.tm_mday = 10;
+   theEarliestDate.tm_mon  = 9;
+   theEarliestDate.tm_year = 2010-1900;
+   if (pTmVal != NULL) *pTmVal = theEarliestDate;
+   return mktime(&theEarliestDate);
 }
