@@ -117,7 +117,7 @@ const int TRAP_LAST_MSG                = TRAP_SET_REQUEST_DELAY;
 
 
 #define TRAP_MIN_PORT     1
-#define TRAP_MAX_PORT 32767
+#define TRAP_MAX_PORT 65535
 
 //
 // Set Alternate Control Server IP
@@ -125,8 +125,8 @@ const int TRAP_LAST_MSG                = TRAP_SET_REQUEST_DELAY;
 typedef struct
 {
    trapHeader hdr;
-   char       serverIp[IP_ADDRESS_SIZE]; // null terminated.
-   short      portId;                    // Range 1 - 32767
+   char           serverIp[IP_ADDRESS_SIZE]; // null terminated.
+   unsigned short portId;                    // Range 1 - 65535
 } setAltControlServerMsg;
 
 const int setAltControlServerMsgSize = sizeof (setAltControlServerMsg);

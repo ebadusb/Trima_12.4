@@ -231,7 +231,7 @@ private:
    int              _feature;                    // Turn on or off interface.
    int              _requestDelay;               // Seconds to delay between Cadence commands
    const char*      _controlIp;                  // Control Server IP Address
-   short            _controlPort;                // Control Server Port #
+   unsigned short   _controlPort;                // Control Server Port #
    int              _requestDelayInMilliSeconds; // milliseconds to delay between Cadence commands
 
    TimeWindow*      _timeWindow;
