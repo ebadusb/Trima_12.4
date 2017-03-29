@@ -66,6 +66,8 @@ extern void usrCommonInitSetFatalError( const char *msg );
 /* Local Functions */
 static void usrSetTime(void);
 static void usrSetupDisk(void);
+static time_t getLastLogFileTime(void);
+static void checkClockInitialization(void);
 static void checkForUpdate(void);
 static void checkForSingleStepMode(void);
 static void usrCleanDisk(void);
@@ -76,6 +78,8 @@ static void usrInitGateway(const char *baseIP);
 static void usrSetupSerialPort(void);
 static STATUS internalFTPAuthorize(int checkPassword, const char * user, const char * password);
 
+/* Exported Functions */
+STATUS usrClockInitStatus(void);
 time_t usrMinAllowedClockDate(struct tm * pTmVal);
 
 /* main entry point */
@@ -98,6 +102,7 @@ void nodeInit(void)
 
    usrSetTime();
    usrSetupDisk();
+   checkClockInitialization();
 
    /* load option files (hw.dat, features.bin) needed early in the boot sequence */
    if (trimaSysLoadOptionFiles() < 0)
@@ -198,6 +203,18 @@ void nodeInit(void)
 }
 
 
+/********************************************************************************/
+
+static STATUS _usrClockInitStatus = OK;
+
+/*
+ * Returns status of the system clock initialization done by usrSetTime().
+ */
+STATUS usrClockInitStatus(void)
+{
+   return _usrClockInitStatus;
+}
+
 /*
  * Set time from battery backed RTC
  */
@@ -221,11 +238,12 @@ static void usrSetTime(void)
    if (status != OK || clockTime.tv_sec < minAllowedTime)
    {
       /*
-       * Set to the sentinel date to clearly mark this failure and provide
-       * a clock date that may someday be used to trigger an alarm. Otherwise, the
-       * subsequent dosFsChk invoked by usrCHKPartition() will set time to the latest
-       * file creation time of /vxboot, which corresponds to the date of last install.
+       * Mark this failure and set to the sentinel date. Otherwise, subsequent dosFsChk
+       * operation will set time to the latest file modification time of /vxboot, which
+       * corresponds to the date of last install.
        */
+      _usrClockInitStatus = ERROR;
+
       if (status != OK)
       {
          printf("usrSetTime: error reading RTC.\n");
@@ -241,6 +259,72 @@ static void usrSetTime(void)
    if (ERROR == clock_settime(CLOCK_REALTIME, &clockTime))
    {
       perror("clock_settime");
+   }
+}
+
+
+
+static time_t getLastLogFileTime(void)
+{
+   time_t      maxTime           = 0;
+   char        dname[NAME_MAX+1] = MACHINE_PARTITION_NAME "/log";
+   struct stat fileStat          = {0};
+
+   DIR*           directory = opendir(dname);
+   struct dirent* dirEntry  = readdir_stat(directory, &fileStat);
+
+   /* Scan directory for time stamp of last modified log file (or directory) */
+   while (dirEntry != NULL)
+   {
+      if (fileStat.st_mtime > maxTime)
+      {
+         maxTime = fileStat.st_mtime;
+         strncpy(dname, dirEntry->d_name, NAME_MAX);
+      }
+      dirEntry = readdir_stat(directory, &fileStat);
+   }
+
+   closedir(directory);
+
+   printf("Last log: %s -> %s", dname, ctime(&maxTime));
+   return maxTime;
+}
+
+/**
+ * Checks for system clock initialization error. If error occurred, system time is
+ * set based on latest log file modification time. The battery-backed real-time clock
+ * is left alone.
+ *
+ * - Must be called after disk partitions are mounted, before next log file is created.
+ * - This workaround ensures that the log file naming sequence is maintained and
+ *   also that it will be collected by TRAP/CADENCE. Otherwise, if left at the
+ *   sentinel value of usrMinAllowedClockDate(), the log will likely be skipped
+ *   as being deemed too old.
+ * - Application can do further handling by checking usrClockInitStatus().
+ */
+static void checkClockInitialization(void)
+{
+   static const time_t CLOCK_ERROR_ADJUSTMENT_SECONDS = (5*60); // 5 minutes
+
+   if (usrClockInitStatus() != OK)
+   {
+      time_t logTime = getLastLogFileTime();
+      if (logTime)
+      {
+         struct timespec newTime = {0, 0};
+         newTime.tv_sec = logTime + CLOCK_ERROR_ADJUSTMENT_SECONDS;
+         printf("Clock init error detected. Setting clock to : %s", ctime(&newTime.tv_sec));
+         if (ERROR == clock_settime(CLOCK_REALTIME, &newTime))
+         {
+            perror("clock_settime");
+         }
+      }
+      else
+      {
+         printf("Error getting last log file time. Leaving clock alone.\n");
+      }
+
+      taskDelay(sysClkRateGet()*3);  /* Delay so messages can be seen at console */
    }
 }
 
