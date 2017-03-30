@@ -267,7 +267,7 @@ static void usrSetTime(void)
 static time_t getLastLogFileTime(void)
 {
    time_t      maxTime           = 0;
-   char        dname[NAME_MAX+1] = MACHINE_PARTITION_NAME "/log";
+   char        dname[NAME_MAX+1] = LOG_PATH;
    struct stat fileStat          = {0};
 
    DIR*           directory = opendir(dname);
