@@ -778,7 +778,7 @@ void Screen_CONFIG_MACHINE::update_screen_with_keypad_data (const KEYPAD_RETURN_
              || month < 1
              || day > 31
              || day < 1
-             || year > 2020)
+             || year > 2037)
          {
             DataLog (log_level_gui_info) << "Entered date (shown here in MM/DD/YYYY format: ["
                                          << month << "/" << day << "/" << year
