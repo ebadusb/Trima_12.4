@@ -19,7 +19,7 @@ ServiceModePeriodicLog                  16 service_mode_periodic_log            
 SpecialBlackStampNeedle                 20 special_black_stamp_needle                  textSpecialBlackStampNeedle                SERVICE
 PloFlag                                 21 plo_flag                                    textPloFlag                                SERVICE
 PloPcaFlag                              22 plopca_flag                                 textPloPca                                 SERVICE
-#ApsAlarmDetectPosPressure              23 this feature is obsolete per IT13457
+AutoFlowFlag                            23 autoflow_flag                               textAutoFlowFlag                           SERVICE
 ShowPlasmaVolume                        24 show_plasma_volume                          textShowPlasmaVolume                       SERVICE
 ExtraPlasmaNoAc                         25 extra_plasma_no_ac                          textExtraPlasmaNoAc                        SERVICE
 JapanFeatures                           26 japan_features                              textJapanFeatures                          SERVICE

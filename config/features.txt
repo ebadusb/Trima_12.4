@@ -135,6 +135,10 @@ procedure_confirmation_popup=0,2ae0aeb
 confirm_pas_bag_barcode_scan=0,757aa1e0
 pir_preferred=0,af1fac0e
 triple_ppc_flag=1,a4efc457
+#
+# Adding the Autoflow feature
+#
+autoflow_flag=0,36b612b5
 
 [GUI]
 #
