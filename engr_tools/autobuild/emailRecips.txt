@@ -5,9 +5,9 @@
 #
 EMAIL_MGR=scott.butzke@terumobct.com, tim.dyes@terumobct.com, louis.marketos@terumobct.com, jay.wong@terumobct.com
 
-EMAIL_DEV=mat.ramey@terumobct.com, Jeffrey.Carroll@terumobct.com
+EMAIL_DEV=mat.ramey@terumobct.com, Jeffrey.Carroll@terumobct.com, terumobcttrima.in@capgemini.com, branndon.albert@terumobct.com
 
-EMAIL_SQA=dennis.giblin@terumobct.com, sushant.painaik@terumobct.com, branndon.albert@terumobct.com
+EMAIL_SQA=dennis.giblin@terumobct.com, sushant.painaik@terumobct.com
 
 EMAIL_SYS=Alicia.Pierini@terumoBCT.com
 
