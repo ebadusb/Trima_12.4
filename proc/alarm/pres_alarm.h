@@ -60,6 +60,7 @@ protected:
    // Function which determines how to set or clear the
    //  appropriate APS alarm
    //
+   void updateAPS_old (const float aps, const bool high, const bool low);
    void updateAPS (const float aps, const bool high, const bool low);
 
    //
@@ -96,7 +97,7 @@ protected:
    void autoFlowDecrease ();
 
 
-   void checkAutoflowStatus ();
+   void updateAutoflowAdjustFlags ();
    void rinsebackState ();
    void stopInletRamp ();
 
@@ -107,6 +108,16 @@ protected:
    void endVeinRecoveryTimer () ;  // special recovery for IT-8487
 
    void startQinTimerAfterRamp ();
+
+   bool isAutoFlowEnabled ();
+
+   bool isSystemInAPSAlarm ();
+
+   bool inCorrectSubstates ();
+
+   void setRecoveryFlag ();
+
+   void setAutoFlow ();
 
 protected:
 
@@ -170,6 +181,9 @@ protected:
    bool                    _shouldStopInletRamp;
 
    bool                    _apsLowRecovery;
+   bool                    _isAFDecreaseScheduled;
+   bool                    _isSystemInRecovery;
+   bool                    _isAutoFlowEnabled;
 
 private:
 

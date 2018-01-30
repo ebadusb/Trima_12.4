@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000 by Gambro BCT, Inc.  All rights reserved.
  *
- * TITLE:      pres_alarm.h
+ * TITLE:      pres_alarm.cpp
  *
  */
 
@@ -85,7 +85,10 @@ PressureAlarm::PressureAlarm()
      _autoFlow_On(false),
      _shouldStopInletRamp(false),
      _adjustMsg(0),
-     _apsLowRecovery(false)
+     _apsLowRecovery(false),
+     _isAFDecreaseScheduled(false),
+     _isSystemInRecovery(false),
+     _isAutoFlowEnabled(false)
 {}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +106,6 @@ PressureAlarm::~PressureAlarm()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::Monitor ()
 {
-
    bool  high       = false;
    bool  low        = false;
    float currentAPS = 0.0f;
@@ -158,11 +160,17 @@ void PressureAlarm::Monitor ()
       }
    }
 
+   // Set the Recovery Flag
+   setRecoveryFlag();
+
    // special timer only if VEIN_TIMER > 0.0f
    endVeinRecoveryTimer();
 
-   checkAutoflowStatus();
-   rinsebackState();
+   // Set the flags for AF increase/decrease only if AF is enabled
+   if (_isAutoFlowEnabled)
+   {
+      updateAutoflowAdjustFlags();
+   }
 
    updateAPS(currentAPS, high, low);
 
@@ -179,103 +187,67 @@ void PressureAlarm::Monitor ()
 
 void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
 {
-
-
-   if (_autoFlow_On == false)
+   ///  see if we can do the slowing yet.... ///////////
+   if (!_isAutoFlowEnabled)
    {
-      ///  see if we can do the slowing yet.... ///////////
       if ( _slowAlarmScheduled
            && (_pd.Status().APS() >= APSNominalPressure)
-
-           // new line:
            && _LastPause.getSecs() > MinPauseTime
-
            )
+      {
          setSlowingAlarm(aps);
-      ////////////////////////////////////////////////////
+      }
+   }
+   else
+   {
+      
+     // Decrease flow only if:
+      // - System is not in recovery
+      // - AF decrease is true (This when set to true has already satisfied inCorrectSubstates()) 
+      if (_isAFDecreaseScheduled && !_isSystemInRecovery)
+      {
+         autoFlowDecrease();
+         _isAFDecreaseScheduled = false;
+      }
    }
 
    unlatchAlarms(aps, high, low);
 
+   // Check and remove pauses if they are older than 3 mins
    removeOldPauses();
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   //  DETERMINE CONDITIONS FOR ALARMS/ALERTS:
-   //
-
-   bool inAPSAlarmtype = false;
-   if (_autoFlow_On == false)
-   {
-      inAPSAlarmtype = (
-         _APSHighAlarm.getState()        != CLEARED     //  We are already alarming
-         || _APSLowAlarm.getState()         != CLEARED  //  with one of these
-         || _APSPumpsSlowAlarm.getState()   != CLEARED  //  alarms
-         // aps during pause (hi/low)
-         || (_APSDuringPauseAlarm_highpres.getState() != CLEARED && _APSDuringPauseAlarm_lowpres.getState() != CLEARED)
-         );
-
-   }
-   else
-   {
-
-      inAPSAlarmtype = (
-         _APSHighAlarm.getState()   != CLEARED      //  We are already alarming
-         || _APSLowAlarm.getState() != CLEARED      //  with one of these
-         // aps during pause (hi/low)
-         || (_APSDuringPauseAlarm_highpres.getState() != CLEARED && _APSDuringPauseAlarm_lowpres.getState() != CLEARED)
-
-         );
-
-   }
-
    //  if it is in AKO or saline bolus
-   bool inRecoverys = (  _pd.AlarmActive()  &&                            // AKO is in progress or
-                         ( _pd.Status().ReturnPump.CmdRPM() == CobeConfig::data().QrpAKO
-                           || ( _pd.Status().ReturnPump.CmdRPM() > 0.0f
-                                && RecoveryTypes::RecoveryId(_pd.RecoveryName().c_str() ) == RecoveryTypes::SalineBolus )
-                         )
-                         );
-
+   bool IsSalineOrAKO = (  _pd.AlarmActive()  &&                            // AKO is in progress or
+                              ( _pd.Status().ReturnPump.CmdRPM() == CobeConfig::data().QrpAKO
+                              || ( _pd.Status().ReturnPump.CmdRPM() > 0.0f
+                                  && RecoveryTypes::RecoveryId(_pd.RecoveryName().c_str() ) == RecoveryTypes::SalineBolus )
+                              )
+                             );
 
    bool outOfRange           = ( high || low );
 
-   bool okTolookForAPSAlarms = ( !_pd.Run().DrawCycle.Get() || inRecoverys || inAPSAlarmtype );
+   bool okTolookForAPSAlarms = ( !_pd.Run().DrawCycle.Get() || IsSalineOrAKO || isSystemInAPSAlarm() );
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //
 
-
    if ( (outOfRange && okTolookForAPSAlarms) || pauseCondition(aps, high, low)  )
    {
-      bool isInPLTCollect = false;
+      bool isPumpsSlowAlarmClear = true;
 
-      if (_autoFlow_On == true)
-         isInPLTCollect = ( _pd.Status().CassIsPltPlsRBC() &&
-                            (_pd.Run().Substate.Get() > SS_CHANNEL_SETUP &&           // we want chennel set up to goto APS low after 3 pauses
-                             _pd.Run().Substate.Get() < SS_RBC_PTF_SETUP_1 ) );
-      else
-         isInPLTCollect = ( _pd.Status().CassIsPltPlsRBC() && _pd.Run().Substate.Get() < SS_RBC_PTF_SETUP_1 );
-
-
-
-      bool slowIsClear = true;
-
-      if (_autoFlow_On == false)
-         slowIsClear = (_APSPumpsSlowAlarm.getState() == CLEARED);
-      else
-         slowIsClear = true;
-
-
+      if (!_isAutoFlowEnabled)
+      {
+         isPumpsSlowAlarmClear = (_APSPumpsSlowAlarm.getState() == CLEARED);
+      }
 
       if (      low
-                && slowIsClear
+                && isPumpsSlowAlarmClear
                 && inAutoPause()
                 && _Pauses.size() >= MaxPausesInPeriod
-                && isInPLTCollect
+                && inCorrectSubstates()
                 )
       {
-
-         if (_autoFlow_On == false)
+         if (!_isAutoFlowEnabled)
          {
             if (!_slowAlarmScheduled)        // log it the first time...
             {
@@ -290,12 +262,17 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
          }
          else
          {
+            // Schedule a decrease if not in recovery
+            if (!_isSystemInRecovery)
+            {
+               DataLog(log_level_proc_alarm_monitor_info)
+                  << "schedule a AF decrease for when the aps recovers to -50 : "
+                  << TIMESTAMP <<  endmsg;
 
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///  DO AUTO SLOWING OF Qin
-            //
-            autoFlowDecrease();
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+               PeriodicLog::forceOutput();
+
+               _isAFDecreaseScheduled = true;
+            }
          }
 
       }
@@ -350,27 +327,28 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
          endVeinRecoveryTimer();
       }
 
-
-      //  ... Since the operator has to intervene we start
-      //  all of the counters over.
-      //
-      //
-      removeAllPauses();
-
+      // If AutoFlow is disabled, clear all pauses as manual intervention required
+      if (!_isAutoFlowEnabled)
+      {
+         removeAllPauses();
+      }
+      else if (!inCorrectSubstates() && !high)
+      {
+         // If not in correct substate no need to maintain count
+         // But APS High cannot reset counter that could be set
+         // in previous substate
+         removeAllPauses();
+      }
 
       DataLog(log_level_proc_alarm_monitor_info) << "APS=" << aps
                                                  << " limits=" << _pd.Status().APSHigh()
                                                  << " " << _pd.Status().APSLow()
                                                  << TIMESTAMP << endmsg;
-
    }
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 int PressureAlarm::pauseCondition (const float aps, const bool high, const bool low)
 {
@@ -399,7 +377,6 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
 
       DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: more than ApsMaxPausesInPeriod: " << MaxPausesInPeriod << " ."  << TIMESTAMP << endmsg;
       doAlarm = 1;
-
 
    }
    else if ( inAutoPause() && ( _LastPause.getSecs() > TimeBeforeAlarm ) )
@@ -432,8 +409,10 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
       }
 
 
-      if (_autoFlow_On == false) _slowAlarmScheduled = false;
-
+      if (_autoFlow_On == false)
+      {
+         _slowAlarmScheduled = false;
+      }
 
       /////////////////////// IT 11181 ////////////////////////////////////////////////
    }
@@ -638,10 +617,12 @@ void PressureAlarm::disable ()
 void PressureAlarm::enable ()
 {
    // refresh my feature flag
-   _autoFlow_On =  (bool)(_pd.Config().Procedure.Get().key_autoflow);
+   _autoFlow_On = (bool)(_pd.Config().Procedure.Get().key_autoflow);
+   // Set the AutoFlow feature flag
+   setAutoFlow();
 
    DataLog(log_level_proc_alarm_monitor_info) << " PressureAlarm monitor enabled: " << TIMESTAMP  << endmsg;
-   DataLog(log_level_proc_alarm_monitor_info) << "  is AutoFlow enabled? " << _autoFlow_On  << endmsg;
+   DataLog(log_level_proc_alarm_monitor_info) << "  is AutoFlow enabled? " << _isAutoFlowEnabled  << endmsg;
 
    MonitorBase::enable();
 }
@@ -699,12 +680,6 @@ void PressureAlarm::endVeinRecoveryTimer ()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::autoFlowDecrease ()
 {
-   if (!(_pd.Config().Procedure.Get().key_autoflow))
-      return;
-
-   if (!_allowAutoDecreases)
-      return;
-
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Auto Decrease Qin: " << TIMESTAMP <<  endmsg;
 
    stopInletRamp();
@@ -732,7 +707,7 @@ void PressureAlarm::autoFlowDecrease ()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::autoFlowIncrease ()
 {
-   if (!(_pd.Config().Procedure.Get().key_autoflow))
+   if (!_isAutoFlowEnabled)
       return;
 
    if (!_allowAutoIncreases)
@@ -762,9 +737,6 @@ void PressureAlarm::autoFlowIncrease ()
 void PressureAlarm::stopInletRamp ()
 {
 
-   if (!(_pd.Config().Procedure.Get().key_autoflow))
-      return;
-
    if (!_shouldStopInletRamp )
       return;
 
@@ -785,12 +757,11 @@ void PressureAlarm::stopInletRamp ()
 
       _block = true;
 
-      if (!_QincreaseTimer.timerArmed() && _pd.Config().Procedure.Get().key_autoflow)
+      if (!_QincreaseTimer.timerArmed())
       {
          _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
          DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (ramp stopped by AF) " << TIMESTAMP <<  endmsg;
       }
-
 
       DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Stop inlet ramping. Qin to cap at " << _pd.Run().deadRampMaxQin.Get() <<  endmsg;
    }
@@ -799,9 +770,8 @@ void PressureAlarm::stopInletRamp ()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-void PressureAlarm::checkAutoflowStatus ()
+void PressureAlarm::updateAutoflowAdjustFlags ()
 {
-
    if (!(_pd.Config().Procedure.Get().key_autoflow))
       return;
 
@@ -856,9 +826,6 @@ void PressureAlarm::checkAutoflowStatus ()
          _shouldStopInletRamp = false;
          break;
    }
-
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -899,6 +866,108 @@ void PressureAlarm::startQinTimerAfterRamp ()
          _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
          DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (post ramp) " << TIMESTAMP <<  endmsg;
       }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   setRecoveryFlag ()
+///
+///   Set the recovery flag if system is in any of recovery modes
+///   
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::setRecoveryFlag ()
+{
+   if (RecoveryTypes::RecoveryId(_pd.RecoveryName().c_str()) == RecoveryTypes::None)
+   {
+      _isSystemInRecovery = false;
+   }
+   else
+   {
+      _isSystemInRecovery = true;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   setAutoFlow ()
+///
+///   Set the value of AutoFlow Feature flag from features.bin
+///   This basically sets the _isAutoFlowEnabled flag which will be used 
+///   throughout pressure alarm 
+///   
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::setAutoFlow ()
+{
+   _isAutoFlowEnabled = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   isSystemInAPSAlarm ()
+///
+///   This function checks if there are any active alarms. The condition differs
+///   if autoflow is enabled.
+///   
+///   @param None
+///   @return bool - true if any of the alarms is active, false otherwise
+////////////////////////////////////////////////////////////////////////////////
+bool PressureAlarm::isSystemInAPSAlarm ()
+{
+   bool inAPSPresAlarm = false;
+
+   inAPSPresAlarm = (
+      _APSHighAlarm.getState() != CLEARED ||
+      _APSLowAlarm.getState() != CLEARED  ||
+      (_APSDuringPauseAlarm_highpres.getState() != CLEARED &&
+       _APSDuringPauseAlarm_lowpres.getState() != CLEARED)
+      );
+
+   if (!_isAutoFlowEnabled)
+   {
+      return ((_APSPumpsSlowAlarm.getState() != CLEARED ) || inAPSPresAlarm);
+   }
+   else
+   {
+      return inAPSPresAlarm;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   inCorrectSubstates ()
+///
+///   This function verifies the system is in correct substate to schedule
+///   a pump slow alarm or an AutoFlow decrease when AutoFlow feature is 
+///   enabled.
+///   
+///   @param   None
+///   @return  bool - true if system is in valid substate, false otherwise
+////////////////////////////////////////////////////////////////////////////////   
+
+bool PressureAlarm::inCorrectSubstates ()
+{
+   State_names subState =  _pd.Run().Substate.Get();
+
+   if (_isAutoFlowEnabled)
+   {
+      return (_pd.Status().CassIsPltPlsRBC() &&
+                 // Check if we are in valid sub-states
+                 // Exception states are PIR states
+                 (subState > SS_CHANNEL_SETUP &&
+                  subState != SS_PIR_PLASMA &&
+                  subState != SS_PIR_NOPLASMA &&
+                  subState < SS_RBC_PTF_SETUP_1)
+              );
+   }
+   else
+   {
+      return ( _pd.Status().CassIsPltPlsRBC() &&
+                 subState < SS_RBC_PTF_SETUP_1);
    }
 }
 
