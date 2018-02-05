@@ -119,6 +119,8 @@ protected:
 
    void setAutoFlow ();
 
+   void disableScheduledFlags ();
+
 protected:
 
    //
@@ -171,7 +173,7 @@ protected:
 
    bool                    _autoFlow_On;
 
-   TimerMessage            _QincreaseTimer;
+   TimeKeeper              _QincreaseTimer;
 
    ProcedureAdjustmentMsg* _adjustMsg;
    ProcSubstateChangeMsg   _substateChangeMsg;   // Substate change message
@@ -179,6 +181,7 @@ protected:
    bool                    _allowAutoIncreases;
    bool                    _allowAutoDecreases;
    bool                    _shouldStopInletRamp;
+   bool                    _initialQinTimerStarted;
 
    bool                    _apsLowRecovery;
    bool                    _isAFDecreaseScheduled;

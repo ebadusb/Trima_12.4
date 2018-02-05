@@ -79,17 +79,22 @@ PressureAlarm::PressureAlarm()
      _slowAlarmScheduled(false),
      _pConfigCds(new Config_CDS(ROLE_RO)),
      _AdditionalPauseTimer(0, Callback<PressureAlarm>(this, &PressureAlarm::clearAutoPauseAlarm), TimerMessage::DISARMED),
-     _QincreaseTimer(0, Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease), TimerMessage::DISARMED),
+     _QincreaseTimer(),
      _allowAutoIncreases(false),
      _allowAutoDecreases(false),
      _autoFlow_On(false),
+     _initialQinTimerStarted(false),
      _shouldStopInletRamp(false),
      _adjustMsg(0),
      _apsLowRecovery(false),
      _isAFDecreaseScheduled(false),
      _isSystemInRecovery(false),
      _isAutoFlowEnabled(false)
-{}
+{
+   _QincreaseTimer.notifier(Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease) );
+   _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
+   _QincreaseTimer.inactivate();
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +179,7 @@ void PressureAlarm::Monitor ()
 
    updateAPS(currentAPS, high, low);
 
-   if ( _autoFlow_On == true )
+   if (_isAutoFlowEnabled)
    {
       startQinTimerAfterRamp();
    }
@@ -200,14 +205,47 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
    }
    else
    {
-      
-     // Decrease flow only if:
+
+      // Proceed for AF decrease only if:
       // - System is not in recovery
-      // - AF decrease is true (This when set to true has already satisfied inCorrectSubstates()) 
-      if (_isAFDecreaseScheduled && !_isSystemInRecovery)
+      // - AF decrease is true
+      if (_isAFDecreaseScheduled &&
+          !_isSystemInRecovery)
       {
-         autoFlowDecrease();
-         _isAFDecreaseScheduled = false;
+         // From 1 sec to less than 6 secs
+         if (_LastPause.getSecs() > MinPauseTime &&
+             _LastPause.getSecs() < TimeBeforeAlarm)
+         {
+            // If we have positve pressure, proceed with Qin decrease
+            if (_pd.Status().APS() >= APSPositivePressure)
+            {
+               DataLog(log_level_proc_alarm_monitor_info) << "Pressure recovered, Qin decrease " << endmsg;
+               autoFlowDecrease();
+               _isAFDecreaseScheduled = false;
+            }
+         }// If pressure does not recover above nominal in 6 sec
+         else if (_LastPause.getSecs() >= TimeBeforeAlarm)
+         {
+            // If the pressure has recovered over nominal, proceed with Qin decrease
+            if (_pd.Status().APS() > APSNominalPressure)
+            {
+               DataLog(log_level_proc_alarm_monitor_info) << "Pressure recovered to nominal, Qin decrease " << endmsg;
+               autoFlowDecrease();
+               _isAFDecreaseScheduled = false;
+            }
+            else
+            {
+               // Pressure has not recovered above nominal and time is up
+               // Latch the low alarm
+               if ( _APSLowAlarm.getState() != LATCHED )
+               {
+                  DataLog(log_level_proc_alarm_monitor_info) << "_APSLowAlarm latched" << endmsg;
+                  _APSLowAlarm.latchAlarm();
+               }
+               // Set this to true when we latch the alarm
+               _LocallyLatched = true;
+            }
+         }
       }
    }
 
@@ -312,12 +350,47 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
          }
          else
          {
-            // Only latch when not latched
-            if (_APSLowAlarm.getState() != LATCHED)
+            // Existing condition when AF is disabled
+            if (!_isAutoFlowEnabled)
             {
-               DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
-               _APSLowAlarm.latchAlarm();
-               _LocallyLatched = true;
+               // Latch the alarm if pressure has not recovered after 6 secs
+               if (_LastPause.getSecs() >= TimeBeforeAlarm)
+               {
+                  if (_APSLowAlarm.getState() != LATCHED)
+                  {
+                     DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                     _APSLowAlarm.latchAlarm();
+                     _LocallyLatched = true;
+                  }
+               }
+            }
+            else
+            {  // Autoflow is enabled here
+               if (inAutoPause())
+               {
+                  // If we exceed 3 APS low and we are in
+                  // substate where AF is not supposed to work
+                  // latch the aps low alarm
+                  if (_Pauses.size() >= MaxPausesInPeriod && !inCorrectSubstates())
+                  {
+                     if (_APSLowAlarm.getState() != LATCHED)
+                     {
+                        DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                        _APSLowAlarm.latchAlarm();
+                        _LocallyLatched = true;
+                     }
+                  }
+                  // We exceed 6 seconds latch the APS low Alarm
+                  else if (_LastPause.getSecs() >= TimeBeforeAlarm)
+                  {
+                     if (_APSLowAlarm.getState() != LATCHED)
+                     {
+                        DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                        _APSLowAlarm.latchAlarm();
+                        _LocallyLatched = true;
+                     }
+                  }
+               }
             }
          }
 
@@ -372,75 +445,61 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
 
    }
 
-   if ( _Pauses.size() >= MaxPausesInPeriod )
+   // If AF in enabled and decrease is scheduled then we could hit this
+   // immediately in next monitor cycle.
+   // We do not want to alarm again if we are going into Qin decrease.
+   if (_Pauses.size() >= MaxPausesInPeriod &&
+       !_isAFDecreaseScheduled)
    {
-
       DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: more than ApsMaxPausesInPeriod: " << MaxPausesInPeriod << " ."  << TIMESTAMP << endmsg;
       doAlarm = 1;
-
    }
-   else if ( inAutoPause() && ( _LastPause.getSecs() > TimeBeforeAlarm ) )
-
+   else if (inAutoPause())
    {
-
-
-      DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Six Seconds is up: "
-                                                 << "aps = "
-                                                 << aps
-                                                 << ", Last Pause = "
-                                                 << _LastPause.getSecs()
-                                                 << TIMESTAMP << endmsg;
-
-      /////////////////////// IT 11181 ////////////////////////////////////////////////
-      // if aps GT -50mmHg
-      if ( aps > APSNominalPressure )
+      // Case where low pause counter are less than 3
+      // Check between 1 and 6 sec after AutoPause,
+      // we are ok to check for other conditions
+      if (_LastPause.getSecs() > MinPauseTime &&
+          _LastPause.getSecs() < TimeBeforeAlarm)
       {
+         // Check if pressure has recovered to positive
+         if (aps >= APSPositivePressure)
+         {
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure recovered to Positive " << TIMESTAMP << endmsg;
 
-         DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure recovered to " << TIMESTAMP << endmsg;
-         doAlarm = 0;
-         clearAutoPauseAlarm();
-
+            // Since pressure has recovered with 1 sec do not alarm
+            doAlarm = 0;
+            clearAutoPauseAlarm();
+            disableScheduledFlags();
+         }
       }
-      else
+      else if (_LastPause.getSecs() >= TimeBeforeAlarm)
       {
+         // 6 Seconds have passed, check if pressure above nominal
+         if ( aps > APSNominalPressure )
+         {
+            // The pressure has recovered to nominal of -50 mmHg so its ok to proceed
+            // Clear the APS low
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure recovered to " << TIMESTAMP << endmsg;
+            doAlarm = 0;
+            clearAutoPauseAlarm();
+         }
+         else
+         {
+            // The pressure has not recovered to nominal after 6 secs
+            // But we already incremented the counter, so remove the last pause
+            // If Qin decrease scheduled, disable it
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
+            doAlarm = 1;
+            _Pauses.pop_back();
+            _isAFDecreaseScheduled = false;
+         }
 
-         DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
-         doAlarm = 1;
+         disableScheduledFlags();
       }
-
-
-      if (_autoFlow_On == false)
-      {
-         _slowAlarmScheduled = false;
-      }
-
-      /////////////////////// IT 11181 ////////////////////////////////////////////////
    }
-   else if (   inAutoPause()
-               && ( aps >= APSPositivePressure )
-               && (_LastPause.getSecs() > MinPauseTime) )
-   {
 
-      DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure recovered, pause is up: :"
-                                                 << "aps = "
-                                                 << aps
-                                                 << ", Last Pause = "
-                                                 << _LastPause.getSecs()
-                                                 << TIMESTAMP << endmsg;
-      doAlarm = 0;
-
-      if (_autoFlow_On == false) _slowAlarmScheduled = false;  // disable the slow if it doesnt recover in time
-      //
-      clearAutoPauseAlarm();
-
-
-   }
-   ////////////////////////////////////////////////////////////////////////////////////
-   //
-   // Return the pause condition
-   //
    return doAlarm ;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -461,12 +520,14 @@ void PressureAlarm::unlatchAlarms (const float,
 
 
    if ( _APSLowAlarm.getState() == LATCHED )
+   {
       if ( _LocallyLatched && !low )
       {
+         DataLog(log_level_proc_alarm_monitor_info) << "Unlatching _APSLowAlarm " <<  endmsg;
          _APSLowAlarm.unlatchAlarm();
          _LocallyLatched = false;
       }
-
+   }
 
    if ( ( _APSDuringPauseAlarm_highpres.getState() == LATCHED ) && !high)
    {
@@ -556,10 +617,18 @@ void PressureAlarm::setAutoPauseAlarm (const float aps)
 void PressureAlarm::clearAutoPauseAlarm ()
 {
    // DataLog(log_level_proc_alarm_monitor_info) << "*** Clearing AutoPause Alarm: " << TIMESTAMP  << endmsg;
-   _APSPauseAlarm.clearAlarm();
-   _LastPause.inactivate();
-   _LastPause.init();
-   _disarmTimer = true;
+   if (inAutoPause())
+   {
+      _APSPauseAlarm.clearAlarm();
+      _LastPause.inactivate();
+      _LastPause.init();
+      _disarmTimer = true;
+      if(_initialQinTimerStarted)
+      {
+         _QincreaseTimer.init();
+         DataLog(log_level_qa_external) << "AutoFlow: Qin increase timer reset. (at clear of APS AutoPause) " << TIMESTAMP <<  endmsg;
+      }
+   }
 
    PeriodicLog::forceOutput();
 }
@@ -608,7 +677,7 @@ void PressureAlarm::disable ()
    clearAutoPauseAlarm();
 
    _AdditionalPauseTimer.interval(0.0f);
-   _QincreaseTimer.interval(0.0f);
+   _QincreaseTimer.init();
 
 
 }
@@ -697,7 +766,7 @@ void PressureAlarm::autoFlowDecrease ()
    _adjustMsg->send(AUTOFLOW_QIN_DECREASE);
 
    // reset the timer for increase.
-   _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
+   _QincreaseTimer.init();
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer reset. (post Qin decrement) " << TIMESTAMP <<  endmsg;
 
    DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: Current Proc Time =  " << _pd.RunTargets().ProcTimeTarget.Get() << endmsg;
@@ -710,9 +779,6 @@ void PressureAlarm::autoFlowIncrease ()
    if (!_isAutoFlowEnabled)
       return;
 
-   if (!_allowAutoIncreases)
-      return;
-
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Auto Increase Qin: " << TIMESTAMP <<  endmsg;
    if (!_adjustMsg)
    {
@@ -723,8 +789,8 @@ void PressureAlarm::autoFlowIncrease ()
    DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: Sending ProcedureAdjustmentMsg " << endmsg;
    _adjustMsg->send(AUTOFLOW_QIN_INCREASE);
 
-   // reset timer to ten minutes
-   _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
+   // reset timer to five minutes
+   _QincreaseTimer.init();
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer reset. (post Qin increase)" << TIMESTAMP <<  endmsg;
 
    DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: Current Proc Time =  " << _pd.RunTargets().ProcTimeTarget.Get() << endmsg;
@@ -757,9 +823,11 @@ void PressureAlarm::stopInletRamp ()
 
       _block = true;
 
-      if (!_QincreaseTimer.timerArmed())
+      if (!_QincreaseTimer.activated())
       {
-         _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
+         _initialQinTimerStarted = true;
+         _QincreaseTimer.init();
+         _QincreaseTimer.activate();
          DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (ramp stopped by AF) " << TIMESTAMP <<  endmsg;
       }
 
@@ -790,14 +858,6 @@ void PressureAlarm::updateAutoflowAdjustFlags ()
          _allowAutoIncreases  = false;
          _allowAutoDecreases  = true;
          _shouldStopInletRamp = true;
-         if ( !(_pConfigCds->Predict.Get().key_inlet_flow_ramp) )
-         {
-            if (!_QincreaseTimer.timerArmed())
-            {
-               _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
-               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (post prime, ramp off-1)" << TIMESTAMP <<  endmsg;
-            }
-         }
          break;
 
       case SS_PLATELET_PLASMA :
@@ -810,14 +870,6 @@ void PressureAlarm::updateAutoflowAdjustFlags ()
          _allowAutoIncreases  = true;
          _allowAutoDecreases  = true;
          _shouldStopInletRamp = false;
-         if ( !(_pConfigCds->Predict.Get().key_inlet_flow_ramp) )
-         {
-            if (!_QincreaseTimer.timerArmed())
-            {
-               _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
-               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (post prime, ramp off)" << TIMESTAMP <<  endmsg;
-            }
-         }
          break;
 
       default :
@@ -839,32 +891,57 @@ void PressureAlarm::rinsebackState ()
       _allowAutoDecreases = false;
    }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   startQinTimerAfterRamp ()
+///
+///   Start autoflow increase timer when inlet ramp completed or terminated early.
+///
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
 
 void PressureAlarm::startQinTimerAfterRamp ()
 {
-
-   if (!(_pd.Config().Procedure.Get().key_autoflow))
-      return;
-
-   float Vincv = CobeConfig::data().MinVinCollectStart;
-   float Vinr  = (Vincv < CobeConfig::data().VinEndOfQinRamp ? Vincv : CobeConfig::data().VinEndOfQinRamp);
-   float Vin   = _pd.Volumes().Vin.Get();
-
-   if ( Vin >= Vinr)
+   if(!_initialQinTimerStarted)
    {
-
+      float Vincv = CobeConfig::data().MinVinCollectStart;
+      float Vinr  = (Vincv < CobeConfig::data().VinEndOfQinRamp ? Vincv : CobeConfig::data().VinEndOfQinRamp);
+      float Vin   = _pd.Volumes().Vin.Get();
       static bool logItOnce = true;
-      if (logItOnce && !_pd.Run().stopRamp.Get())
+
+      if ( Vin >= Vinr)
       {
-         logItOnce = false;
-         DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin ramping completed. " << TIMESTAMP <<  endmsg;
+         if (logItOnce && !_pd.Run().stopRamp.Get())
+         {
+            logItOnce = false;
+            DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin ramping completed. " << TIMESTAMP <<  endmsg;
+         }
+         if (!_QincreaseTimer.activated())
+         {
+            _initialQinTimerStarted = true;
+            _QincreaseTimer.init();
+            _QincreaseTimer.activate();
+            DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (post ramp) " << TIMESTAMP <<  endmsg;
+         }
       }
-      if (!_QincreaseTimer.timerArmed())
+      else
       {
-         _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
-         DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (post ramp) " << TIMESTAMP <<  endmsg;
+         if(_pd.Run().stopRamp.Get())
+         {
+            if (logItOnce)
+            {
+               logItOnce = false;
+               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin ramping terminated early. " << TIMESTAMP <<  endmsg;
+            }
+            if (!_QincreaseTimer.activated())
+            {
+               _initialQinTimerStarted = true;
+               _QincreaseTimer.init();
+               _QincreaseTimer.activate();
+               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer started. (ramp terminated early) " << TIMESTAMP <<  endmsg;
+            }
+         }
       }
    }
 }
@@ -874,7 +951,7 @@ void PressureAlarm::startQinTimerAfterRamp ()
 ///   setRecoveryFlag ()
 ///
 ///   Set the recovery flag if system is in any of recovery modes
-///   
+///
 ///   @param None
 ///   @return void
 ////////////////////////////////////////////////////////////////////////////////
@@ -895,9 +972,9 @@ void PressureAlarm::setRecoveryFlag ()
 ///   setAutoFlow ()
 ///
 ///   Set the value of AutoFlow Feature flag from features.bin
-///   This basically sets the _isAutoFlowEnabled flag which will be used 
-///   throughout pressure alarm 
-///   
+///   This basically sets the _isAutoFlowEnabled flag which will be used
+///   throughout pressure alarm
+///
 ///   @param None
 ///   @return void
 ////////////////////////////////////////////////////////////////////////////////
@@ -912,7 +989,7 @@ void PressureAlarm::setAutoFlow ()
 ///
 ///   This function checks if there are any active alarms. The condition differs
 ///   if autoflow is enabled.
-///   
+///
 ///   @param None
 ///   @return bool - true if any of the alarms is active, false otherwise
 ////////////////////////////////////////////////////////////////////////////////
@@ -942,13 +1019,12 @@ bool PressureAlarm::isSystemInAPSAlarm ()
 ///   inCorrectSubstates ()
 ///
 ///   This function verifies the system is in correct substate to schedule
-///   a pump slow alarm or an AutoFlow decrease when AutoFlow feature is 
+///   a pump slow alarm or an AutoFlow decrease when AutoFlow feature is
 ///   enabled.
-///   
+///
 ///   @param   None
 ///   @return  bool - true if system is in valid substate, false otherwise
-////////////////////////////////////////////////////////////////////////////////   
-
+////////////////////////////////////////////////////////////////////////////////
 bool PressureAlarm::inCorrectSubstates ()
 {
    State_names subState =  _pd.Run().Substate.Get();
@@ -971,4 +1047,26 @@ bool PressureAlarm::inCorrectSubstates ()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   disableScheduledFlags ()
+///
+///   This function:
+///   For AF On - Disables _isAFDecreaseScheduled
+///   For AF OFF - Disables _slowAlarmScheduled
+///
+///   @param   None
+///   @return  void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::disableScheduledFlags ()
+{
+   if (_isAutoFlowEnabled)
+   {
+      _isAFDecreaseScheduled = false;
+   }
+   else
+   {
+      _slowAlarmScheduled = false;
+   }
+}
 /* FORMAT HASH 9fff9f1134959345225571be5747e6d3 */

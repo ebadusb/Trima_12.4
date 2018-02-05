@@ -28,6 +28,7 @@ public:
 private:
    anAlarmMsg _ACOcclusionAlarmMsg;
    anAlarmMsg _AcPrimeInletAlarmMsg;
+   anAlarmMsg _ACLevelAlarmLatch;
    int        _FirstTime;
    float      _ApsSnapshot;
    float      _ApsCurrent;

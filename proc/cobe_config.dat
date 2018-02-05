@@ -708,7 +708,7 @@ aps_additional_delay=0.0
 
 ################
 # AUTO FLOW SETTINGS:
-autoflow_increase_timer=10.0
+autoflow_increase_timer=5.0
 autoflow_increase_increment=5.0
 autoflow_decrease_increment=5.0
 

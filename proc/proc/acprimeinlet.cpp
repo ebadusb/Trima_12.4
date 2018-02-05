@@ -115,7 +115,7 @@ int ACPrimeInlet::preProcess ()
             //
             // Send it to the alarm handler.
             //
-            _ACLevelAlarm.setAlarm();
+            _ACLevelAlarm.latchAlarm();
             DataLog(log_level_proc_ac_prime_info) << "Set Prime Failure Alarm " << AC_LEVEL_ALARM << endmsg;
          }
 
@@ -149,11 +149,17 @@ int ACPrimeInlet::preProcess ()
    else if ( !pd.Status().ACDetectFluid() && ( _ACVolume >= 5.0f ) && _ACLevelAlarm.getState() != ACTIVE)
    {
       //
-      // Set the alarm
+      // Latch the alarm
       //
-      _ACLevelAlarm.setAlarm();
+      _ACLevelAlarm.latchAlarm();
       DataLog(log_level_proc_ac_prime_info) << "Set AC Level Alarm " << AC_LEVEL_ALARM << endmsg;
    }
+   else if ( pd.Status().ACDetectFluid() && _ACLevelAlarm.getState() == LATCHED )
+   {
+      DataLog(log_level_proc_ac_prime_info) << "AC detected, unlatching " << AC_LEVEL_ALARM << endmsg;
+      _ACLevelAlarm.unlatchAlarm();
+   }
+
 
    //
    if (_ACSeen && (_ACVolume >= 5.0f) && !waitDone)

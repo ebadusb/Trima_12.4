@@ -17,6 +17,7 @@ const float THIRD_STAGE_PRESSURE_LIMIT  = 80.0f;
 AcPrimeInletAlarm::AcPrimeInletAlarm()
    : _ACOcclusionAlarmMsg(AC_OCCLUSION_DETECTED),
      _AcPrimeInletAlarmMsg(AC_PRIME_INLET_ALARM),
+     _ACLevelAlarmLatch(AC_LEVEL_ALARM),
      _FirstTime(1),
      _AcVolume(0.0f),
      _SecondStageThrown(0),
@@ -82,6 +83,19 @@ void AcPrimeInletAlarm::Monitor ()
          _ACOcclusionAlarmMsg.setAlarm();
       }
    }
+   //used for Latch and UnLatch during AC prime
+   if ( !pd.Status().ACDetectFluid() && _ACLevelAlarmLatch.getState() != LATCHED)
+   {
+      // Latch the alarm
+      _ACLevelAlarmLatch.latchAlarm();
+      DataLog(log_level_proc_ac_prime_info) << "Set AC Level Alarm " << AC_LEVEL_ALARM << endmsg;
+   }
+   else if ( pd.Status().ACDetectFluid() && _ACLevelAlarmLatch.getState() == LATCHED )
+   {
+      DataLog(log_level_proc_ac_prime_info) << "AC detected, unlatching" << AC_LEVEL_ALARM << endmsg;
+      _ACLevelAlarmLatch.unlatchAlarm();
+   }
+
 }
 
 /* FORMAT HASH 6807ffd070c088320c0ee5e7b63af916 */
