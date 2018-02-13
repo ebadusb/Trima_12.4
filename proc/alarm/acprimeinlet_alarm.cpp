@@ -84,15 +84,15 @@ void AcPrimeInletAlarm::Monitor ()
       }
    }
    //used for Latch and UnLatch during AC prime
-   if ( !pd.Status().ACDetectFluid() && _ACLevelAlarmLatch.getState() != LATCHED)
+   if ( !pd.Status().ACDetectFluid() && ( _AcVolume >= 5.0f ) && _ACLevelAlarmLatch.getState() != LATCHED)
    {
       // Latch the alarm
       _ACLevelAlarmLatch.latchAlarm();
       DataLog(log_level_proc_ac_prime_info) << "Set AC Level Alarm " << AC_LEVEL_ALARM << endmsg;
    }
-   else if ( pd.Status().ACDetectFluid() && _ACLevelAlarmLatch.getState() == LATCHED )
+   else if ( pd.Status().ACDetectFluid() && ( _AcVolume >= 5.0f ) && _ACLevelAlarmLatch.getState() == LATCHED )
    {
-      DataLog(log_level_proc_ac_prime_info) << "AC detected, unlatching" << AC_LEVEL_ALARM << endmsg;
+      DataLog(log_level_proc_ac_prime_info) << "AC detected, unlatching " << AC_LEVEL_ALARM << endmsg;
       _ACLevelAlarmLatch.unlatchAlarm();
    }
 
