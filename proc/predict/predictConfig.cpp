@@ -61,7 +61,8 @@ Config::Config()
      _Ytarg_CL(0),
      _MinPostCount(0.0f),
      _MinPostHct(0.0f),
-     _MaxProcedureTime(0)
+     _MaxProcedureTime(0),
+     _FirstTimeQinCapDown(false)
 {}
 
 Config::~Config() {}
@@ -328,17 +329,30 @@ float Config::getConfigMaxACRate () const
 int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCap)
 {
    int repredict = 0;
+   float limit;
    //
    //
    //   Test instantaneous Qin limit and see if limit has changed
    //
-   float limit = MIN(getConfigMaxQin(), QinCap);
-   if (_MaxInstQin != limit)
+   if (_FirstTimeQinCapDown == false && QinCap == _cc.QinLimitMax)
    {
-      _MaxInstQin = limit;
-      repredict   = 1;
+      limit = MIN(getConfigMaxQin(), QinCap);
+      if (_MaxInstQin != limit)
+      {
+         _MaxInstQin = limit;
+         repredict   = 1;
+      }
    }
-
+   else if (QinCap <= _cc.QinLimitMax)
+   {
+      limit = QinCap;
+      _FirstTimeQinCapDown = true;
+      if (_MaxInstQin != limit)
+      {
+         _MaxInstQin = limit;
+         repredict   = 1;
+      }
+   }
    //
    //
    //  Max instantaneous Qn flow
