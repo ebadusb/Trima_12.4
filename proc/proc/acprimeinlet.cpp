@@ -146,7 +146,7 @@ int ACPrimeInlet::preProcess ()
    //   to see fluid and then air and then fluid... until about 5mls
    //   after first fluid is seen.)
    //
-   else if ( !pd.Status().ACDetectFluid() && ( _ACVolume >= 5.0f ) && _ACLevelAlarm.getState() != ACTIVE)
+   else if ( !pd.Status().ACDetectFluid() && ( _ACVolume >= 5.0f ) && _ACLevelAlarm.getState() != LATCHED)
    {
       //
       // Latch the alarm
