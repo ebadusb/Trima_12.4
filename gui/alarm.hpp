@@ -193,7 +193,12 @@ private:
    // FOUR_BUTTON_SCREEN_ADJUSTMENT
    // This method does some button jiggery-pokery
    void four_button_suite_adjustment ();
-
+   //IT:14565
+   TimerMessage _acBlinkingTimer;
+   bool         _acImageFlipped;
+   void         TimeoutHandler();
+   Bitmap       _acSensorImage;
+   Display_Text text_only_AC;
 protected:
 
    void alarm_state_change ();

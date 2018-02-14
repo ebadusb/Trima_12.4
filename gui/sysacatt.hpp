@@ -34,7 +34,7 @@
 #include "bitmap.h"
 #include "display_text.h"
 #include "trimamessages.h"
-
+#include "TimerMessage.h"
 
 // CLASS DECLARES
 
@@ -47,8 +47,10 @@ private:
 
    // The AC attach placard bitmap objects
    Bitmap
-            _bmpAcAttach,
-            _bmpAcLuerAttach;
+      _bmpAcAttach,
+      _bmpAcLuerAttach,
+      _bmpSensorImage,//IT:14565
+      _bmpLuerSensorImage;
 
    // The display text objects
    Display_Text
@@ -68,6 +70,9 @@ private:
 
       _txtNoStorSol; // "Do NOT connect storage solution".
 
+      TimerMessage _acBlinkingTimer;
+      bool         _acImageFlipped;
+
 protected:
 
    ConfirmBoxConfirmMsg _msgAcConnectConfirmed;
@@ -82,7 +87,7 @@ protected:
    void callConfirmBox ();
 
    void confirmAcAttached ();
-
+   void TimeoutHandler();
 
 public:
 

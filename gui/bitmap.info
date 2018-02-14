@@ -716,6 +716,14 @@ BITMAP_AUTO_FLOW_TEN_MIN_INCREASE                      false      alarmnew/autoF
 BITMAP_AUTO_FLOW_PREDICT_ADJ_UP                        false      runproc/btn_trb2.bmp
 BITMAP_AUTO_FLOW_PREDICT_ADJ_DOWN                      false      runproc/btn_trbb2.bmp
 BITMAP_VISTA_CONNECTED                                 false      sysdonor/vista_connected.bmp
+BITMAP_AC_ATTACH_SENSOR                                false      sysacatt/ac_att_sensor.bmp
+BITMAP_AC_ATTACH_SENSOR_ORANGE                         false      sysacatt/ac_att_sensor_orange.bmp
+BITMAP_AC_ATTACH_SENSOR_GREEN                          false      sysacatt/ac_att_sensor_green.bmp
+BITMAP_AC_ATTACH_LUER_SENSOR                           false      sysacatt/ac_att_luer_sensor.bmp
+BITMAP_AC_ATTACH_LUER_SENSOR_ORANGE                    false      sysacatt/ac_att_luer_sensor_orange.bmp
+BITMAP_AC_ATTACH_LUER_SENSOR_GREEN                     false      sysacatt/ac_att_luer_sensor_green.bmp
+BITMAP_AC_LEVEL_ALERT_GREEN_SENSOR                     false      alarmnew/alr011GreenLs.bmp
+BITMAP_AC_LEVEL_ALERT_ORANGE_SENSOR                    false      alarmnew/alr011OrangeLs.bmp
 
 BITMAP_FILE_TABLE_END
 

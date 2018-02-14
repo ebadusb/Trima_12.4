@@ -26,7 +26,7 @@
 #include "predict_manager.hpp"
 #include "scrncomm.hpp"
 #include "generic_positions.hpp"
-
+#include "HALSTATUS_CDS.h"
 
 static const int BITMAP_BUTTON_ADJUST_Y = 188;
 static const int BITMAP_BUTTON_UNLOAD_Y = 261;
@@ -56,6 +56,7 @@ Screen_ALARM::Screen_ALARM()
      goto_screen_literal      (NULL),
      goto_screen_gui          (GUI_SCREEN_ID(0)),
      alarm_opts               (0),
+     _acImageFlipped          (false),
 
 
      btn_alarm_continue (GUI_BUTTON_ALARM_CONTINUE,
@@ -116,7 +117,9 @@ Screen_ALARM::Screen_ALARM()
 
      text_alarm_number               (textEmptyFormatAlarmNumberData),
 
-     _timerMuteTimeout(MUTE_PERIOD, Callback<Screen_ALARM>(this, &Screen_ALARM::mute_timer_handler), TimerMessage::DISARMED)
+      _timerMuteTimeout(MUTE_PERIOD, Callback<Screen_ALARM>(this, &Screen_ALARM::mute_timer_handler), TimerMessage::DISARMED),
+      _acSensorImage(346, 336, BITMAP_AC_LEVEL_ALERT_ORANGE_SENSOR),
+      text_only_AC(textEmptyACBag)
 
 {
    // initialize four button suite message to false
@@ -446,6 +449,17 @@ void Screen_ALARM::allocate_resources (const char* allocation_parameter)
 
    // Link the status bar/line to this window
    link_status_bar_line();
+   // While allocating resource if current alarm triggered for air detected instead of AC then arm the timer and show the blinking image else hide the ac sensor image
+   if (alarm_enumeration == AC_LEVEL_ALARM)
+   {
+      _acBlinkingTimer.init(1500, Callback<Screen_ALARM>(this, &Screen_ALARM::TimeoutHandler), TimerMessage::DISARMED);
+      _acSensorImage.allocate_resources(*this);
+      TimeoutHandler();
+   }
+   else
+   {
+      _acSensorImage.set_visible(false);
+   }
 
    // build the screen
    reconstruct_alarm_screen ();
@@ -549,6 +563,7 @@ void Screen_ALARM::deallocate_resources ()
    btn_continue.deallocate_resources();
    text_and_bitmap_display.deallocate_resources();
    text_only_display.deallocate_resources();
+   text_only_AC.deallocate_resources();
    // text_continue_button_disabled.deallocate_resources();
    text_alarm_number.deallocate_resources();
    bitmap_alarm_foreground.deallocate_resources();
@@ -571,8 +586,12 @@ void Screen_ALARM::deallocate_resources ()
    alarm_set_struct.alarm_name     = NULL_ALARM;
    alarm_set_struct.alarm_response = CONFIRM;
    alarm_set_struct_manager ();
-
-
+   //Triggered alarm is for air detected instead of AC then deallocate the sensor image and stop the timer
+   if (alarm_enumeration == AC_LEVEL_ALARM)
+   {
+      _acBlinkingTimer.armTimer(TimerMessage::DISARMED);
+      _acSensorImage.deallocate_resources();
+   }
 }   // END of Screen_ALARM DEALLOCATE_RESOURCES
 
 
@@ -619,7 +638,7 @@ void Screen_ALARM::reconstruct_alarm_screen ()
    bitmap_alarm_foreground.deallocate_resources();
    bitmap_text_background.deallocate_resources();
    bitmap_text_bitmap_background.deallocate_resources();
-
+   text_only_AC.deallocate_resources();
    // deallocate the continue (more info) button and the goback button
    btn_goback.deallocate_resources();
    btn_continue.deallocate_resources();
@@ -744,6 +763,37 @@ void Screen_ALARM::reconstruct_alarm_screen ()
       btn_goback.allocate_resources(*this);
       btn_goback.set_up_bitmap(BITMAP_BUTTON_GOBACK_UP);
       btn_goback.set_callback (aph_callback_goback, (void*)this);
+      //Triggered alarm is for air detected instead of AC and operator pressed more info button then hide the AC sensor image and stop the timer
+      if (alarm_enumeration == AC_LEVEL_ALARM)
+      {
+         _acSensorImage.set_visible(false);
+         _acBlinkingTimer.armTimer(TimerMessage::DISARMED);
+         _acImageFlipped = false;
+      }
+   }
+   else
+   {
+      //Triggered alarm is for air detected instead of AC and blinking to be shown then show the AC sensor image and start timer
+      if (alarm_enumeration == AC_LEVEL_ALARM)
+      {
+         _acSensorImage.set_visible(true);
+         _acBlinkingTimer.armTimer(TimerMessage::ARMED);
+         //On pressing of more info button and then donor comes back to bliking screen AC sensor image is hidden by current screen image so bring it to front
+         _acSensorImage.move_to_front();
+         _acImageFlipped = false;
+         TimeoutHandler();
+         text_only_AC.set_string_id(textMiscAcBagLvlAlrm);
+         text_only_AC.allocate_resources(*this);
+      }
+      else if (alarm_enumeration == AC_OCCLUSION_DETECTED)
+      {
+         text_only_AC.set_string_id(textMiscAcBagOcclusion);
+         text_only_AC.allocate_resources(*this);
+      }
+      else
+      {
+         //do nothing
+      }
    }
 
    // Display alarm status line message
@@ -1349,6 +1399,24 @@ void Screen_ALARM::cassetteChange ()
 
       goto_screen(GUI_SCREEN_SYSCASSETTE, "GUI_SCREEN_SYSDONOR");
    }
+}
+//This time out handler triggered always 1.5 second if current alarm
+//is for air detected instead of AC and it will produce blinking effect
+void Screen_ALARM::TimeoutHandler ()
+{
+   HalStatus_CDS status(ROLE_RO);
+
+   if(status.ACDetectFluid())
+   {
+      _acSensorImage.set_id(BITMAP_AC_LEVEL_ALERT_GREEN_SENSOR);
+      _acSensorImage.set_visible(true);
+   }
+   else
+   {
+      _acSensorImage.set_id(BITMAP_AC_LEVEL_ALERT_ORANGE_SENSOR);
+      _acSensorImage.set_visible(_acImageFlipped);
+   }
+   _acImageFlipped = !_acImageFlipped;
 }
 
 /* FORMAT HASH 82d479612977df7b22989f2cf4f03761 */

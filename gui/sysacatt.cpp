@@ -28,7 +28,7 @@
 
 #include "guiglobs.hpp"
 #include "software_cds.h"
-
+#include "HALSTATUS_CDS.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR
@@ -42,6 +42,8 @@ Screen_SYSACATT::Screen_SYSACATT()
      _bmpAcLuerAttach (PLAC_ACATT_X - 30,
                        PLAC_ACATT_Y,
                        BITMAP_PLACARD_AC_LUER_ATTACH),
+     _bmpSensorImage (418, 156, BITMAP_AC_ATTACH_SENSOR),
+     _bmpLuerSensorImage (476, 156, BITMAP_AC_ATTACH_LUER_SENSOR),
 
      _txtAcConnect (textMiscInstructionDispConnectAc),
      _txtAcSqueeze (textMiscInstructionDispSqueezeAc),
@@ -57,7 +59,8 @@ Screen_SYSACATT::Screen_SYSACATT()
      _txtAcLuerBag2    (textMiscAcLuerConnBag2),
      _txtAcLuerBag3    (textMiscAcLuerConnBag3),
 
-     _txtNoStorSol (textMiscConnectAcOnly)
+     _txtNoStorSol (textMiscConnectAcOnly),
+     _acImageFlipped (false)
 {}   // END of Screen_SYSACATT CONSTRUCTOR
 
 
@@ -94,7 +97,9 @@ void Screen_SYSACATT::allocate_resources (const char* allocation_parameter)
 
    // Set the status bar to reflect load in progress
    guiglobs::apheresis_status_bar->set_phase_active (STATUS_BAR_LOAD);
-
+   //Set the blinking period to 1.5 second
+   _acBlinkingTimer.init(1500, Callback<Screen_SYSACATT>(this, &Screen_SYSACATT::TimeoutHandler), TimerMessage::ARMED);
+   TimeoutHandler();
 }   // END of Screen_SYSACATT ALLOCATE_RESOURCES
 
 void Screen_SYSACATT::updateScreedData (bool hasAcLuer)
@@ -116,12 +121,15 @@ void Screen_SYSACATT::updateScreedData (bool hasAcLuer)
 
    _bmpAcLuerAttach.deallocate_resources();
    _bmpAcAttach.deallocate_resources();
+   _bmpSensorImage.deallocate_resources();
+   _bmpLuerSensorImage.deallocate_resources();
 
    if ( hasAcLuer)
    {
       // AC bag has luer connector w. frangible
       DataLog (log_level_gui_info) << "Kit has AC bag with luer & frangible." << endmsg;
       _bmpAcLuerAttach.allocate_resources(*this);
+      _bmpLuerSensorImage.allocate_resources(*this);
       _txtAcLuerBreak.allocate_resources(*this);
       _txtAcLuerConnect.allocate_resources(*this);
       _txtAcLuerSqueeze.allocate_resources(*this);
@@ -135,6 +143,7 @@ void Screen_SYSACATT::updateScreedData (bool hasAcLuer)
       // AC bag uses a spike connector
       DataLog (log_level_gui_info) << "Kit has AC bag with spike." << endmsg;
       _bmpAcAttach.allocate_resources(*this);
+      _bmpSensorImage.allocate_resources(*this);
       _txtAcConnect.allocate_resources(*this);
       _txtAcSqueeze.allocate_resources(*this);
       _txtAcLoad.allocate_resources(*this);
@@ -168,13 +177,14 @@ void Screen_SYSACATT::deallocate_resources ()
 
    _bmpAcLuerAttach.deallocate_resources();
    _bmpAcAttach.deallocate_resources();
-
+   _bmpSensorImage.deallocate_resources();
+   _bmpLuerSensorImage.deallocate_resources();
    // Now unparent the status bar/line from this window
    unlink_status_bar_line();
 
    // deallocate parent's resources
    Base_Apheresis_Window::deallocate_resources ();
-
+   _acBlinkingTimer.armTimer(TimerMessage::DISARMED);
 
 }     // END of Screen_SYSACATT DEALLOCATE_RESOURCES
 
@@ -302,5 +312,50 @@ void Screen_SYSACATT::handleTraverseMessage ()
    }
 }
 #endif /* if CPU==SIMNT */
+
+void Screen_SYSACATT::TimeoutHandler ()
+{
+   HalStatus_CDS status(ROLE_RO);
+   //If AC has AC leur then use leur sensor image
+   if (guiglobs::cassette_mgr->currentSetHasAcLuer())
+   {
+      //If fluid is detected then set the green image else either use orange image or yellow image
+      if(status.ACDetectFluid())
+      {
+         _bmpLuerSensorImage.set_id(BITMAP_AC_ATTACH_LUER_SENSOR_GREEN);
+      }
+      else
+      {
+         if (_acImageFlipped)
+         {
+            _bmpLuerSensorImage.set_id(BITMAP_AC_ATTACH_LUER_SENSOR);
+         }
+         else
+         {
+            _bmpLuerSensorImage.set_id(BITMAP_AC_ATTACH_LUER_SENSOR_ORANGE);
+         }
+      }
+   }
+   else
+   {
+      //If fluid is detected then set the green image else either use orange image or yellow image
+      if (status.ACDetectFluid())
+      {
+         _bmpSensorImage.set_id(BITMAP_AC_ATTACH_SENSOR_GREEN);
+      }
+      else
+      {
+         if (_acImageFlipped)
+         {
+            _bmpSensorImage.set_id(BITMAP_AC_ATTACH_SENSOR_ORANGE);
+         }
+         else
+         {
+            _bmpSensorImage.set_id(BITMAP_AC_ATTACH_SENSOR);
+         }
+      }
+   }
+   _acImageFlipped = !_acImageFlipped;
+}
 
 /* FORMAT HASH 7fada088e5869d501b4cf5e9e5bc622d */
