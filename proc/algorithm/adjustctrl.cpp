@@ -48,6 +48,7 @@ AdjustCtrl::AdjustCtrl()
      _ChangeCount            (0),
      _AlarmActivePrevious    (false),
      _MaxQinMonitoringActive (false),
+     _autoFlowAdjustRequest  (false),
      _currentAdjustment      (0)
 {}
 
@@ -285,18 +286,21 @@ void AdjustCtrl::ProcessRequest ()
                                << endmsg;
 
    int beginChangeCount = _ChangeCount;
+   _autoFlowAdjustRequest = false;
 
    switch ( rq )
    {
 
 
       case AUTOFLOW_QIN_INCREASE :
+         _autoFlowAdjustRequest = true;
          pd.MakeAdjustmentsWritable();
          IncAdjustment(pd.Adjustments().Draw, AUTOFLOW_INCREASE_STEP);
          pd.MakeAdjustmentsReadable();
          DataLog (log_level_gui_info) << "AUTOFLOW_INCREASE_STEP"  << endmsg;
          break;
       case AUTOFLOW_QIN_DECREASE :
+         _autoFlowAdjustRequest = true;
          pd.MakeAdjustmentsWritable();
          IncAdjustment(pd.Adjustments().Draw, -AUTOFLOW_DECREASE_STEP);
          pd.MakeAdjustmentsReadable();
@@ -456,22 +460,30 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
    const float maximum      = cds.Maximum.Get();
    const float minimum      = cds.Minimum.Get();
    const float currentValue = cds.CurrentValue.Get();
-   DataLog(log_level_gui_info) << "Adjustment Increment: " << maximum << " " << minimum << " " << currentValue << " " << val << endmsg;
-
    float currentCap = cds.CurrentCap.Get();
 
-   //
-   //
-   //   Adjust down from lower of cap or current value
-   //
-   if ( ( currentCap > currentValue ) &&
-        ( val < 0 )
-        )
-   {
-      currentCap = currentValue;
-   }
+   DataLog(log_level_proc_info) << "Adjustment Increment: " << maximum
+                                   << " " << minimum
+                                   << " " << currentValue
+                                   << " " << val
+                                   << ", current cap " << currentCap
+                                   << endmsg;
 
-   currentCap = currentCap + val;
+   if(!_autoFlowAdjustRequest)
+   {
+      // if no autoflow adjustment request then make cap down before increase
+      if((currentCap > currentValue) && (val < 0))
+      {
+         currentCap = currentValue;
+      }
+      DataLog(log_level_proc_info) << "Adjustment Increment: oldcap: " << currentCap << endmsg;
+      currentCap = currentCap + val;
+   }
+   else
+   {
+      DataLog(log_level_proc_info) << "Adjustment Increment: oldcap: " << currentCap << endmsg;
+      currentCap = currentValue + val;
+   }
 
    if ( currentCap > maximum )
    {
@@ -489,6 +501,7 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
    _ChangeCount += (( cds.CurrentCap.Get() == currentCap ) ? 0 : 1);
 
    cds.CurrentCap.Set(currentCap);
+   DataLog(log_level_proc_info) << "Adjustment Increment: newcap: " << cds.CurrentCap.Get() << endmsg;
 }
 
 bool AdjustCtrl::SetQin (const bool active, float current)

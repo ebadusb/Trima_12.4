@@ -776,8 +776,17 @@ void PressureAlarm::autoFlowDecrease ()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::autoFlowIncrease ()
 {
+   // Function call is via a timer, check if AF enabled else return
    if (!_isAutoFlowEnabled)
+   {
       return;
+   }
+
+   // AF up should only be allowed in certain substates
+   if (!inCorrectSubstates())
+   {
+      return;
+   }
 
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Auto Increase Qin: " << TIMESTAMP <<  endmsg;
    if (!_adjustMsg)

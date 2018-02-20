@@ -89,6 +89,7 @@ protected:
    int  _currentAdjustment;                         // set to the serial number
                                                     // of the current adjustment
                                                     // from the trouble screen
+   bool _autoFlowAdjustRequest;                     // true if autoflow adjustment (increase/decrease) requested
 
 };
 
