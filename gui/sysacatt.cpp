@@ -98,8 +98,8 @@ void Screen_SYSACATT::allocate_resources (const char* allocation_parameter)
    // Set the status bar to reflect load in progress
    guiglobs::apheresis_status_bar->set_phase_active (STATUS_BAR_LOAD);
 
-   //Set the blinking period to 1 second
-   _acBlinkingTimer.init(1000, Callback<Screen_SYSACATT>(this, &Screen_SYSACATT::TimeoutHandler), TimerMessage::ARMED);
+   //Set the blinking period to 1.5 second
+   _acBlinkingTimer.init(1500, Callback<Screen_SYSACATT>(this, &Screen_SYSACATT::TimeoutHandler), TimerMessage::ARMED);
    TimeoutHandler();
 
 }   // END of Screen_SYSACATT ALLOCATE_RESOURCES

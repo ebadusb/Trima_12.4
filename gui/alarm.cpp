@@ -452,7 +452,7 @@ void Screen_ALARM::allocate_resources (const char* allocation_parameter)
    // While allocating resource if current alarm triggered for air detected instead of AC then arm the timer and show the blinking image else hide the ac sensor image
    if (alarm_enumeration == AC_LEVEL_ALARM)
    {
-      _acBlinkingTimer.init(1500, Callback<Screen_ALARM>(this, &Screen_ALARM::TimeoutHandler), TimerMessage::DISARMED);
+      _acBlinkingTimer.init(1000, Callback<Screen_ALARM>(this, &Screen_ALARM::TimeoutHandler), TimerMessage::DISARMED);
       _acSensorImage.allocate_resources(*this);
       TimeoutHandler();
    }
