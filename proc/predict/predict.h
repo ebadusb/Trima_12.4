@@ -131,7 +131,7 @@ public: // for predict_task interface
 
    void FillInRegionConfig (int procindex);         // new 6.3
 
-   int  doRepredictForAdjustments (); // VISTA INTERFACE
+   int  doRepredictForAdjustments (bool isAfAdjustment = false); // VISTA INTERFACE
    void SetAllUnoptimized ();
    bool MeteringStatusLocked (const procedureDetail& pd);
 
@@ -153,7 +153,7 @@ public: // for predict_task interface
 #ifndef __WIN32__
 public:
 
-   void process_adjustment ();
+   void process_adjustment (bool isAfAdjustment = false);
 
    void ProcData_Repredict_Only ();
    void ProcData_Donor_Info_Changed ();

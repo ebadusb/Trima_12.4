@@ -152,7 +152,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    if (request & AUTO_FLOW_ADJUSTMENT)
    {
       DataLog(log_level_predict_debug) << "AUTO_FLOW ADJUSTMENT" << endmsg;
-      _predict.process_adjustment();
+      _predict.process_adjustment(true);
 
       request = (DoPrediction_t)(request & (~REPREDICT_ONLY)); // we've already done repredict if requested
    }

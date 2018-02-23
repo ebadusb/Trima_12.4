@@ -326,7 +326,7 @@ float Config::getConfigMaxACRate () const
 //
 // -----------------------------------------------------------------------------
 //
-int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCap)
+int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCap, bool IsAfAdjust)
 {
    int repredict = 0;
    float limit;
@@ -411,6 +411,11 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
       repredict = 1;
    }
 
+   // Set the max draw management flow since this is an AF adjustment
+   if (IsAfAdjust)
+   {
+      setTbvQinmaxScaleConst(1.00f);    
+   }
    return repredict;
 }
 

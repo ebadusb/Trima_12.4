@@ -475,13 +475,14 @@ void Predict::setPredictTargets ()
    }
 }
 
-int Predict::doRepredictForAdjustments ()
+int Predict::doRepredictForAdjustments (bool isAfAdjustment)
 {
    DataLog(log_level_predict_debug) << "Predict::doRepredictForAdjustments()" << endmsg;
    const int repredict = _config.AdjustConfig(_procState.AdjQinCap(),
                                               _procState.AdjQrpCap(),
                                               _procState.AdjIrCap(),
-                                              _procState.AdjRatioCap() );
+                                              _procState.AdjRatioCap(),
+                                              isAfAdjustment );
    if ( repredict == -1)
    {
       DataLog(log_level_predict_error) << "Illegal AC Rate " << _config.getKeyACRate() << endmsg;
@@ -1016,10 +1017,10 @@ void Predict::reset_targets ()
 }
 
 
-void Predict::process_adjustment ()
+void Predict::process_adjustment (bool isAfAdjustment)
 {
    DataLog(log_level_predict_debug) << "Predict::Adjustment" << endmsg;
-   doRepredictForAdjustments();
+   doRepredictForAdjustments(isAfAdjustment);
    _blockTargets = true;
    SetAllUnoptimized();
 

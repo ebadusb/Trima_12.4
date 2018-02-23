@@ -144,7 +144,7 @@ public:
    float                getDrbcTbvLimit () const;
    int                  getTbvVolLimitSetting () const;
 
-   int AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCap);
+   int AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCap, bool IsAfAdjust = false);
 
    bool PirAlways () const;
 
