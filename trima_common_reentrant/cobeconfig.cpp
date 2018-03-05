@@ -536,6 +536,7 @@ ALARM_VALUES CobeConfig::ReadConfig (CDatFileReader& config)
    _data.AutoflowIncreaseTimer     = config.get_float("APS_PAUSE", "autoflow_increase_timer", 0.0f, 25.0f);
    _data.AutoflowIncreaseIncrement = config.get_float("APS_PAUSE", "autoflow_increase_increment", 0.0f, 20.0f);
    _data.AutoflowDecreaseIncrement = config.get_float("APS_PAUSE", "autoflow_decrease_increment", 0.0f, 20.0f);
+   _data.AutoflowMinUpTime         = config.get_float("APS_PAUSE", "autoflow_min_up_time", 0.0f, 30.0f);
 
 
 

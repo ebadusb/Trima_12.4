@@ -795,8 +795,15 @@ void PressureAlarm::autoFlowIncrease ()
       _adjustMsg = new ProcedureAdjustmentMsg(MessageBase::SEND_LOCAL);
    }
 
-   DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: Sending ProcedureAdjustmentMsg " << endmsg;
-   _adjustMsg->send(AUTOFLOW_QIN_INCREASE);
+   if ((_pd.RunTargets().ProcTimeTarget.Get() - _pd.ProcRunTime().getMins()) > CobeConfig::data().AutoflowMinUpTime)
+   {
+      DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: Sending ProcedureAdjustmentMsg " << endmsg;
+      _adjustMsg->send(AUTOFLOW_QIN_INCREASE);
+   }
+   else
+   {
+      DataLog (log_level_proc_alarm_monitor_info) << "AutoFlow: ignoring up adjust near end of procedure" << endmsg;
+   }
 
    // reset timer to five minutes
    _QincreaseTimer.init();

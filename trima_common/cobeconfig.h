@@ -484,6 +484,7 @@ public:
       float AutoflowIncreaseTimer;
       float AutoflowIncreaseIncrement;
       float AutoflowDecreaseIncrement;
+      float AutoflowMinUpTime;
 
 
 
