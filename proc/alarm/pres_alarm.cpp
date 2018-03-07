@@ -80,16 +80,15 @@ PressureAlarm::PressureAlarm()
      _pConfigCds(new Config_CDS(ROLE_RO)),
      _AdditionalPauseTimer(0, Callback<PressureAlarm>(this, &PressureAlarm::clearAutoPauseAlarm), TimerMessage::DISARMED),
      _QincreaseTimer(),
-     _allowAutoIncreases(false),
-     _allowAutoDecreases(false),
      _autoFlow_On(false),
      _initialQinTimerStarted(false),
-     _shouldStopInletRamp(false),
      _adjustMsg(0),
      _apsLowRecovery(false),
      _isAFDecreaseScheduled(false),
      _isSystemInRecovery(false),
-     _isAutoFlowEnabled(false)
+     _isAutoFlowEnabled(false),
+     _stoppedInletRamp(false),
+     _isQinIncreaseTimerPaused(false)
 {
    _QincreaseTimer.notifier(Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease) );
    _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
@@ -171,17 +170,12 @@ void PressureAlarm::Monitor ()
    // special timer only if VEIN_TIMER > 0.0f
    endVeinRecoveryTimer();
 
-   // Set the flags for AF increase/decrease only if AF is enabled
-   if (_isAutoFlowEnabled)
-   {
-      updateAutoflowAdjustFlags();
-   }
-
    updateAPS(currentAPS, high, low);
 
    if (_isAutoFlowEnabled)
    {
       startQinTimerAfterRamp();
+      toggleAfQinIncreaseTimer();
    }
 
 }
@@ -623,7 +617,7 @@ void PressureAlarm::clearAutoPauseAlarm ()
       _LastPause.inactivate();
       _LastPause.init();
       _disarmTimer = true;
-      if(_initialQinTimerStarted)
+      if(_initialQinTimerStarted && !_isQinIncreaseTimerPaused)
       {
          _QincreaseTimer.init();
          DataLog(log_level_qa_external) << "AutoFlow: Qin increase timer reset. (at clear of APS AutoPause) " << TIMESTAMP <<  endmsg;
@@ -839,7 +833,7 @@ void PressureAlarm::stopInletRamp ()
 
       _block = true;
 
-      if (!_QincreaseTimer.activated())
+      if (!_QincreaseTimer.activated() && !_isQinIncreaseTimerPaused)
       {
          _initialQinTimerStarted = true;
          _QincreaseTimer.init();
@@ -854,57 +848,12 @@ void PressureAlarm::stopInletRamp ()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-void PressureAlarm::updateAutoflowAdjustFlags ()
-{
-   if (!(_pd.Config().Procedure.Get().key_autoflow))
-      return;
-
-   State_names ss =  _pd.Run().Substate.Get();
-
-   switch (ss)
-   {
-      case SS_CHANNEL_SETUP :
-         _allowAutoIncreases  = false;
-         _allowAutoDecreases  = false;
-         _shouldStopInletRamp = false;
-         break;
-
-      case SS_PREPLATELET_PLASMA :
-      case SS_PREPLATELET_NOPLASMA :
-         _allowAutoIncreases  = false;
-         _allowAutoDecreases  = true;
-         _shouldStopInletRamp = true;
-         break;
-
-      case SS_PLATELET_PLASMA :
-      case SS_PCA :
-      case SS_MIDRUN :
-      case SS_PIR_PLASMA :
-      case SS_PIR_NOPLASMA :
-      case SS_EXTENDED_PCA :
-      case SS_EXTENDED_PLASMA :
-         _allowAutoIncreases  = true;
-         _allowAutoDecreases  = true;
-         _shouldStopInletRamp = false;
-         break;
-
-      default :
-         _allowAutoIncreases  = false;
-         _allowAutoDecreases  = false;
-         _shouldStopInletRamp = false;
-         break;
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void PressureAlarm::rinsebackState ()
 {
    if (_pd.Run().RinsebackStarted.Get())
    {
-      _allowAutoIncreases = false;
-      _allowAutoDecreases = false;
+      // AF increase/decrease not allowed
    }
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -933,7 +882,7 @@ void PressureAlarm::startQinTimerAfterRamp ()
             logItOnce = false;
             DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin ramping completed. " << TIMESTAMP <<  endmsg;
          }
-         if (!_QincreaseTimer.activated())
+         if (!_QincreaseTimer.activated() && !_isQinIncreaseTimerPaused)
          {
             _initialQinTimerStarted = true;
             _QincreaseTimer.init();
@@ -950,7 +899,7 @@ void PressureAlarm::startQinTimerAfterRamp ()
                logItOnce = false;
                DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin ramping terminated early. " << TIMESTAMP <<  endmsg;
             }
-            if (!_QincreaseTimer.activated())
+            if (!_QincreaseTimer.activated() && !_isQinIncreaseTimerPaused)
             {
                _initialQinTimerStarted = true;
                _QincreaseTimer.init();
@@ -1085,4 +1034,102 @@ void PressureAlarm::disableScheduledFlags ()
       _slowAlarmScheduled = false;
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   isSystemPaused ()
+///
+///   This function:
+///   Checks for condition when all pumps are paused and system is in alarm
+///
+///   @param   None
+///   @return  true - Above conditions are met
+///            false - otherwise
+////////////////////////////////////////////////////////////////////////////////
+bool PressureAlarm::isSystemPaused ()
+{
+   if (_pd.AlarmActive() &&
+      _pd.Status().ACPump.ActFlow()      == 0.0f &&
+      _pd.Status().CollectPump.ActFlow() == 0.0f &&
+      _pd.Status().InletPump.ActFlow()   == 0.0f &&
+      _pd.Status().PlasmaPump.ActFlow()  == 0.0f &&
+      _pd.Status().ReturnPump.ActFlow()  == 0.0f)
+   {
+      return true;
+   }
+
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   toggleAfQinIncreaseTimer ()
+///
+///   This function:
+///   Toggles the Qin increase timer. If the system is paused, the timer is paused
+///   Once the system resumes, the timer is started back from where it was paused.
+///
+///   @param   None
+///   @return  void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::toggleAfQinIncreaseTimer ()
+{
+   if (isSystemPaused())
+   {
+      // Pause the timer
+      if (!_isQinIncreaseTimerPaused)
+      {
+         _isQinIncreaseTimerPaused = true;
+         pauseAutoFlowQinIncreaseTimer();
+      }
+   }
+   else
+   {
+      // Resume the timer
+      if (_isQinIncreaseTimerPaused)
+      {
+         _isQinIncreaseTimerPaused = false;
+         resumeAutoFlowQinIncreaseTimer();
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   pauseAutoFlowQinIncreaseTimer ()
+///
+///   This function:
+///   Paused the Qin Increase timer for AutoFlow
+///
+///   @param   None
+///   @return  void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::pauseAutoFlowQinIncreaseTimer ()
+{
+   if (_initialQinTimerStarted)
+   {
+      _QincreaseTimer.inactivate();
+      DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer pause " << TIMESTAMP <<  endmsg;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   resumeAutoFlowQinIncreaseTimer ()
+///
+///   This function:
+///   Resumes the Qin Increase timer for AutoFlow
+///
+///   @param   None
+///   @return  void
+////////////////////////////////////////////////////////////////////////////////
+void PressureAlarm::resumeAutoFlowQinIncreaseTimer ()
+{
+   if (_initialQinTimerStarted)
+   {
+      _QincreaseTimer.activate();
+      DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Qin increase timer resumed." << TIMESTAMP <<  endmsg;
+   }
+}
+
 /* FORMAT HASH 9fff9f1134959345225571be5747e6d3 */
