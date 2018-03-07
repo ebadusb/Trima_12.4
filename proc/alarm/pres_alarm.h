@@ -97,7 +97,6 @@ protected:
    void autoFlowDecrease ();
 
 
-   void updateAutoflowAdjustFlags ();
    void rinsebackState ();
    void stopInletRamp ();
 
@@ -120,6 +119,13 @@ protected:
    void setAutoFlow ();
 
    void disableScheduledFlags ();
+
+   bool isSystemPaused ();
+
+   void toggleAfQinIncreaseTimer ();
+   void resumeAutoFlowQinIncreaseTimer ();
+   void pauseAutoFlowQinIncreaseTimer ();
+
 
 protected:
 
@@ -178,9 +184,6 @@ protected:
    ProcedureAdjustmentMsg* _adjustMsg;
    ProcSubstateChangeMsg   _substateChangeMsg;   // Substate change message
 
-   bool                    _allowAutoIncreases;
-   bool                    _allowAutoDecreases;
-   bool                    _shouldStopInletRamp;
    bool                    _initialQinTimerStarted;
 
    bool                    _apsLowRecovery;
@@ -188,6 +191,7 @@ protected:
    bool                    _isSystemInRecovery;
    bool                    _isAutoFlowEnabled;
    bool                    _stoppedInletRamp;
+   bool                    _isQinIncreaseTimerPaused;
 
 private:
 
