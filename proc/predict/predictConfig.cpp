@@ -2,6 +2,7 @@
 #include "substatemap.h"
 #include <cstdio>
 #include "predict_types.h"
+#include "software_cds.h"
 
 const float Config::__plasmaTolerance       = 0.4f;          // ml
 const float Config::__MaxConcentrationError = 0.05f;         // allowable concentration error
@@ -207,7 +208,7 @@ float Config::getConfigMaxQin () const
 
 bool Config::isAutoFlowOn () const
 {
-   return _pConfigCds.Procedure.Get().key_autoflow;
+   return Software_CDS::GetInstance().getFeature(AutoFlowFlag);
 }
 
 float Config::getConfigACRatio () const

@@ -89,7 +89,8 @@ PressureAlarm::PressureAlarm()
      _apsLowRecovery(false),
      _isAFDecreaseScheduled(false),
      _isSystemInRecovery(false),
-     _isAutoFlowEnabled(false)
+     _isAutoFlowEnabled(false),
+     _stoppedInletRamp(false)
 {
    _QincreaseTimer.notifier(Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease) );
    _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
@@ -751,9 +752,18 @@ void PressureAlarm::autoFlowDecrease ()
 {
    DataLog(log_level_proc_alarm_monitor_info) << "AutoFlow: Auto Decrease Qin: " << TIMESTAMP <<  endmsg;
 
+   // AF down should only be allowed in certain substates
+   // This check is required to avoid potential race condition
+   // when states transition after AF down is scheduled.
+   if (!inCorrectSubstates())
+   {
+      return;
+   }
+
    stopInletRamp();
 
    clearAutoPauseAlarm();
+
    removeAllPauses();
 
    if (!_adjustMsg)
@@ -819,14 +829,9 @@ void PressureAlarm::autoFlowIncrease ()
 void PressureAlarm::stopInletRamp ()
 {
 
-   if (!_shouldStopInletRamp )
-      return;
-
    State_names ss     =   _pd.Run().Substate.Get();
 
-   static bool _block = false;
-
-   if (  !_block  &&
+   if (  !_stoppedInletRamp  &&
          ( (ss == SS_PREPLATELET_PLASMA) ||  (ss == SS_PREPLATELET_NOPLASMA) )
          )
    {
@@ -837,7 +842,7 @@ void PressureAlarm::stopInletRamp ()
       _pd.Run().deadRampMaxQin.Set(qin - 5.0f);      // get actual Qin draw -5ml/Min
       _pd.MakeRunReadable();
 
-      _block = true;
+      _stoppedInletRamp = true;
 
       if (!_QincreaseTimer.activated())
       {

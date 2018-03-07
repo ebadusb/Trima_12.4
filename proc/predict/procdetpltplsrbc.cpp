@@ -2787,16 +2787,18 @@ void procedureDetailPltPlsRBC::initialFlowRamp (float Vin, float& QinLimit, floa
          DataLog(log_level_predict_debug) << "AutoFlow: aps stopping Ramping, capped at " << QinLimit << endmsg;
       }
    }
-
-   float Vinr = (_Vincv < cobeConfig.VinEndOfQinRamp ? _Vincv : cobeConfig.VinEndOfQinRamp);
-   if (Vin < Vinr)
+   else
    {
-      float Qin = cobeConfig.InletFlowRampConstant * (cobeConfig.QinStartup + (Vin - cobeConfig.PlateletPlasmaPrimeVolume) * ((_Qinr - cobeConfig.QinStartup) / (Vinr - cobeConfig.PlateletPlasmaPrimeVolume)));
-      Qin     = MIN(MAX(Qin, cobeConfig.QinStartup), QinLimit);
-      QnLimit = _Qnmax * (Qin / ((_QinrQnLimit == 0.0f) ? _Qinr : _QinrQnLimit));
-      QnLimit = MIN(QnLimit, _Qnmax);
-      QnLimit = MAX(QnLimit, cobeConfig.QneedleLimitMin); // IT9693
-      if (_config.getInletFlowRamp()) QinLimit = Qin;
+      float Vinr = (_Vincv < cobeConfig.VinEndOfQinRamp ? _Vincv : cobeConfig.VinEndOfQinRamp);
+      if (Vin < Vinr)
+      {
+         float Qin = cobeConfig.InletFlowRampConstant * (cobeConfig.QinStartup + (Vin - cobeConfig.PlateletPlasmaPrimeVolume) * ((_Qinr - cobeConfig.QinStartup) / (Vinr - cobeConfig.PlateletPlasmaPrimeVolume)));
+         Qin     = MIN(MAX(Qin, cobeConfig.QinStartup), QinLimit);
+         QnLimit = _Qnmax * (Qin / ((_QinrQnLimit == 0.0f) ? _Qinr : _QinrQnLimit));
+         QnLimit = MIN(QnLimit, _Qnmax);
+         QnLimit = MAX(QnLimit, cobeConfig.QneedleLimitMin); // IT9693
+         if (_config.getInletFlowRamp()) QinLimit = Qin;
+      }
    }
 }
 //

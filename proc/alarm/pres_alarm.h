@@ -187,6 +187,7 @@ protected:
    bool                    _isAFDecreaseScheduled;
    bool                    _isSystemInRecovery;
    bool                    _isAutoFlowEnabled;
+   bool                    _stoppedInletRamp;
 
 private:
 
