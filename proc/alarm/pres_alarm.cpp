@@ -347,15 +347,11 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
             // Existing condition when AF is disabled
             if (!_isAutoFlowEnabled)
             {
-               // Latch the alarm if pressure has not recovered after 6 secs
-               if (_LastPause.getSecs() >= TimeBeforeAlarm)
+               if (_APSLowAlarm.getState() != LATCHED)
                {
-                  if (_APSLowAlarm.getState() != LATCHED)
-                  {
-                     DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
-                     _APSLowAlarm.latchAlarm();
-                     _LocallyLatched = true;
-                  }
+                  DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                  _APSLowAlarm.latchAlarm();
+                  _LocallyLatched = true;
                }
             }
             else
