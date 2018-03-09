@@ -144,11 +144,22 @@ Screen_CONFIG_DONOR::Screen_CONFIG_DONOR()
 
 
      config_lbl_autoflow(JPHtextAutoFlowCfgBtn),
+     _isAfToggledOff(false),
 
      _key_post_crit(guiglobs::config_var_list.Var(KEY_POST_CRIT)),
-     _key_post_plat(guiglobs::config_var_list.Var(KEY_POST_PLAT))
+     _key_post_plat(guiglobs::config_var_list.Var(KEY_POST_PLAT)),
+     _featureChanged(Callback<Screen_CONFIG_DONOR>(this,&Screen_CONFIG_DONOR::FeatureChangedNotification))
 
-{}  // END of Screen_CONFIG_donor CONSTRUCTOR
+{
+   _isAFEnabledOnBoot = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
+   if (_isAFEnabledOnBoot && guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp != 1)
+   {
+     // Ensure that Inlet Draw Ramp is forced to True
+     guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp = 1;
+     guiglobs::cdsData.rwConfig.write();
+   }
+}
+// END of Screen_CONFIG_donor CONSTRUCTOR
 
 
 void Screen_CONFIG_DONOR::dealloc_widgets ()
@@ -223,8 +234,18 @@ void Screen_CONFIG_DONOR::allocate_resources (const char* allocation_parameter)
    // chooseToggleButtonAppearance(guiglobs::cdsData.rwConfig.procedure.key_autoflow,      config_btn_autoflow);
    // ///////////////////////////////////////////////////////////////////////////////
 
-
    checkForTimeOnlyConfig();
+
+   // If AF is enabled, Inlet Draw Flow ramp is forced to Yes, user cannot select an option.
+   if (Software_CDS::GetInstance().getFeature(AutoFlowFlag))
+   {
+      disableInitialDrawRampButton();
+   }
+   else if (_isAfToggledOff)
+   {
+      enableInitialDrawRampButton();
+      _isAfToggledOff = false;
+   }
 } // END of Screen_CONFIG_donor ALLOCATE_RESOURCES
 
 
@@ -545,6 +566,70 @@ void Screen_CONFIG_DONOR::checkForTimeOnlyConfig ()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   disableInitialDrawRampButton ()
+///
+///   Disables the initial Draw Ramp button, user cannot select a value
+///
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
+
+void Screen_CONFIG_DONOR::disableInitialDrawRampButton ()
+{
+   disableConfigBtn(config_btn_inlet_flow_ramp);
+   config_btn_inlet_flow_ramp.set_text_color(YELLOW);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   enableInitialDrawRampButton ()
+///
+///   The Initial Draw Ramp Button is enabled, user can select an option
+///
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
+
+void Screen_CONFIG_DONOR::enableInitialDrawRampButton ()
+{
+   DataLog (log_level_gui_info) << "enableConfigBtn(Config_button_with_text): btnId="
+                                   << config_btn_inlet_flow_ramp.get_button_id() << endmsg;
+   config_btn_inlet_flow_ramp.enable_callbacks();
+   config_btn_inlet_flow_ramp.set_disabled(false);
+   config_btn_inlet_flow_ramp.set_up_bitmap(CFG_Look::BUTTON_UP_NAME);
+   config_btn_inlet_flow_ramp.set_button_text_color(YELLOW);
+   config_btn_inlet_flow_ramp.set_text_color(YELLOW);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+///   Function Name:
+///   FeatureChangedNotification ()
+///
+///   If features have been changed using Feature key, check if AF has been toggled.
+///   If AF is turned OFF, set the flag.
+///   If AF is turned ON, set the value of Inlet Draw Ramp to 1
+///
+///   @param None
+///   @return void
+////////////////////////////////////////////////////////////////////////////////
+
+void Screen_CONFIG_DONOR::FeatureChangedNotification()
+{
+   bool isAfEnabled = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
+
+   if (_isAFEnabledOnBoot && !isAfEnabled)
+   {
+      _isAfToggledOff = true;
+   }
+
+   if (isAfEnabled)
+   {
+      guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp = 1;
+      guiglobs::cdsData.rwConfig.write();
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////
 

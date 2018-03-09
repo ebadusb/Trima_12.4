@@ -52,7 +52,9 @@ protected:
 
    const CCfgVarInfo&      _key_post_crit;
    const CCfgVarInfo&      _key_post_plat;
-
+   bool                    _isAfToggledOff;
+   bool                    _isAFEnabledOnBoot;
+   FeatureChanged          _featureChanged;
 
 public:
 
@@ -100,6 +102,12 @@ protected:
    void checkForTimeOnlyConfig ();
 
    void dealloc_widgets ();
+   void FeatureChangedNotification();
+
+private:
+
+   void disableInitialDrawRampButton ();
+   void enableInitialDrawRampButton ();
 
 }; // END of Screen_CONFIG_donor Class Declaration
 
