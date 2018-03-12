@@ -53,7 +53,7 @@ protected:
    const CCfgVarInfo&      _key_post_crit;
    const CCfgVarInfo&      _key_post_plat;
    bool                    _isAfToggledOff;
-   bool                    _isAFEnabledOnBoot;
+   bool                    _previousValueOfAF;
    FeatureChanged          _featureChanged;
 
 public:

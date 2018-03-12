@@ -151,8 +151,8 @@ Screen_CONFIG_DONOR::Screen_CONFIG_DONOR()
      _featureChanged(Callback<Screen_CONFIG_DONOR>(this,&Screen_CONFIG_DONOR::FeatureChangedNotification))
 
 {
-   _isAFEnabledOnBoot = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
-   if (_isAFEnabledOnBoot && guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp != 1)
+   _previousValueOfAF = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
+   if (_previousValueOfAF && guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp != 1)
    {
      // Ensure that Inlet Draw Ramp is forced to True
      guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp = 1;
@@ -619,16 +619,17 @@ void Screen_CONFIG_DONOR::FeatureChangedNotification()
 {
    bool isAfEnabled = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
 
-   if (_isAFEnabledOnBoot && !isAfEnabled)
+   if (_previousValueOfAF != isAfEnabled && !isAfEnabled)
    {
       _isAfToggledOff = true;
    }
 
-   if (isAfEnabled)
+   if (_previousValueOfAF != isAfEnabled && isAfEnabled)
    {
       guiglobs::cdsData.rwConfig.predict.key_inlet_flow_ramp = 1;
       guiglobs::cdsData.rwConfig.write();
    }
+   _previousValueOfAF = isAfEnabled;
 }
 
 ////////////////////////////////////////////////////////////////////////////
