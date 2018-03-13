@@ -80,7 +80,6 @@ public:
       float dVinSamplingREDpl;
       float YieldReflectancePltPlsRBCSet;
 
-      float LowConcentrationTriggerJapan;
       float LowConcentrationTrigger;
       float LowConcentrationThreshold;
       float LowConcentrationShutoffConcentration;

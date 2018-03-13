@@ -107,7 +107,6 @@ delta_vin_red_platelet_baseline_sampling=50.0
 
 #
 # Low platelet concentration alert
-low_concentration_alert_trigger_japan=1.0
 low_concentration_alert_trigger=1.0
 low_concentration_alert_threshold=0.54
 low_concentration_alert_shutoff_concentration=2500.0

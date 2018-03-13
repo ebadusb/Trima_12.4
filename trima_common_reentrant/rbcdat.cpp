@@ -90,7 +90,6 @@ ALARM_VALUES RbcDat::initialize (bool logError)
    _data.dVinSamplingREDpl            = config.get_float("RBC_DETECTOR", "delta_vin_red_platelet_baseline_sampling", 20.0f, 100.0f);
 
 
-   _data.LowConcentrationTriggerJapan         = config.get_float("RBC_DETECTOR", "low_concentration_alert_trigger_japan", 0.0f, 10.0f);
    _data.LowConcentrationTrigger              = config.get_float("RBC_DETECTOR", "low_concentration_alert_trigger", 0.0f, 10.0f);
    _data.LowConcentrationThreshold            = config.get_float("RBC_DETECTOR", "low_concentration_alert_threshold", 0.0f, 1.0f);
    _data.LowConcentrationShutoffConcentration = config.get_float("RBC_DETECTOR", "low_concentration_alert_shutoff_concentration", 0.0f, 10000.0f);

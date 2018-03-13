@@ -25,8 +25,7 @@ void LowConcentrationAlarm::Monitor ()
 {
    ProcData pd;
 
-   float    triggerpoint = Software_CDS::GetInstance().getFeature(JapanFeatures) ?
-                           RbcDat::data().LowConcentrationTriggerJapan : RbcDat::data().LowConcentrationTrigger;
+   float    triggerpoint = RbcDat::data().LowConcentrationTrigger;
 
    if (    _NotAlreadyGiven
            && pd.RunTargets().SelectedPlateletConcen.Get()
