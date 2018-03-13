@@ -489,6 +489,11 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
       }
    }
 
+   if (doAlarm)
+   {
+      DataLog(log_level_proc_alarm_monitor_info) << "auto-pause ConditionCheck returns alarm = " << doAlarm << " ::" << TIMESTAMP <<  endmsg;
+   }
+
    return doAlarm ;
 }
 
