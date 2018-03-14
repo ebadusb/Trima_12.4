@@ -177,8 +177,6 @@ protected:
    bool         _disarmTimer, _slowAlarmScheduled;
 
 
-   bool                    _autoFlow_On;
-
    TimeKeeper              _QincreaseTimer;
 
    ProcedureAdjustmentMsg* _adjustMsg;

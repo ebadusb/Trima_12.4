@@ -80,7 +80,6 @@ PressureAlarm::PressureAlarm()
      _pConfigCds(new Config_CDS(ROLE_RO)),
      _AdditionalPauseTimer(0, Callback<PressureAlarm>(this, &PressureAlarm::clearAutoPauseAlarm), TimerMessage::DISARMED),
      _QincreaseTimer(),
-     _autoFlow_On(false),
      _initialQinTimerStarted(false),
      _adjustMsg(0),
      _apsLowRecovery(false),
@@ -644,7 +643,7 @@ bool PressureAlarm::inAutoPause ()
 
 void PressureAlarm::setSlowingAlarm (const float aps)
 {
-   if (_autoFlow_On == false)
+   if (_isAutoFlowEnabled == false)
    {
       DataLog(log_level_proc_alarm_monitor_info) << " entering the slowing alarm process: " << TIMESTAMP <<  endmsg;
       // Set the pumps slow alarm ...
@@ -680,8 +679,6 @@ void PressureAlarm::disable ()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::enable ()
 {
-   // refresh my feature flag
-   _autoFlow_On = (bool)(_pd.Config().Procedure.Get().key_autoflow);
    // Set the AutoFlow feature flag
    setAutoFlow();
 
