@@ -394,11 +394,10 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
       {
          removeAllPauses();
       }
-      else if (!inCorrectSubstates() && !high)
+      else if (!inCorrectSubstates())
       {
          // If not in correct substate no need to maintain count
-         // But APS High cannot reset counter that could be set
-         // in previous substate
+         // AF does not work in these substates
          removeAllPauses();
       }
 
@@ -543,13 +542,17 @@ void PressureAlarm::unlatchAlarms (const float,
 
 void PressureAlarm::removeAllPauses ()
 {
-   // DataLog(log_level_proc_alarm_monitor_info) << "Remove All Pause history: number removed=" << _Pauses.size() << "; "  << TIMESTAMP << endmsg;
-   list< TimeKeeper* >::iterator pause;
+   DataLog(log_level_proc_alarm_monitor_info) << "Remove All Pause history: number removed=" << _Pauses.size() << "; "  << TIMESTAMP << endmsg;
 
-   for ( pause = _Pauses.begin() ; pause != _Pauses.end() ; pause++ )
-      delete *pause;
+   if ( _Pauses.size() > 0 )
+   {
+      list< TimeKeeper* >::iterator pause;
 
-   _Pauses.erase(_Pauses.begin(), _Pauses.end() );
+      for ( pause = _Pauses.begin() ; pause != _Pauses.end() ; pause++ )
+         delete *pause;
+
+      _Pauses.erase(_Pauses.begin(), _Pauses.end() );
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
