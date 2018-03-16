@@ -152,6 +152,7 @@ ProcVolumes_CDS::ProcVolumes_CDS (Role role)
 
    TotalPASVolumePumped.Register                (this, PFR_RECOVER, 0.0f);
    TotalRASVolumePumped.Register                (this, PFR_RECOVER, 0.0f);
+   Vreturn_for_residuals_calc.Register          (this, PFR_RECOVER, 0.0f);
 }
 
 ProcVolumes_CDS::~ProcVolumes_CDS()

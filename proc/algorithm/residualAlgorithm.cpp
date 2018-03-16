@@ -140,9 +140,20 @@ void ResidualAlgorithm::initialize (bool logData)
 
    hct_donor =  pd.Donor().Hct.Get();
 
-   // get the volume of blood processed only if first return fAils
-   // otherwise it isnt used anyplace
-   vb_processed =   pd.Volumes().VBP.Get();        // where we were when the run ened... no rinseback will be done.
+   // if we hooked up a donor then the procRunTime clock starts
+   // otherwise we just went to endrun before donorconnect... show zero
+   if (pd.ProcRunTime().getMins() > 0.0f)
+   {
+      // get the volume of blood processed only if first return fails
+      // otherwise it isn't used anyplace.  Cannot use Volumes.VBP here since it does not include prime (see IT14170)
+      float vin = pd.Volumes().Vin.Get() -  pd.Volumes().Vreturn_for_residuals_calc.Get();  // note Vreturn is negative, set in donor disco Pre Enter
+      float vac = pd.Volumes().Vac.Get() - CobeConfig::data().ACPrimeVolume;
+      vb_processed = vin - vac;   // where we were when the run ended... no rinseback will be done.
+   }
+   else
+   {
+      vb_processed = 0.0f;
+   }
 
 
    incompleteRASVolume1 = RAS_target1 - RAS_actual1 - CobeConfig::data().mssPtfFilterLoss + CobeConfig::data().MssPtfVolume;

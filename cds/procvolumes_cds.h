@@ -105,6 +105,8 @@ public:
    BaseElement< float > TotalPASVolumePumped;
    BaseElement< float > TotalRASVolumePumped;
 
+   BaseElement< float > Vreturn_for_residuals_calc; // Vreturn set to zero in donor disconnect so save this for residual blood calc.
+
 // Class Methods
 public:
 

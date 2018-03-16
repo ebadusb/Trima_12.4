@@ -312,7 +312,13 @@ int DonorDisconnect::preEnter ()
                                                             pd.Volumes().Vac.Get());
 
    if ( !pd.Run().RinsebackStarted.Get() )
+   {
+      pd.MakeVolumesWritable();
+      pd.Volumes().Vreturn_for_residuals_calc.Set(pd.Volumes().Vreturn.Get() );  // need this for residual calc before we zero it below....
+      pd.MakeVolumesReadable();
+
       VolumeAcc::ClearReturn();
+   }
    _HypovolemiaDistance += pd.Volumes().Vreturn.Get();
    _VinAtStart           = pd.Volumes().VinTotal.Get();
 
