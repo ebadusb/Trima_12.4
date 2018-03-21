@@ -29,14 +29,15 @@ public:
 
    int algorithmError ()              const {return myErrorCode; }
 
-   float getReportedRBCVolume_Prod1 ()  const {return myReportedRBCVolume_prod1; }
-   float getReportedSSVolume_Prod1 ()   const {return myReportedSSVolume_prod1; }
-   float getOfflineSSVolume_Prod1 ()    const {return myOfflineSSVolume_prod1; }
-   float getReportedRBCVolume_Prod2 ()  const {return myReportedRBCVolume_prod2; }
-   float getReportedSSVolume_Prod2 ()   const {return myReportedSSVolume_prod2; }
-   float getOfflineSSVolume_Prod2 ()    const {return myOfflineSSVolume_prod2; }
-   float getResidualRBCDose ()          const {return myRBCResidualDose; }
-   float getResidualPLSVolume ()        const {return myPLSResidualVolume; }
+   float getReportedRBCVolume_Prod1 ()      const {return myReportedRBCVolume_prod1; }
+   float getReportedSSVolume_Prod1 ()       const {return myReportedSSVolume_prod1; }
+   float getOfflineSSVolume_Prod1 ()        const {return myOfflineSSVolume_prod1; }
+   float getReportedRBCVolume_Prod2 ()      const {return myReportedRBCVolume_prod2; }
+   float getReportedSSVolume_Prod2 ()       const {return myReportedSSVolume_prod2; }
+   float getOfflineSSVolume_Prod2 ()        const {return myOfflineSSVolume_prod2; }
+   float getResidualRBCDose ()              const {return myRBCResidualDose; }
+   float getResidualPLSVolume ()            const {return myPLSResidualVolume; }
+   float getCassetteOnlyResidualRBCDose ()  const {return  _cassettOnlyRBCResidualDose; } // does not includes filter loss, just cassette only
 
    static float getBaseResidual (const cassette::cassetteType setType,
                                  const int plasmaRinseback_ON,
@@ -114,6 +115,7 @@ public:
 
    float myRBCResidualDose;
    float myPLSResidualVolume;
+   float _cassettOnlyRBCResidualDose;  // no filter losses
 
    /**************************************/
 

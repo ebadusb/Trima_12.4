@@ -58,7 +58,8 @@ ResidualAlgorithm::ResidualAlgorithm()
      RbcVolm_actual1(0.0),
      RbcVolm_actual2(0.0),
      MSS_TOLERANCE1(0.0f),
-     MSS_TOLERANCE2(0.0f)
+     MSS_TOLERANCE2(0.0f),
+     _cassettOnlyRBCResidualDose(0.0f)
 {}
 
 ResidualAlgorithm::~ResidualAlgorithm()
@@ -258,14 +259,15 @@ void ResidualAlgorithm::calculate (bool logData)
       DataLog(log_level_proc_info) << "ResidualAlgorithm calculate() :"   << endmsg;
       if (!algorithmError())
       {
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedRBCVolume_prod1  :"   << myReportedRBCVolume_prod1 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedSSVolume_prod1   :"   << myReportedSSVolume_prod1 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myOfflineSSVolume_prod1    :"   << myOfflineSSVolume_prod1 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedRBCVolume_prod2  :"   << myReportedRBCVolume_prod2 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedSSVolume_prod2   :"   << myReportedSSVolume_prod2 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myOfflineSSVolume_prod2    :"   << myOfflineSSVolume_prod2 <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myRBCResidualDose          :"   << myRBCResidualDose <<  endmsg;
-         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myPLSResidualVolume        :"   << myPLSResidualVolume <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedRBCVolume_prod1   :"   << myReportedRBCVolume_prod1 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedSSVolume_prod1    :"   << myReportedSSVolume_prod1 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myOfflineSSVolume_prod1     :"   << myOfflineSSVolume_prod1 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedRBCVolume_prod2   :"   << myReportedRBCVolume_prod2 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myReportedSSVolume_prod2    :"   << myReportedSSVolume_prod2 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myOfflineSSVolume_prod2     :"   << myOfflineSSVolume_prod2 <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myRBCResidualDose           :"   << myRBCResidualDose <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: myPLSResidualVolume         :"   << myPLSResidualVolume <<  endmsg;
+         DataLog(log_level_proc_info) << "    ResidualAlgorithm :: _cassettOnlyRBCResidualDose :"   << _cassettOnlyRBCResidualDose <<  endmsg;
       }
       else
       {
@@ -287,7 +289,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
 
    if (!firstReturnEntered)
    {
-      pRbcResiduals = vb_processed * hct_donor;
+      pRbcResiduals               = vb_processed * hct_donor;
+      _cassettOnlyRBCResidualDose = vb_processed * hct_donor;
 
    }
    else         // firstReturnEntered is OK
@@ -303,6 +306,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =  CobeConfig::data().ResPlsRbc_NormalRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose =  CobeConfig::data().ResPlsRbc_NormalRB_RBC;
             }
             else
             {
@@ -310,6 +315,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =   CobeConfig::data().ResPlsRbc_NoRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose =   CobeConfig::data().ResPlsRbc_NoRB_RBC;
             }
 
          }
@@ -322,6 +329,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
 
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPltPlsRbc_NormalRB_RBC;
+
             }
             else
             {
@@ -329,6 +338,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =   CobeConfig::data().ResPltPlsRbc_NoRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPltPlsRbc_NoRB_RBC;
             }
          }
 
@@ -350,6 +361,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
 
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPltPlsRbc_PlasmaRB_RBC;
+
             }
             else
             {
@@ -357,6 +370,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =   CobeConfig::data().ResPltPlsRbc_NoRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPltPlsRbc_NoRB_RBC;
             }
          }
 
@@ -371,6 +386,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =  CobeConfig::data().ResPlsRbc_SalineRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPlsRbc_SalineRB_RBC;
             }
             else
             {
@@ -378,6 +395,8 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
                pRbcResiduals =   CobeConfig::data().ResPlsRbc_NoRB_RBC
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual1,  RAStoProduct1, incompleteRas1)
                                + PTFFilterHoldUpRBCDose(RbcVolm_actual2,  RAStoProduct2, incompleteRas2);
+
+               _cassettOnlyRBCResidualDose = CobeConfig::data().ResPlsRbc_NoRB_RBC;
             }
 
          }
@@ -392,6 +411,7 @@ float ResidualAlgorithm::reportedResidual_pRBC (const float RbcVolm_actual1,   c
 
          myErrorCode   = 3;
          pRbcResiduals = 0.0f;
+         _cassettOnlyRBCResidualDose = 0.0f;
       }
 
    }

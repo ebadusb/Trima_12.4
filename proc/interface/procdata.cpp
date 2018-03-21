@@ -487,14 +487,14 @@ void ProcData::ProcDataStruct::getRunSummaryData (RUN_SUMMARY_STRUCT& data)
    //
    if (DonorTBV > 0.0f)
    {
-      const float residualSetVolume = myResiduals.getResidualRBCDose();
+      const float residualSetVolume = myResiduals.getCassetteOnlyResidualRBCDose(); // these dont include the filter loses
 
       PostHct     posthct;
 
       const float hct = 100.0f * posthct.postHct(_RODonorData.Hct.Get(),
                                                  DonorTBV,
-                                                 RBCDose * _ConfigurationData.Predict.Get().key_rsf,  // undo the RSF dose
-                                                 residualSetVolume,
+                                                 RBCDose * _ConfigurationData.Predict.Get().key_rsf,  // undo the RSF dose  Note: includes PTF filter losses if any
+                                                 residualSetVolume,  // cassette only no PTF filter losses
                                                  _RODonorData.SampleVolume.Get() );
 
 
