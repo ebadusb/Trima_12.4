@@ -70,14 +70,17 @@ protected:
 
    //
    // Function to perform pause functionality.
-   //  0 returned if an alarm should occur
+   //  1 returned if an alarm should occur
    //
+   int checkPauseCondition (const float& aps, const bool& high, const bool& low);
    int pauseCondition (const float aps, const bool high, const bool low);
+   int pauseConditionInRecovery (const float& aps, const bool& high, const bool& low);
 
    //
    // Remove all pauses in the list
    //
    void removeAllPauses ();
+   void removeAllRecoveryPauses ();
 
    //
    // Remove pauses from the list which are older than the
@@ -90,6 +93,8 @@ protected:
    //
    void setAutoPauseAlarm (const float aps);
    void clearAutoPauseAlarm ();
+   void setAutoPauseRecoveryAlarm (const float& aps);
+   void clearAutoPauseRecoveryAlarm ();
    void setSlowingAlarm (const float aps);
 
 
@@ -166,11 +171,13 @@ protected:
    //   APS alarm has occurred.
    //
    list< TimeKeeper* > _Pauses;
+   list< TimeKeeper* > _PausesInRecovery;
 
    //
    // Time of since current active pause alarm was initially set ...
    //
    TimeKeeper _LastPause;
+   TimeKeeper _LastPauseInRecovery;
 
    // wait for vein to recover  after a pause is cleared
    TimerMessage _AdditionalPauseTimer;
