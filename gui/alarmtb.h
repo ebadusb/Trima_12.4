@@ -49,7 +49,8 @@ enum
    ALARM_OPT_4_BTN_SUITE_PRE_DISP_TEST=16, // Show the 4-button suite if alarm shows prior to disposables test
    ALARM_OPT_UNOBTRUSIVE_ALERT        =32, // Add some extra tweaks to make this alarm unobtrusive
    ALARM_OPT_DISALLOW_END_RUN         =64, // Don't show the 'end run' button on this alarm
-   ALARM_OPT_DISALLOW_ADJUST          =128
+   ALARM_OPT_DISALLOW_ADJUST          =128,
+   ALARM_OPT_DISALLOW_RINSEBACK       =256, // Don't show rinseback
 };
 
 

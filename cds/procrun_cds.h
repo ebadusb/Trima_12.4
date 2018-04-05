@@ -247,6 +247,9 @@ public:
    // AUTOFLOW CHANGES
    BaseElement< bool >  stopRamp;
    BaseElement< float > deadRampMaxQin;
+   BaseElement<float>   AutoflowDeltaTime;
+   BaseElement<float>   AutoflowTotalNetTimeChanges;
+   BaseElement<int>     AutoflowTotal10MinAlarms;
 
 // Class Methods
 

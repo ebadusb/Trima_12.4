@@ -42,7 +42,7 @@ int StartupTest::preEnter ()
    pd.SystemState(STARTUP_TESTS);
 
 
-   if (pd.Config().Procedure.Get().key_autoflow)
+   if (Software_CDS::GetInstance().getFeature(AutoFlowFlag))
    {
       DataLog(log_level_proc_info) << "AutoFlow ON" << endmsg;
    }

@@ -310,6 +310,7 @@ void AdjustCtrl::ProcessRequest ()
          pd.MakeAdjustmentsWritable();
          IncAdjustment(pd.Adjustments().Draw, ACCESS_ADJUSTMENT_STEP);
          pd.MakeAdjustmentsReadable();
+         ResetAutoFlowsDeltaTimer(); // reset the AF delta Time!
          break;
       case ACCESS_PRESSURE_DOWN :
          pd.MakeAdjustmentsWritable();
@@ -614,6 +615,15 @@ bool AdjustCtrl::SetRatio (const bool active, float current)
    pd.MakeAdjustmentsReadable();
 
    return updated;
+}
+
+void AdjustCtrl::ResetAutoFlowsDeltaTimer ()
+{
+   ProcData pd;
+   DataLog(log_level_proc_info) << "Clearing Autoflow Delta Time. Delta Time was: " << pd.Run().AutoflowDeltaTime.Get()  << endmsg;
+   pd.MakeRunWritable();
+   pd.Run().AutoflowDeltaTime.Set(0.0f);
+   pd.MakeRunReadable();
 }
 
 /* FORMAT HASH cbc614c2ed1ee55d796455e188083b59 */

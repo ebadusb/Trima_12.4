@@ -713,6 +713,8 @@ BITMAP_BG_CONFIG_SOFTOPT_LIST                          false      cfgsoftOpt/lis
 BITMAP_BG_CONFIG_SOFTOPT_LIST_ITEM                     false      cfgsoftOpt/item_bg.bmp        
 BITMAP_BG_CONFIG_SOFTOPT_CONFIRM_CODE                  false      cfgsoftOpt/confirm_bg.bmp
 BITMAP_AUTO_FLOW_TEN_MIN_INCREASE                      false      alarmnew/autoFlow_01.bmp
+BITMAP_AUTO_FLOW_TIME_INCREASE                         false      alarmnew/autoFlow_02.bmp
+BITMAP_AUTO_FLOW_TIME_INCREASE_CLOCKONLY               false      alarmnew/autoFlow_03.bmp
 BITMAP_AUTO_FLOW_PREDICT_ADJ_UP                        false      runproc/btn_trb2.bmp
 BITMAP_AUTO_FLOW_PREDICT_ADJ_DOWN                      false      runproc/btn_trbb2.bmp
 BITMAP_VISTA_CONNECTED                                 false      sysdonor/vista_connected.bmp

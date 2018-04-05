@@ -116,6 +116,15 @@ protected:
    //
    void clearAlarms (ALARM_TYPES type, ALARM_STATES state);
 
+   // Clear AF alert, used when AF ALARM occurs on top of AF alert
+   //
+   void clearAfAlert (ALARM_VALUES activeAlarm);
+
+   //
+   // Used in special cases where proc can clear an alarm
+   //
+   void specialClearAlarm (AlarmStruct& alarm);
+
    //
    // This function will clear the one minute
    //  alarm if the three or ten minute alarm get set

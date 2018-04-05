@@ -103,6 +103,10 @@ private:                        // member data
    ProcToGuiPredictStatusMsg _procToGuiPredictStatusMsg;
    UpdateAutoFlowTimerMsg    _updateAFTimeMsg; // msg to reset autoflow timer
 
+   //////  Alarms
+   anAlarmMsg                _AF_TimeAlert;             // autoflow, time has increased > 10 min first time
+   anAlarmMsg                _AF_TimeAlarm;             // autoflow, time has increased > 10 min having _AF_TimeAlert
+
    ////// Singletons
    ProcedureList& _procedures;
    procedureDetail*&                   _selectedProc;
@@ -134,6 +138,8 @@ private:                        // member data
    ProcDataState&    _procState;
    ProcAdjust_CDS    _adjustCDS;
    GuiProcedures_CDS _guiProcedures;
+   ProcRun_CDS       _procRunCDS;
+   Config_CDS        _configCDS;
 
    // synchronization
    int                    _adjustmentNumber;

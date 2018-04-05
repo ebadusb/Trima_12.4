@@ -38,7 +38,6 @@ protected:
 
    // These methods will not be implemented.
    anAlarmMsg();
-   anAlarmMsg(const anAlarmMsg&);
    anAlarmMsg& operator = (const anAlarmMsg&);
 
 protected:
@@ -49,6 +48,7 @@ protected:
 public:
    // Constructor
    // Each instance must be created with a specific alarm in mind.
+   anAlarmMsg(const anAlarmMsg&);
    anAlarmMsg(ALARM_VALUES name)
    {
       the_alarm.alarm_name  = name;

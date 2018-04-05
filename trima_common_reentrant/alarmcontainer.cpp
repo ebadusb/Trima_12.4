@@ -529,6 +529,7 @@ void load_alarms ()
    AlarmTable::add(GENERIC_PLT_WBC_CONTAMINATION_ALERT,           R1,      NOTHING,    DISP_OPERATOR,         ALARM_SOUND,      "Inform operator about possible plt wbc contamination ");
    AlarmTable::add(GENERIC_PLT_WBC_CONTAMINATION_OBTRUSIVE_ALERT, R1,      NOTHING,    DISP_OPERATOR,         ALARM_SOUND,      "Inform operator about possible plt wbc contamination and offer endrun ");
    AlarmTable::add(AUTOFLOW_TIME_ALERT,                           R1,      NOTHING,    DISP_OPERATOR,         ATTENTION1_SOUND, "Inform operator proc time increased 10 mins due to autoflow ");
+   AlarmTable::add(AUTOFLOW_TIME_ALARM,                           R1,      STOP_PUMPS, DISP_R1,               ALARM_SOUND,      "Inform operator proc time increased 10 mins due to autoflow AGAIN! ");
 
    AlarmTable::add(APS_DURING_PAUSE_LOW,                          R1,      STOP_PUMPS, DISP_R2,               ALARM_SOUND, "Access pressure alarm occurred in pause condition (low) ");
 

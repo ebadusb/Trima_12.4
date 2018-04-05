@@ -426,6 +426,11 @@ void Screen_ALARM::allocate_resources (const char* allocation_parameter)
       btn_cancel.deallocate_resources();
    }
 
+   if (_alarmItem->alarm_options & ALARM_OPT_DISALLOW_RINSEBACK)
+   {
+      btn_alarm_rinseback.deallocate_resources();
+   }
+
    // if in four button suite add fourth button and relocate others
    if (four_button_suite)
       four_button_suite_adjustment();

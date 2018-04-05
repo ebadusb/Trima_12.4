@@ -36,6 +36,9 @@ PredictTask::PredictTask()
      _procToGuiPredictStatusMsg (MessageBase::SEND_LOCAL),
      _updateAFTimeMsg           (MessageBase::SEND_LOCAL),
 
+     // Alarm messages
+     _AF_TimeAlert (AUTOFLOW_TIME_ALERT),
+     _AF_TimeAlarm (AUTOFLOW_TIME_ALARM),
 
 // Singletons
      _procedures    (ProcedureList::Instance()),
@@ -60,6 +63,8 @@ PredictTask::PredictTask()
      _procState (ProcDataState::Instance()),
      _adjustCDS (ROLE_RW),
      _guiProcedures(ROLE_RW),
+     _procRunCDS    (ROLE_RW),
+     _configCDS     (ROLE_RO),
 
      _current_response_type(NON_REQUEST),
      _adjustmentNumber (0),
@@ -132,9 +137,18 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    _procState.setPredictRequest(request);
    _predict.UpdateProcData(); // refresh members from CDS
 
+   float old_time = 0.0f;
+   // time before prediction called
+   if (_selectedProc)
+   {
+      old_time = _selectedProc->getPredTp();
+   }
+   int predictEvent = 0;  // used for the autoflow / non-autoflow disqualification alarms
+
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & ADJUSTMENT)
    {
+      predictEvent = 0;
       _predict.process_adjustment();
 
       // we just made a manual adjustment, so reset the autoflow timer
@@ -151,6 +165,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & AUTO_FLOW_ADJUSTMENT)
    {
+      predictEvent = 2;
       DataLog(log_level_predict_debug) << "AUTO_FLOW ADJUSTMENT" << endmsg;
       _predict.process_adjustment(true);
 
@@ -160,6 +175,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & REPREDICT_ONLY)
    {
+      predictEvent = 3;
       _predict.ProcData_Repredict_Only();
    }
 
@@ -167,6 +183,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & DONOR_INFO_UNCHANGED)
    {
+      predictEvent = 0;
       DataLog(log_level_predict_debug) << " DONOR_INFO_UNCHANGED" << endmsg;
       validate_selected_procedure(__LINE__);
    }
@@ -177,7 +194,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
       //   If the 'confirm' button was pressed on the donor info screen, and
       //   the donor is not yet connected, we need to force reprediction and
       //   transfer to the selection screen.
-
+      predictEvent = 0;
       DataLog(log_level_predict_debug) << " DONOR_INFO_PRECONNECT" << endmsg;
       _predict.reset_PIR_flags();
 
@@ -202,6 +219,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & DONOR_INFO_CHANGED)
    {
+      predictEvent = 0;
       _predict.ProcData_Donor_Info_Changed();
 
       if (displayListHasChanged())
@@ -219,6 +237,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & PTF_FILTER_RECALC)
    {
+      predictEvent = 0;
       // repredict the selected proc, if it exists, and we've started the run
       if (_selectedProc && (_selectedProc->AlgSubstate(_procState.SubState()) > 0))
       {
@@ -228,7 +247,62 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   ///  AUTOFLOW Time checking stuff....
 
+   if (_config.isAutoFlowOn() && _selectedProc)
+   {
+      float            new_time = _selectedProc->getPredTp();
+
+      if (predictEvent==2)  // an AF adjust
+      {
+         float dt = new_time - old_time;
+
+         float last_dt = _procRunCDS.AutoflowDeltaTime.Get();   // from before
+         _procRunCDS.AutoflowDeltaTime.Set(last_dt + dt);
+         _procRunCDS.AutoflowTotalNetTimeChanges.Set(_procRunCDS.AutoflowTotalNetTimeChanges.Get() + dt);
+
+         DataLog (log_level_proc_info) << " Time Delta Set:  Current Proc Time=" << new_time
+                                       << ",  Prior Proc Time=" << old_time
+                                       << ",  This Changes Proc DeltaT=" << dt
+                                       << ",  Prior Total DeltaT=" << last_dt
+                                       << ",  New Total DeltaT=" <<   _procRunCDS.AutoflowDeltaTime.Get()
+                                       << ",  Net Time Delta this run =" << _procRunCDS.AutoflowTotalNetTimeChanges.Get()
+                                       << endmsg;
+
+
+
+         // And now, check for resulting issues.  First, check for 10 minute increase
+         if ( _procRunCDS.AutoflowDeltaTime.Get() >= 10.0f )
+         {
+
+            DataLog(log_level_proc_alarm_monitor_info) << "AutoFlowTimeAlarm set; time delta = "
+                                                       <<  _procRunCDS.AutoflowDeltaTime.Get()
+                                                       <<  endmsg;
+
+            _procRunCDS.AutoflowDeltaTime.Set(0.0f);   // reset the delta time upon an alrm
+            _procRunCDS.AutoflowTotal10MinAlarms.Set(_procRunCDS.AutoflowTotal10MinAlarms.Get() + 1);
+
+            if (_AF_TimeAlert.getState() == ACTIVE)
+            {
+
+               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlowTimeAlarm ALARM set, system stop. " <<  endmsg;
+               // _AF_TimeAlert.clearAlarm();
+               _AF_TimeAlarm.setAlarm();
+
+            }
+            else
+            {
+
+               DataLog(log_level_proc_alarm_monitor_info) << "AutoFlowTimeAlarm advisory set, no system stop. " <<  endmsg;
+               _AF_TimeAlert.setAlarm();
+
+            }
+         }
+      }
+      predictEvent = 0;
+   }
+   ////////////////////////////////////////////////////////////////////////////////////
    _predict.setPredictTargets();
 
    // Handshake with proc (regardless of results)
@@ -363,6 +437,7 @@ void PredictTask::gui_predict_request ()
          // the response type.  (Otherwise, the next 'spontanous' GuiProcUpdated
          // message will say 'SELECT_CURRENT_ACK'.)
          _current_response_type = NON_REQUEST;
+         _procRunCDS.AutoflowDeltaTime.Set(0.0f);
 
          select();
          break;

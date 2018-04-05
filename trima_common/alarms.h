@@ -205,6 +205,7 @@ enum ALARM_VALUES
    SILENT_PAUSE_FOR_RET_TOO_SHORT_CHECK,
 
    MSS_MISCONNECTED_2ND_PAS_BAG,      // IT 13701
+   AUTOFLOW_TIME_ALARM,
 
    LAST_PROCEDURE_ALARM,              // Don't add procedure alarms after this enum
 

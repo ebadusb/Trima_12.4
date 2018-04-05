@@ -70,6 +70,8 @@ protected:
    bool SetInfusion (const bool active, float current);
    bool SetRatio   (const bool active, float current);
 
+   // Reset Delta timer During manual UP Adjustment
+   void ResetAutoFlowsDeltaTimer ();
 
 protected:
 

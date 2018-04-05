@@ -203,6 +203,9 @@ ProcRun_CDS::ProcRun_CDS (Role role)
    stopRamp.Register                 (this, PFR_RECOVER, false);
    deadRampMaxQin.Register           (this, PFR_RECOVER, 0.0f);
 
+   AutoflowDeltaTime.Register                  (this, PFR_RECOVER, 0.0f);
+   AutoflowTotalNetTimeChanges.Register        (this, PFR_RECOVER, 0.0f);
+   AutoflowTotal10MinAlarms.Register           (this, PFR_RECOVER, 0);
 }
 
 ProcRun_CDS::~ProcRun_CDS()

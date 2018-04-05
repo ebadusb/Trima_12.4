@@ -256,6 +256,13 @@ void AlarmHandler::processRequest (AlarmStruct& alarm)
    //
    clearPressureAlarms(alarm);
 
+   // Clear AF alert if AF alarm occurs on top of it
+   //
+   if ( alarm.getName() == AUTOFLOW_TIME_ALARM )
+   {
+      clearAfAlert(alarm.getName());
+   }
+
    //
    // Determine which alarm should be displayed ...
    //
@@ -1028,6 +1035,41 @@ void AlarmHandler::HandleSystemStateChangeMsg ()
 {
    _systemState = (State_names)_systemStateMsg.getData();
    DataLog(log_level_alarm_handler_info) << "_systemState: " << _systemState << endmsg;
+}
+
+void AlarmHandler::clearAfAlert (ALARM_VALUES activeAlarm)
+{
+   AlarmStruct& afAlert     = _AlarmTable[AUTOFLOW_TIME_ALERT];
+   AlarmStruct& afAlarm     = _AlarmTable[AUTOFLOW_TIME_ALARM];
+
+   // Autoflow alarm clears autoflow alert
+   specialClearAlarm(afAlert);
+}
+
+void AlarmHandler::specialClearAlarm( AlarmStruct& alarm )
+{
+   //
+   // Special cases where one alarm being instantiated clears another
+   //
+   DataLog(log_level_alarm_handler_info) << "Special clearing of alarm " << alarm.getName() << endmsg;
+   //
+   // Clear the internal state.
+   //
+   alarm.setState(CLEARED);
+   removeAlarmFromPFR(alarm);
+
+   //
+   // Send to the alarm itself the resulting new alarm state.
+   //
+   Alarm_struct data;
+   data.alarm_name  = alarm.getName();
+   data.alarm_state = alarm.getState();
+
+   //
+   // This is really the outgoing response for the alarm that
+   // was responded to.
+   //
+   _IncomingAlarmMsg.send(data);
 }
 
 /* FORMAT HASH ea9fbd7e10cf9c9e4c0caa342e0c7ab0 */
