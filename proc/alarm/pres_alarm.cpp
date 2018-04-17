@@ -1059,7 +1059,7 @@ void PressureAlarm::stopInletRamp ()
 
       _pd.MakeRunWritable();
       _pd.Run().stopRamp.Set(true);
-      _pd.Run().deadRampMaxQin.Set(qin - 5.0f);      // get actual Qin draw -5ml/Min
+      _pd.Run().deadRampMaxQin.Set(qin);
       _pd.MakeRunReadable();
 
       _stoppedInletRamp = true;
@@ -1297,8 +1297,8 @@ bool PressureAlarm::isSystemPaused ()
 ///   toggleAfQinIncreaseTimer ()
 ///
 ///   This function:
-///   Toggles the Qin increase timer. If the system is paused, the timer is paused
-///   Once the system resumes, the timer is started back from where it was paused.
+///   Toggles the Qin increase timer. If the system is paused or in recovery, the timer is paused
+///   Once the system resumes or recovery completes, the timer is started back from where it was paused.
 ///
 ///   @param   None
 ///   @return  void

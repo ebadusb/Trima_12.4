@@ -469,7 +469,7 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
                                    << " " << val
                                    << ", current cap " << currentCap
                                    << endmsg;
-
+   ProcData pd;
    if(!_autoFlowAdjustRequest)
    {
       // if no autoflow adjustment request then make cap down before increase
@@ -503,6 +503,30 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
 
    cds.CurrentCap.Set(currentCap);
    DataLog(log_level_proc_info) << "Adjustment Increment: newcap: " << cds.CurrentCap.Get() << endmsg;
+
+   // if ramp stopped by autoflow decrease then all the subsequent adjustments(manual/autoflow) should update deadRampMaxQin
+   // value in PrePlatletPlasma and PrePlatletNoPlasma substate.
+   if ( pd.Run().stopRamp.Get() &&
+         pd.Run().Substate.Get() <  SS_PLATELET_PLASMA
+   )
+   {
+      float dramp        = pd.Run().deadRampMaxQin.Get();
+      float newRampSpeed = dramp + val;
+
+      // make sure that new ramp speed falls within limits
+      if (newRampSpeed > CobeConfig::data().QinLimitMax)
+         newRampSpeed = CobeConfig::data().QinLimitMax;
+      if (newRampSpeed < CobeConfig::data().QinLimitMin)
+         newRampSpeed = CobeConfig::data().QinLimitMin;
+
+      pd.MakeRunWritable();
+      pd.Run().deadRampMaxQin.Set(newRampSpeed);
+      pd.MakeRunReadable();
+
+      DataLog(log_level_proc_info) << "ADJCTRL:   float the stopped ramp speed for manual adj. old speed = "
+            << dramp << "; new speed = "  << pd.Run().deadRampMaxQin.Get()
+            << " change = " << val << endmsg;
+   }
 }
 
 bool AdjustCtrl::SetQin (const bool active, float current)
