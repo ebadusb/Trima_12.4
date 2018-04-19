@@ -335,7 +335,7 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
    //
    //   Test instantaneous Qin limit and see if limit has changed
    //
-   // if autoflow off restrict draw flow limit to configured limit
+   // When AutoFlow is ON manual or auto increase adjustments can exceed configured limits
    if (!_isAutoFlowEnabled)
    {
       limit = MIN(getConfigMaxQin(), QinCap);
