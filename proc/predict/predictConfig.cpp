@@ -62,8 +62,7 @@ Config::Config()
      _Ytarg_CL(0),
      _MinPostCount(0.0f),
      _MinPostHct(0.0f),
-     _MaxProcedureTime(0),
-     _FirstTimeQinCapDown(false)
+     _MaxProcedureTime(0)
 {}
 
 Config::~Config() {}
@@ -331,11 +330,13 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
 {
    int repredict = 0;
    float limit;
+   bool _isAutoFlowEnabled = Software_CDS::GetInstance().getFeature(AutoFlowFlag);
    //
    //
    //   Test instantaneous Qin limit and see if limit has changed
    //
-   if (_FirstTimeQinCapDown == false && QinCap == _cc.QinLimitMax)
+   // if autoflow off restrict draw flow limit to configured limit
+   if (!_isAutoFlowEnabled)
    {
       limit = MIN(getConfigMaxQin(), QinCap);
       if (_MaxInstQin != limit)
@@ -344,14 +345,16 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
          repredict   = 1;
       }
    }
-   else if (QinCap <= _cc.QinLimitMax)
+   else
    {
-      limit = QinCap;
-      _FirstTimeQinCapDown = true;
-      if (_MaxInstQin != limit)
+      if (QinCap <= _cc.QinLimitMax)
       {
-         _MaxInstQin = limit;
-         repredict   = 1;
+         limit = QinCap;
+         if (_MaxInstQin != limit)
+         {
+            _MaxInstQin = limit;
+            repredict   = 1;
+         }
       }
    }
    //
