@@ -975,7 +975,7 @@ void PressureAlarm::autoFlowDecrease ()
    // AF down should only be allowed in certain substates
    // This check is required to avoid potential race condition
    // when states transition after AF down is scheduled.
-   if (!inCorrectSubstates())
+   if (!inCorrectSubstates() || _isSystemInRecovery)
    {
       return;
    }
@@ -1013,7 +1013,7 @@ void PressureAlarm::autoFlowIncrease ()
    }
 
    // AF up should only be allowed in certain substates
-   if (!inCorrectSubstates())
+   if (!inCorrectSubstates() || _isSystemInRecovery)
    {
       return;
    }
