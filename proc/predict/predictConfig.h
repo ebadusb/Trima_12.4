@@ -195,7 +195,7 @@ private:
    float _MinPostCount;        // Minimum platelet post count
    float _MinPostHct;          // Minimum post HCT
    int   _MaxProcedureTime;    // Maximum procedure time
-                               //
+   bool  _FirstTimeQinCapDown; // Used to track first time QinCap down
 
 // API
 public:

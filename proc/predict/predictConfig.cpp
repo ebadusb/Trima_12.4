@@ -62,7 +62,8 @@ Config::Config()
      _Ytarg_CL(0),
      _MinPostCount(0.0f),
      _MinPostHct(0.0f),
-     _MaxProcedureTime(0)
+     _MaxProcedureTime(0),
+     _FirstTimeQinCapDown(false)
 {}
 
 Config::~Config() {}
@@ -335,7 +336,8 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
    //
    //   Test instantaneous Qin limit and see if limit has changed
    //
-   // When AutoFlow is ON manual or auto increase adjustments can exceed configured limits
+   // When AutoFlow is ON manual or auto increase adjustments can exceed configured limits provided that
+   // cap should be made down by auto/manual adjustment
    if (!_isAutoFlowEnabled)
    {
       limit = MIN(getConfigMaxQin(), QinCap);
@@ -347,9 +349,19 @@ int Config::AdjustConfig (float QinCap, float QrpCap, float IrCap, float RatioCa
    }
    else
    {
-      if (QinCap <= _cc.QinLimitMax)
+      if (_FirstTimeQinCapDown == false && QinCap == _cc.QinLimitMax)
+      {
+         limit = MIN(getConfigMaxQin(), QinCap);
+         if (_MaxInstQin != limit)
+         {
+            _MaxInstQin = limit;
+            repredict   = 1;
+         }
+      }
+      else if (QinCap <= _cc.QinLimitMax)
       {
          limit = QinCap;
+         _FirstTimeQinCapDown = true;
          if (_MaxInstQin != limit)
          {
             _MaxInstQin = limit;
