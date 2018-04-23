@@ -82,11 +82,11 @@ void predict_buttons::allocate_AF_Buttons (Screen_PREDICT& parent)
       _btnAdjust_AF.set_callback (cbAFadjustBtn, (void*)&parent);
    }
 
-   if (!_btnMute_AF.allocated())
-   {
-      _btnMute_AF.allocate_resources (parent);
-      _btnMute_AF.set_callback (cbAFmuteBtn, (void*)&parent);
-   }
+//   if (!_btnMute_AF.allocated())
+//   {
+//      _btnMute_AF.allocate_resources (parent);
+//      _btnMute_AF.set_callback (cbAFmuteBtn, (void*)&parent);
+//   }
 }
 
 

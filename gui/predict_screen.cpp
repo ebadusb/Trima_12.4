@@ -413,11 +413,12 @@ void Screen_PREDICT::allocate_resources (const char* allocation_parameter)
       _buttons.allocate_AF_Buttons(*this);
 
       if (guiglobs::apheresis_status_line)
-         guiglobs::apheresis_status_line->set_current_status_line_text_by_type (ALERT_STATUS_LINE, JPHtextStatPredictScreenAFTimeout);
+         guiglobs::apheresis_status_line->deactivate_status_line_type(DEFAULT_STATUS_LINE);
+//         guiglobs::apheresis_status_line->set_current_status_line_text_by_type (ALERT_STATUS_LINE, JPHtextStatPredictScreenAFTimeout);
       else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
 
-      startBeepingSound();
+      //startBeepingSound();
 
    }
    else
@@ -2374,7 +2375,8 @@ void Screen_PREDICT::processAFAdjustBtn ()
 
 
    if (guiglobs::apheresis_status_line)
-      guiglobs::apheresis_status_line->reset_status_line ();
+      guiglobs::apheresis_status_line->deactivate_status_line_type(ALARM_STATUS_LINE);
+      //guiglobs::apheresis_status_line->reset_status_line ();
    else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
 
@@ -2477,7 +2479,8 @@ void Screen_PREDICT::process_continue_button ()
       guiglobs::button_audio_feedback.create_feedback_sound (ALERT_SOUND, SOUND_CLEAR);
 
       if (guiglobs::apheresis_status_line)
-         guiglobs::apheresis_status_line->reset_status_line ();
+         guiglobs::apheresis_status_line->deactivate_status_line_type(ALARM_STATUS_LINE);
+         //guiglobs::apheresis_status_line->reset_status_line ();
       else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
    }

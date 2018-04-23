@@ -986,6 +986,23 @@ void Screen_ALARM::process_continue_procedure_button ()
 
    }
 
+   // if the AUTOFLOW_TIME_DQ is raised then we need to put up the
+   // proc selection screen for the operator.
+   if ( ( alarm_set_struct.alarm_name == AUTOFLOW_TIME_DQ ) &&
+        ( current_state == BLOOD_RUN ) )
+   {
+      DataLog(log_level_gui_info) << "Alarm_SCREEN, exiting with AUTOFLOW_TIME_DQ, "
+                                  << "bringing up Predict screen" << endmsg;
+
+      PredictManager::clear_prediction_screen_requested();
+
+      guistring allocation_parameter_string;
+      sprintf(allocation_parameter_string, "%d", (int)AUTO_FLOW_TIMEOUT);
+
+      // call the procedure selection screen, because the op. didn't want to
+      //  connect RF for this procedure... let 'em select another procedure.
+      goto_stateless_screen (GUI_SCREEN_PREDICT, allocation_parameter_string);
+   }
 
    const bool AUTOFLOW_ON = (bool)(guiglobs::cdsData.config.Procedure.Get().key_autoflow);
    if (AUTOFLOW_ON == true)
