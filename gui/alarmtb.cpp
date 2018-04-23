@@ -2882,6 +2882,51 @@ ALARM_TABLE_T alarms [] =
 
    ///////////////////////
    {
+      AUTOFLOW_TIME_DQ,
+      NAME_LITERAL("AUTOFLOW TIME DISQUALIFICATION")
+      ALARM_OPT_DISALLOW_END_RUN | ALARM_OPT_DISALLOW_RINSEBACK,
+      AutoFlowTextAlarmBodyTimeout,
+      AutoFlowTextStatAlarmTimeout,
+      BITMAP_AUTO_FLOW_TEN_MIN_INCREASE
+   },
+
+   {
+      AUTOFLOW_TIME_DQ,
+      // NAME_LITERAL("AUTOFLOW TIME DISQUALIFICATION")
+      ALARM_OPT_DISALLOW_END_RUN | ALARM_OPT_DISALLOW_RINSEBACK,
+      AutoFlowTextAlarmBodyTimeout02,
+      AutoFlowTextStatAlarmTimeout,
+      BITMAP_AUTO_FLOW_TIME_INCREASE_NEEDLE_MAX
+   },
+
+   {
+      AUTOFLOW_TIME_DQ,
+      // NAME_LITERAL("AUTOFLOW TIME DISQUALIFICATION")
+      ALARM_OPT_DISALLOW_END_RUN | ALARM_OPT_DISALLOW_RINSEBACK,
+      AutoFlowTextAlarmBodyTimeout03,
+      AutoFlowTextStatAlarmTimeout,
+      BITMAP_AUTO_FLOW_TIME_INCREASE_SQUEEZING_MAX
+   },
+
+   {
+      AUTOFLOW_TIME_DQ,
+      // NAME_LITERAL("AUTOFLOW TIME DISQUALIFICATION")
+      ALARM_OPT_DISALLOW_END_RUN | ALARM_OPT_DISALLOW_RINSEBACK,
+      AutoFlowTextAlarmBodyTimeout04,
+      AutoFlowTextStatAlarmTimeout,
+      BITMAP_DONOR_WARM
+   },
+
+   {
+      AUTOFLOW_TIME_DQ,
+      // NAME_LITERAL("AUTOFLOW TIME DISQUALIFICATION")
+      ALARM_OPT_DISALLOW_END_RUN | ALARM_OPT_DISALLOW_RINSEBACK,
+      AutoFlowTextAlarmBodyTimeoutBodyNoGraphic05,
+      AutoFlowTextStatAlarmTimeout
+   },
+
+   //////////////////////
+   {
       PERSISTENT_SPILLOVER_ALARM,
       NAME_LITERAL("PERSISTENT SPILLOVER")
       ALARM_OPT_NONE,

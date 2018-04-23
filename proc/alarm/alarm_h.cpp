@@ -258,7 +258,7 @@ void AlarmHandler::processRequest (AlarmStruct& alarm)
 
    // Clear AF alert if AF alarm occurs on top of it
    //
-   if ( alarm.getName() == AUTOFLOW_TIME_ALARM )
+   if ( alarm.getName() == AUTOFLOW_TIME_ALARM || alarm.getName() == AUTOFLOW_TIME_DQ )
    {
       clearAfAlert(alarm.getName());
    }
@@ -1043,6 +1043,10 @@ void AlarmHandler::clearAfAlert (ALARM_VALUES activeAlarm)
    AlarmStruct& afAlarm     = _AlarmTable[AUTOFLOW_TIME_ALARM];
 
    // Autoflow alarm clears autoflow alert
+   if ( activeAlarm == AUTOFLOW_TIME_DQ )
+   {
+      specialClearAlarm(afAlarm);
+   }
    specialClearAlarm(afAlert);
 }
 

@@ -314,8 +314,11 @@ void Screen_ALARM::allocate_resources (const char* allocation_parameter)
             btn_alarm_continue.allocate_resources(*this);
             btn_alarm_continue.set_callback (callback_continue_procedure, (void*)this);
          }
-
-
+         // During AUTOFLOW_TIME_DQ alarm continue button text replaced by procedure selection text
+         if (( current_state < BLOOD_RINSEBACK ) && ( _alarmItem->alarm_name == AUTOFLOW_TIME_DQ ))
+         {
+            btn_alarm_continue.set_string_id(textButtonAlarmProcedureSelection);
+         }
       }
       break;
 

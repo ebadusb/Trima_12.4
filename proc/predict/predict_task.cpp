@@ -39,6 +39,7 @@ PredictTask::PredictTask()
      // Alarm messages
      _AF_TimeAlert (AUTOFLOW_TIME_ALERT),
      _AF_TimeAlarm (AUTOFLOW_TIME_ALARM),
+     _AF_DQAlarm   (AUTOFLOW_TIME_DQ),
 
 // Singletons
      _procedures    (ProcedureList::Instance()),
@@ -297,6 +298,25 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
                DataLog(log_level_proc_alarm_monitor_info) << "AutoFlowTimeAlarm advisory set, no system stop. " <<  endmsg;
                _AF_TimeAlert.setAlarm();
 
+            }
+         }
+      }
+
+      if (predictEvent > 0 )
+      {
+         // check for procedure time disqualification
+         if (new_time > _configCDS.Procedure.Get().key_proc_time)
+         {
+            DataLog(log_level_qa_external)
+               << "Procedure Time Exceeds Max Proc Time,"
+               << _configCDS.Procedure.Get().key_proc_time
+               << " minutes.  Predict screen coming up as alert.  "
+               << endmsg;
+
+            if (predictEvent == 2)
+            {
+               DataLog(log_level_proc_alarm_monitor_info) << "set AutoFlow Disqualification Alarm" << endmsg;
+               _AF_DQAlarm.setAlarm();
             }
          }
       }

@@ -718,7 +718,9 @@ BITMAP_AUTO_FLOW_TIME_INCREASE_CLOCKONLY               false      alarmnew/autoF
 BITMAP_AUTO_FLOW_PREDICT_ADJ_UP                        false      runproc/btn_trb2.bmp
 BITMAP_AUTO_FLOW_PREDICT_ADJ_DOWN                      false      runproc/btn_trbb2.bmp
 BITMAP_AUTO_FLOW_TIME_INCREASE_NEEDLE                  false      alarmnew/needlePosition.bmp
+BITMAP_AUTO_FLOW_TIME_INCREASE_NEEDLE_MAX              false      alarmnew/needlePositionMax.bmp
 BITMAP_AUTO_FLOW_TIME_INCREASE_SQUEEZING               false      alarmnew/donorSqueezing.bmp
+BITMAP_AUTO_FLOW_TIME_INCREASE_SQUEEZING_MAX           false      alarmnew/donorSqueezingMax.bmp
 BITMAP_DONOR_WARM                                      false      alarmnew/DonorWarm.bmp
 BITMAP_VISTA_CONNECTED                                 false      sysdonor/vista_connected.bmp
 BITMAP_AC_ATTACH_SENSOR                                false      sysacatt/ac_att_sensor.bmp

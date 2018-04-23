@@ -206,6 +206,7 @@ enum ALARM_VALUES
 
    MSS_MISCONNECTED_2ND_PAS_BAG,      // IT 13701
    AUTOFLOW_TIME_ALARM,
+   AUTOFLOW_TIME_DQ,             // autoflow has increased proc time to > procedure max time
 
    LAST_PROCEDURE_ALARM,              // Don't add procedure alarms after this enum
 
