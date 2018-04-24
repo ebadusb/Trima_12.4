@@ -1002,6 +1002,7 @@ void Screen_PREDICT::screenExit (GUI_SCREEN_ID gui_screen_transition,
       // user desires to remove stateless screen
       RemoveMostRecentStatelessScreenMsg req(MessageBase::SEND_LOCAL);
       req.send(0);
+      guiglobs::adj_button_press = false;
    }
    else if ((gui_screen_transition == GUI_SCREEN_TROUBLE) &&
             (get_screen_invocation_type () == GUI_SCREEN_INVOKE_STATELESS))
@@ -1030,6 +1031,7 @@ void Screen_PREDICT::screenExit (GUI_SCREEN_ID gui_screen_transition,
    {
       // user desires back to goto the DONINFO screen on goback
       goto_screen(gui_screen_transition, allocation_param_transition);
+      guiglobs::adj_button_press = false;
    }
 
 }  // End of screenExit
@@ -1965,15 +1967,20 @@ void Screen_PREDICT::updateScreenData ()
 
    bool in_run          = ( _procData.system_state == BLOOD_PRIME || _procData.system_state == BLOOD_RUN );
 
+   // in run, disable go back button if invocation type is either CPS_DISABLES_RBCS or AUTO_FLOW_TIMEOUT
    bool disable_go_back = in_run
-                          ? ( _invocationType == CPS_DISABLES_RBCS )  // in run, disable if CPS
+                          ? (( _invocationType == CPS_DISABLES_RBCS ) || ( _invocationType == AUTO_FLOW_TIMEOUT ))
                           : ( _invocationType == REPFLUID_NO_DELTA ); // not in run,disable if REPFLUID
 
 
    if (disable_go_back)
+   {
       btn_goback.deallocate_resources();
+   }
    else
+   {
       btn_goback.allocate_resources(*this);
+   }
 
 
    if (isAmapp && (_amapState == SHOW_ONE))
@@ -2372,14 +2379,16 @@ void Screen_PREDICT::processAFAdjustBtn ()
 
    guiglobs::button_audio_feedback.create_feedback_sound (ALERT_SOUND, SOUND_CLEAR);
 
-
-
    if (guiglobs::apheresis_status_line)
       guiglobs::apheresis_status_line->deactivate_status_line_type(ALARM_STATUS_LINE);
       //guiglobs::apheresis_status_line->reset_status_line ();
    else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
-
+   if(_invocationType == AUTO_FLOW_TIMEOUT)
+   {
+      guiglobs::adj_button_press = true;
+      PredictManager::clear_prediction_screen_requested();
+   }
 
    // user desires to remove stateless screen
    RemoveMostRecentStatelessScreenMsg req(MessageBase::SEND_LOCAL);

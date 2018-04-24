@@ -1145,6 +1145,10 @@ void Screen_TROUBLE::process_continue_button ()
    // inform bio mgr of decision to exit the screen
    AdjustManager::sendAdjustment(ADJUSTMENT_SCREEN_CLOSED, HERE);
 
+   if(guiglobs::adj_button_press == true)
+   {
+      PredictManager::set_prediction_screen_requested();
+   }
    shutdown();
 }
 
@@ -1337,7 +1341,15 @@ void Screen_TROUBLE::shutdown ()
 
       // set invocation allocation parameter
       guistring predict_call_type;
-      sprintf(predict_call_type, "%d", (int)ADJUST_DELTA);
+      if(guiglobs::adj_button_press == true)
+      {
+         sprintf(predict_call_type, "%d", (int)AUTO_FLOW_TIMEOUT);
+      }
+      else
+      {
+         sprintf(predict_call_type, "%d", (int)ADJUST_DELTA);
+      }
+
       // exit the screen based on invocation type
       screen_exit (GUI_SCREEN_PREDICT, predict_call_type);
       return;
