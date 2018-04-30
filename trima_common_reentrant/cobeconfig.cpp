@@ -116,6 +116,8 @@ ALARM_VALUES CobeConfig::ReadConfig (CDatFileReader& config)
    _data.AKOVolume                         = config.get_float("SYSTEM", "ako_volume", 0.0f, 20.0f);
    _data.QrpAKO                            = config.get_float("SYSTEM", "qrp_ako", 10.0f, 200.0f);
    _data.ACPrimeVolume                     = config.get_float("SYSTEM", "ac_prime_volume", 0.0f, 100.0f);
+   _data.NoACAlarmVolLimit                 = config.get_float("SYSTEM", "no_ac_alarm_vol_limit", 0.0f, 20.0f);
+   _data.PostFirstACAlarmVolLimit          = config.get_float("SYSTEM", "post_first_ac_alarm_vol_limit", 0.0f, 20.0f);
 
    _data.FirstCycleTooSoonPauseDoublecheck = config.get_float("SYSTEM", "first_cycle_too_soon_pause_doublecheck", 0.0f, 8000.0f);
    _data.FirstCycleTooSoonRetryDoublecheck = config.get_float("SYSTEM", "first_cycle_too_soon_retry_doublecheck", 0.0f, 8.0f);

@@ -27,10 +27,17 @@
 class PredictTask
    : public CStdAppl
 {
-public: // types
+public: // types and enums
 
    typedef ProcedureList::iterator iterator;
    typedef ProcedureList::const_iterator const_iterator;
+
+   enum _PredictEvent
+   {
+      NoChangeInProcTime       = 0,
+      AfAdjChangedProcTime     = 2,
+      RepredictChangedProcTime = 3
+   };
 
 public: // member functions
 

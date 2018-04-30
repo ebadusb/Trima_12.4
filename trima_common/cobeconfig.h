@@ -75,6 +75,8 @@ public:
       float AKOVolume;
       float QrpAKO;
       float ACPrimeVolume;
+      float NoACAlarmVolLimit;
+      float PostFirstACAlarmVolLimit;
 
       float FirstReturnNoCollectQnCap;
 

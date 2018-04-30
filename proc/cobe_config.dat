@@ -87,6 +87,8 @@ sample_volume=20
 ako_volume=4.0
 qrp_ako=20.0
 ac_prime_volume=18.0
+no_ac_alarm_vol_limit=4.0
+post_first_ac_alarm_vol_limit=5.0
 
 first_return_nocollect_qn_cap = 60.0 
 

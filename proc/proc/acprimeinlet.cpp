@@ -87,7 +87,7 @@ int ACPrimeInlet::preProcess ()
    //
    if ( !_ACSeen )
    {
-      if ( ( _ACVolume ) >= 4.0f )
+      if ( ( _ACVolume ) >= CobeConfig::data().NoACAlarmVolLimit )
       {
          //
          // If we have already failed this test once.
@@ -150,7 +150,7 @@ int ACPrimeInlet::preProcess ()
    // and operator does not continue, there can be a case where air is detected again
    // or the line gets pulled off the sensor, just latch the alarm then
    else if ( !pd.Status().ACDetectFluid() &&
-            (( _ACVolume >= 5.0f ) || (_ACSeen && _ACVolume == 0.0f)) &&
+            (( _ACVolume >= CobeConfig::data().PostFirstACAlarmVolLimit ) || (_ACSeen && _ACVolume == 0.0f)) &&
               _ACLevelAlarm.getState() != LATCHED )
    {
       //
@@ -165,9 +165,7 @@ int ACPrimeInlet::preProcess ()
       _ACLevelAlarm.unlatchAlarm();
    }
 
-
-   //
-   if (_ACSeen && (_ACVolume >= 5.0f) && !waitDone)
+   if (_ACSeen && (_ACVolume >= CobeConfig::data().PostFirstACAlarmVolLimit) && !waitDone)
    {
       runPauseTimer = true;
    }

@@ -144,12 +144,12 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    {
       old_time = _selectedProc->getPredTp();
    }
-   int predictEvent = 0;  // used for the autoflow / non-autoflow disqualification alarms
+   int predictEvent = NoChangeInProcTime;  // used for the autoflow / non-autoflow disqualification alarms
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & ADJUSTMENT)
    {
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
       _predict.process_adjustment();
 
       // we just made a manual adjustment, so reset the autoflow timer
@@ -166,7 +166,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & AUTO_FLOW_ADJUSTMENT)
    {
-      predictEvent = 2;
+      predictEvent = AfAdjChangedProcTime;
       DataLog(log_level_predict_debug) << "AUTO_FLOW ADJUSTMENT" << endmsg;
       _predict.process_adjustment(true);
 
@@ -176,7 +176,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & REPREDICT_ONLY)
    {
-      predictEvent = 3;
+      predictEvent = RepredictChangedProcTime;
       _predict.ProcData_Repredict_Only();
    }
 
@@ -184,7 +184,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & DONOR_INFO_UNCHANGED)
    {
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
       DataLog(log_level_predict_debug) << " DONOR_INFO_UNCHANGED" << endmsg;
       validate_selected_procedure(__LINE__);
    }
@@ -195,7 +195,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
       //   If the 'confirm' button was pressed on the donor info screen, and
       //   the donor is not yet connected, we need to force reprediction and
       //   transfer to the selection screen.
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
       DataLog(log_level_predict_debug) << " DONOR_INFO_PRECONNECT" << endmsg;
       _predict.reset_PIR_flags();
 
@@ -220,7 +220,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & DONOR_INFO_CHANGED)
    {
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
       _predict.ProcData_Donor_Info_Changed();
 
       if (displayListHasChanged())
@@ -238,7 +238,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    if (request & PTF_FILTER_RECALC)
    {
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
       // repredict the selected proc, if it exists, and we've started the run
       if (_selectedProc && (_selectedProc->AlgSubstate(_procState.SubState()) > 0))
       {
@@ -255,7 +255,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
    {
       float            new_time = _selectedProc->getPredTp();
 
-      if (predictEvent==2)  // an AF adjust
+      if (predictEvent == AfAdjChangedProcTime)  // an AF adjust
       {
          float dt = new_time - old_time;
 
@@ -302,7 +302,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
          }
       }
 
-      if (predictEvent > 0 )
+      if (predictEvent > NoChangeInProcTime )
       {
          // check for procedure time disqualification
          if (new_time > _configCDS.Procedure.Get().key_proc_time)
@@ -313,14 +313,14 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
                << " minutes.  Predict screen coming up as alert.  "
                << endmsg;
 
-            if (predictEvent == 2)
+            if (predictEvent == AfAdjChangedProcTime)
             {
                DataLog(log_level_proc_alarm_monitor_info) << "set AutoFlow Disqualification Alarm" << endmsg;
                _AF_DQAlarm.setAlarm();
             }
          }
       }
-      predictEvent = 0;
+      predictEvent = NoChangeInProcTime;
    }
    ////////////////////////////////////////////////////////////////////////////////////
    _predict.setPredictTargets();
