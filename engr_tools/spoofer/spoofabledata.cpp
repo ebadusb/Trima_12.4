@@ -1906,6 +1906,11 @@ void SpoofableData :: initdb( )
     new SpoofableData( "FastData", "raw",
 	&fd, &fd.raw, FASTDATA_ARRAY ); 
 
+    //
+    // ProcPQI_CDS data
+    //
+    new SpoofableData( CDS, "ProcPQI_spoofChamberSat", "data", 0, 0, INT );
+
 #endif // SUPPORT_CONTROL_SPOOFS
 
 

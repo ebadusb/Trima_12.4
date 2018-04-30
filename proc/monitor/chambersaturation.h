@@ -91,6 +91,7 @@ protected:
    bool crit3bTriggered ();
    bool crit4aTriggered ();
    bool crit4bTriggered ();
+   bool spoofTriggered ();  // for spoof testing
 
    //
    // Functions which return the active status of the flagging criteria

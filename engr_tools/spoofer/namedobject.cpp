@@ -62,6 +62,7 @@
 #include "proccycle_cds.h"
 #include "proctrimaset_cds.h"
 #include "procdonor_cds.h"
+#include "procpqi_cds.h"
 #endif // SUPPORT_CONTROL_SPOOFS
 
 
@@ -734,6 +735,13 @@ NamedObject* NamedObject :: create( const char* name )
         NamedCds< ProcDonor_CDS, float >* pC;
         pC = new NamedCds< ProcDonor_CDS, float >( name );
         pC->init( &pC->cds().PreCnt );
+        p = pC;
+    }
+    else if( strcmp(name, "ProcPQI_spoofChamberSat") == 0 )
+    {
+        NamedCds< ProcPQI_CDS, int >* pC;
+        pC = new NamedCds< ProcPQI_CDS, int >(name);
+        pC->init(&pC->cds().spoofChamberSat);
         p = pC;
     }
 

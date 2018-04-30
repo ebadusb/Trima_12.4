@@ -48,6 +48,9 @@ public:
 
    BaseElement<float> previousDonorHct;
 
+   // For testing only; when true it triggers chamber saturation event
+   BaseElement<int> spoofChamberSat;
+
 // Class Methods
 public:
    ProcPQI_CDS (Role role);

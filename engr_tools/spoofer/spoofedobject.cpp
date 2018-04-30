@@ -79,6 +79,7 @@
 #include "procrun_cds.h"
 #include "proctrimaset_cds.h"
 #include "procdonor_cds.h"
+#include "procpqi_cds.h"
 #endif // SUPPORT_CONTROL_SPOOFS
 
 #undef LOG_ERROR
@@ -955,6 +956,13 @@ SpoofedObject* SpoofedObject :: create( const char* name )
         SpoofedCds< ProcDonor_CDS, float >* pC;
         pC = new SpoofedCds< ProcDonor_CDS, float >( name );
         pC->init( &pC->cds().PreCnt );
+        p = pC;
+    }
+    else if( strcmp( name, "ProcPQI_spoofChamberSat") == 0 )
+    {
+        SpoofedCds< ProcPQI_CDS, int >* pC;
+        pC = new SpoofedCds< ProcPQI_CDS, int >( name );
+        pC->init(&pC->cds().spoofChamberSat);
         p = pC;
     }
 

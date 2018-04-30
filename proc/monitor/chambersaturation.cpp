@@ -227,7 +227,8 @@ void ChamberSaturation::Monitor ()
    if (    crit3aTriggered()
            || crit3bTriggered()
            || crit4aTriggered()
-           || crit4bTriggered() )
+           || crit4bTriggered()
+           || spoofTriggered() )
    {
       _sout << "COUNT PLATELET PRODUCT because WBC contamination detected";
       LogIt(PLATELET_CONTAMINANT_DETECTION);
@@ -455,7 +456,15 @@ bool ChamberSaturation::crit4bTriggered ()
    return false;
 }
 
-
+bool ChamberSaturation::spoofTriggered ()
+{
+   const bool triggered = ( _pd->PQI().spoofChamberSat.Get() != 0 );
+   if (triggered)
+   {
+      DataLog(log_level_proc_pqi_info) << "ChamberSaturation triggered by spoof" << endmsg;
+   }
+   return triggered;
+}
 
 
 bool ChamberSaturation::crit3Enabled ()

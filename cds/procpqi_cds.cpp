@@ -63,6 +63,7 @@ ProcPQI_CDS::ProcPQI_CDS (Role role)
    PlasmaWasCollected.Register      (this, PFR_RECOVER, false);
    RbcWereCollected.Register        (this, PFR_RECOVER, false);
    wasInPIR.Register                (this, PFR_RECOVER, false); // Flag that tracks whether PIR ever occurred.
+   spoofChamberSat.Register         (this, NO_PFR, 0);
    ClampClosureFailedFullFailure.Register      (this, PFR_RECOVER, false);
    ClampClosureFailedPartFailure.Register      (this, PFR_RECOVER, false);
    VinEndedPIR.Register             (this, PFR_RECOVER, 0.0f);
