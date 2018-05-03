@@ -99,7 +99,10 @@ bool AdjustCtrl::Update ()
    bool     DrawActive, ReturnActive, IRActive, ClumpingActive;
    bool     needUpdate = false;
 
-   //
+   float       predictQin    = 0.0f;
+   float       predictQn     = 0.0f;
+   State_names substate      = pd.Run().Substate.Get();
+
    //
    //   IT9829: Do not update meters during an alarm condition, or the
    //   following cycle.  Waiting one cycle allows the alarm clear condition
@@ -119,6 +122,10 @@ bool AdjustCtrl::Update ()
    //
    if (RecoveryTypes::RecoveryId(pd.RecoveryName().c_str()) == RecoveryTypes::PumpsPause)
    {
+      predictQin = pd.Predict().Qin(true, substate);
+      predictQn  = pd.Predict().Qrp(false, substate) - pd.Predict().Qin(false, substate);
+      DataLog(log_level_proc_info) << "predictQin inRecovery(PP) but using predicted speeds: " << predictQin << "predictQn : " << predictQn << endmsg;
+
       _AlarmActivePrevious = true; // will get reset by alarm logic above
       ignoreDueToAlarm     = true;
    }
@@ -135,7 +142,15 @@ bool AdjustCtrl::Update ()
          if ( pd.Status().ReturnPump.CmdFlow() == 0.0f )
          {
             if ( !ignoreDueToAlarm && (pd.Status().InletPump.CmdFlow() > 0.0f ) )
+            {
                qin = pd.Status().InletPump.CmdFlow();
+            }
+
+            // Use predicted value of needle flow while adjusting return flow during draw cycle
+            if (pd.Run().FirstCycleComplete.Get())
+            {
+               qrp = predictQn;
+            }
          }
       }
       else
@@ -143,7 +158,15 @@ bool AdjustCtrl::Update ()
          if ( pd.Status().ReturnPump.CmdFlow() > 0.0f )
          {
             if ( !ignoreDueToAlarm )
+            {
                qrp = pd.Status().ReturnPump.CmdFlow() - pd.Status().InletPump.CmdFlow();
+            }
+
+            // Use the last predicted value for Qin if in valid substate
+            if ((substate >= SS_CHANNEL_SETUP) && (substate < SS_RBC_PTF_SETUP_1))
+            {
+               qin = predictQin;
+            }
          }
       }
 
@@ -597,6 +620,11 @@ bool AdjustCtrl::SetQreturn (const bool active, float current)
    bool updated = ( (pd.Adjustments().Return.Active.Get() != active) ||
                     (pd.Adjustments().Return.CurrentValue.Get() != current) );
 
+   if ( updated )
+   {
+      DataLog(log_level_proc_info) << "Adjustment Qrp change: " << current << " from: " << pd.Adjustments().Return.CurrentValue.Get() << endmsg;
+   }
+
    pd.MakeAdjustmentsWritable();
    pd.Adjustments().Return.Active.Set(active);
    pd.Adjustments().Return.CurrentValue.Set(current);
@@ -615,6 +643,11 @@ bool AdjustCtrl::SetInfusion (const bool active, float current)
    bool updated = ( (pd.Adjustments().Tingling.Active.Get() != active) ||
                     (pd.Adjustments().Tingling.CurrentValue.Get() != current) );
 
+   if ( updated )
+   {
+      DataLog(log_level_proc_info) << "Adjustment Infusion change: " << current << " from: " << pd.Adjustments().Tingling.CurrentValue.Get() << endmsg;
+   }
+
    pd.MakeAdjustmentsWritable();
    pd.Adjustments().Tingling.Active.Set(active);
    pd.Adjustments().Tingling.CurrentValue.Set(current);
@@ -632,6 +665,11 @@ bool AdjustCtrl::SetRatio (const bool active, float current)
 
    bool updated = ( (pd.Adjustments().Clumping.Active.Get() != active) ||
                     (pd.Adjustments().Clumping.CurrentValue.Get() != current) );
+
+   if ( updated )
+   {
+      DataLog(log_level_proc_info) << "Adjustment Ratio change: " << current << " from: " << pd.Adjustments().Clumping.CurrentValue.Get() << endmsg;
+   }
 
    pd.MakeAdjustmentsWritable();
    pd.Adjustments().Clumping.Active.Set(active);

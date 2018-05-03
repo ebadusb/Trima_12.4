@@ -41,6 +41,11 @@ PumpsPause::~PumpsPause()
 
 int PumpsPause::init ()
 {
+   ProcData pd;
+   pd.MakeRunWritable();
+   pd.Run().inPPR.Set(false);
+   pd.MakeRunReadable();
+
    return 1;
 }
 
@@ -127,9 +132,9 @@ int PumpsPause::doRecovery ()
       Qret = nc_Qrp;
    }
 
-//    DataLog(log_level_proc_info) << "PumpsPause: Qn set to "      << nc_Qn
-//                                 << ",  PumpsPause: Qret set to " << Qret
-//                                 << ",  PumpsPause: Qin set to "  << inletSpeedForce << endmsg;
+    DataLog(log_level_proc_info) << "PumpsPause: Qn set to "      << nc_Qn
+                                 << ",  PumpsPause: Qret set to " << Qret
+                                 << ",  PumpsPause: Qin set to "  << inletSpeedForce << endmsg;
 
 
    if (Qret > nc_Qrp)
@@ -206,7 +211,7 @@ int PumpsPause::shouldRecover ()
          _TimerStarted = 1;
       }
    }
-   else
+   else  // Pump speed is above minimum RPM
    {
       //
       // Stop the timer ...
@@ -230,17 +235,27 @@ int PumpsPause::shouldRecover ()
 
 void PumpsPause::reset ()
 {
+   ProcData pd;
    _RecoveryTimer.interval(0);
    _TimerStarted         = 0;
    _PerformRecovery      = 0;
    _InterfaceEstablished = 0;
    _InletVolume          = 0;
+
+   pd.MakeRunWritable();
+   pd.Run().inPPR.Set(false);
+   pd.MakeRunReadable();
 }
 
 void PumpsPause::copyOver (const PumpsPause&)
 {}
 
 void PumpsPause::cleanup ()
-{}
+{
+   ProcData pd;
+   pd.MakeRunWritable();
+   pd.Run().inPPR.Set(false);
+   pd.MakeRunReadable();
+}
 
 /* FORMAT HASH c71186bcafd788b3b6a245e73e488b25 */
