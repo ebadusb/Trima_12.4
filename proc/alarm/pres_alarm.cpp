@@ -1305,7 +1305,7 @@ bool PressureAlarm::isSystemPaused ()
 ////////////////////////////////////////////////////////////////////////////////
 void PressureAlarm::toggleAfQinIncreaseTimer ()
 {
-   if (isSystemPaused())
+   if (isSystemPaused() || _isSystemInRecovery)
    {
       // Pause the timer
       if (!_isQinIncreaseTimerPaused)
