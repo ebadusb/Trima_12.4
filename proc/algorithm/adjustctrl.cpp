@@ -174,8 +174,8 @@ bool AdjustCtrl::Update ()
       ir    = pd.Run().LastRunInfusion.Get();
       ratio = pd.Run().LastRunRatio.Get();
 
-      // Use predicted value of Qin and Qac for run ratio.
-      if ( isValidState )
+      // Use predicted value of Qin and Qac for run ratio in PPR.
+      if (RecoveryTypes::RecoveryId(pd.RecoveryName().c_str()) == RecoveryTypes::PumpsPause)
       {
          float qac = pd.Predict().Qac(true /*draw*/, pd.Run().Substate.Get() );
 
