@@ -66,7 +66,8 @@ enum PREDICT_INVOKE_TYPE
    ADJUST_NO_DELTA   = 44,
    REPFLUID_NO_DELTA = 55,
    CPS_DISABLES_RBCS = 66,
-   AUTO_FLOW_TIMEOUT = 77
+   AUTO_FLOW_TIMEOUT = 77,
+   NON_AUTO_FLOW_TIMEOUT = 88
 };
 
 DataLog_Stream& operator << (DataLog_Stream& os, const PREDICT_INVOKE_TYPE&);

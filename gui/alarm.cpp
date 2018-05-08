@@ -315,7 +315,7 @@ void Screen_ALARM::allocate_resources (const char* allocation_parameter)
             btn_alarm_continue.set_callback (callback_continue_procedure, (void*)this);
          }
          // During AUTOFLOW_TIME_DQ alarm continue button text replaced by procedure selection text
-         if (( current_state < BLOOD_RINSEBACK ) && ( _alarmItem->alarm_name == AUTOFLOW_TIME_DQ ))
+         if (( current_state < BLOOD_RINSEBACK ) && ( _alarmItem->alarm_name == AUTOFLOW_TIME_DQ || _alarmItem->alarm_name == NON_AUTOFLOW_TIME_DQ ))
          {
             btn_alarm_continue.set_string_id(textButtonAlarmProcedureSelection);
          }
@@ -988,8 +988,7 @@ void Screen_ALARM::process_continue_procedure_button ()
 
    // if the AUTOFLOW_TIME_DQ is raised then we need to put up the
    // proc selection screen for the operator.
-   if ( ( alarm_set_struct.alarm_name == AUTOFLOW_TIME_DQ ) &&
-        ( current_state == BLOOD_RUN ) )
+   if ( ( alarm_set_struct.alarm_name == AUTOFLOW_TIME_DQ ) && ( current_state < BLOOD_RINSEBACK ) )
    {
       DataLog(log_level_gui_info) << "Alarm_SCREEN, exiting with AUTOFLOW_TIME_DQ, "
                                   << "bringing up Predict screen" << endmsg;
@@ -1001,7 +1000,28 @@ void Screen_ALARM::process_continue_procedure_button ()
 
       // call the procedure selection screen, because the op. didn't want to
       //  connect RF for this procedure... let 'em select another procedure.
-      goto_stateless_screen (GUI_SCREEN_PREDICT, allocation_parameter_string);
+      goto_screen (GUI_SCREEN_PREDICT, allocation_parameter_string);
+   }
+
+   // if the NON_AUTOFLOW_TIME_DQ is raised then we need to put up the
+   // proc selection screen for the operator.
+   if ( (_alarmItem->alarm_name == NON_AUTOFLOW_TIME_DQ) && ( current_state < BLOOD_RINSEBACK ) )
+   {
+      DataLog(log_level_gui_info) << "Alarm_SCREEN, exiting with NON_AUTOFLOW_TIME_DQ, "
+                                  << "bringing up Predict screen" << endmsg;
+
+      PredictManager::clear_prediction_screen_requested();
+
+      guistring allocation_parameter_string;
+
+      if(guiglobs::predictScreenFromAfDqAlarm == true)
+         sprintf(allocation_parameter_string, "%d", (int)AUTO_FLOW_TIMEOUT);
+      else
+         sprintf(allocation_parameter_string, "%d", (int)NON_AUTO_FLOW_TIMEOUT);
+
+      // call the procedure selection screen, because the op. didn't want to
+      //  connect RF for this procedure... let 'em select another procedure.
+      goto_screen (GUI_SCREEN_PREDICT, allocation_parameter_string);
    }
 
    const bool AUTOFLOW_ON = (bool)(guiglobs::cdsData.config.Procedure.Get().key_autoflow);

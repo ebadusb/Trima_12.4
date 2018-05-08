@@ -413,13 +413,13 @@ void Screen_PREDICT::allocate_resources (const char* allocation_parameter)
       _buttons.allocate_AF_Buttons(*this);
 
       if (guiglobs::apheresis_status_line)
+      {
          guiglobs::apheresis_status_line->deactivate_status_line_type(DEFAULT_STATUS_LINE);
-//         guiglobs::apheresis_status_line->set_current_status_line_text_by_type (ALERT_STATUS_LINE, JPHtextStatPredictScreenAFTimeout);
-      else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
+      }
+      else
+         DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
-
-      //startBeepingSound();
-
+      guiglobs::predictScreenFromAfDqAlarm = true;
    }
    else
    {
@@ -1002,7 +1002,7 @@ void Screen_PREDICT::screenExit (GUI_SCREEN_ID gui_screen_transition,
       // user desires to remove stateless screen
       RemoveMostRecentStatelessScreenMsg req(MessageBase::SEND_LOCAL);
       req.send(0);
-      guiglobs::adj_button_press = false;
+      guiglobs::predictScreenFromAfDqAlarm = false;
    }
    else if ((gui_screen_transition == GUI_SCREEN_TROUBLE) &&
             (get_screen_invocation_type () == GUI_SCREEN_INVOKE_STATELESS))
@@ -1031,7 +1031,7 @@ void Screen_PREDICT::screenExit (GUI_SCREEN_ID gui_screen_transition,
    {
       // user desires back to goto the DONINFO screen on goback
       goto_screen(gui_screen_transition, allocation_param_transition);
-      guiglobs::adj_button_press = false;
+      guiglobs::predictScreenFromAfDqAlarm = false;
    }
 
 }  // End of screenExit
@@ -2310,6 +2310,10 @@ void Screen_PREDICT::process_goback_button ()
       {
          case ADJUST_DELTA    :
          case ADJUST_NO_DELTA : screenExit (GUI_SCREEN_TROUBLE, predictCallType); break;
+         case NON_AUTO_FLOW_TIMEOUT :
+            screenExit (GUI_SCREEN_RUNPROC, predictCallType);
+            PredictManager::clear_prediction_screen_requested();
+            break;
          default              : screenExit (GUI_SCREEN_DONINFO, predictCallType); break;
       }
 
@@ -2381,21 +2385,15 @@ void Screen_PREDICT::processAFAdjustBtn ()
 
    if (guiglobs::apheresis_status_line)
       guiglobs::apheresis_status_line->deactivate_status_line_type(ALARM_STATUS_LINE);
-      //guiglobs::apheresis_status_line->reset_status_line ();
-   else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
-
-   if(_invocationType == AUTO_FLOW_TIMEOUT)
-   {
-      guiglobs::adj_button_press = true;
-      PredictManager::clear_prediction_screen_requested();
-   }
+   else
+      DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
 
    // user desires to remove stateless screen
    RemoveMostRecentStatelessScreenMsg req(MessageBase::SEND_LOCAL);
    req.send(0);
 
    // user desires to change procedure, goto the TROUBLE screen
-   goto_stateless_screen(GUI_SCREEN_TROUBLE, "GUI_SCREEN_TROUBLE");
+   goto_screen(GUI_SCREEN_TROUBLE, "GUI_SCREEN_TROUBLE");
 }
 
 
@@ -2483,17 +2481,16 @@ void Screen_PREDICT::processAdjustFlowRateBtn ()
 // PROCESS_CONTINUE_BUTTON
 void Screen_PREDICT::process_continue_button ()
 {
+
    if (_invocationType == AUTO_FLOW_TIMEOUT)
    {
       guiglobs::button_audio_feedback.create_feedback_sound (ALERT_SOUND, SOUND_CLEAR);
 
       if (guiglobs::apheresis_status_line)
          guiglobs::apheresis_status_line->deactivate_status_line_type(ALARM_STATUS_LINE);
-         //guiglobs::apheresis_status_line->reset_status_line ();
-      else DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
-
+      else
+         DataLog (log_level_gui_error) << "AF Unallocated apheresis status line." << endmsg;
    }
-
 
    if (guiglobs::complementaryPlasmaEnabled())
    {

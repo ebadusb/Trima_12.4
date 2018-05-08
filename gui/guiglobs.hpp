@@ -132,7 +132,7 @@ public:
 
    static bool                  donor_platelet_precount_entered;
 
-   static bool                  adj_button_press;
+   static bool                  predictScreenFromAfDqAlarm;
 
    // Proc sends gui the cobe config value (currently 4200) for
    // the threshold of PLT concentration at which we flag for

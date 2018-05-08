@@ -71,7 +71,7 @@ bool                  guiglobs::procedure_selected                  = false;
 bool                  guiglobs::timeOnlyConfigMode                  = false;
 bool                  guiglobs::currentlyInPreConnectDonorDataCheck = false;
 bool                  guiglobs::donor_platelet_precount_entered     = false;
-bool                  guiglobs::adj_button_press                    = false;
+bool                  guiglobs::predictScreenFromAfDqAlarm          = false;
 
 
 BioSignaturesMgr& guiglobs::bioMgr () {static BioSignaturesMgr b; return b; }

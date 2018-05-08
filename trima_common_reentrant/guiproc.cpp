@@ -11,6 +11,7 @@ DataLog_Stream & operator << (DataLog_Stream& os, const PREDICT_INVOKE_TYPE& p)
       case REPFLUID_NO_DELTA : return os << "REPFLUID_NO_DELTA" ;
       case CPS_DISABLES_RBCS : return os << "CPS_DISABLES_RBCS" ;
       case AUTO_FLOW_TIMEOUT : return os << "AUTO_FLOW_TIMEOUT" ;
+      case NON_AUTO_FLOW_TIMEOUT : return os << "NON_AUTO_FLOW_TIMEOUT" ;
    }
 
    return os << "UNKNOWN(" << (int)p << ')';

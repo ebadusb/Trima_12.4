@@ -40,6 +40,7 @@ PredictTask::PredictTask()
      _AF_TimeAlert (AUTOFLOW_TIME_ALERT),
      _AF_TimeAlarm (AUTOFLOW_TIME_ALARM),
      _AF_DQAlarm   (AUTOFLOW_TIME_DQ),
+     _NONAF_DQAlarm(NON_AUTOFLOW_TIME_DQ),
 
 // Singletons
      _procedures    (ProcedureList::Instance()),
@@ -253,7 +254,7 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
 
    if (_config.isAutoFlowOn() && _selectedProc)
    {
-      float            new_time = _selectedProc->getPredTp();
+      float new_time = _selectedProc->getPredTp();
 
       if (predictEvent == AfAdjChangedProcTime)  // an AF adjust
       {
@@ -317,6 +318,11 @@ void PredictTask::ProcDataReceived (int line, DoPrediction_t request)
             {
                DataLog(log_level_proc_alarm_monitor_info) << "set AutoFlow Disqualification Alarm" << endmsg;
                _AF_DQAlarm.setAlarm();
+            }
+            else
+            {
+               DataLog(log_level_proc_alarm_monitor_info) << "set Non-AutoFlow Disqualification Alarm" << endmsg;
+               _NONAF_DQAlarm.setAlarm();
             }
          }
       }
