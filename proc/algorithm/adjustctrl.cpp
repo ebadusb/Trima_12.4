@@ -102,6 +102,7 @@ bool AdjustCtrl::Update ()
    float       predictQin    = 0.0f;
    float       predictQn     = 0.0f;
    State_names substate      = pd.Run().Substate.Get();
+   bool        isValidState  = ((substate >= SS_CHANNEL_SETUP) && (substate < SS_RBC_PTF_SETUP_1));
 
    //
    //   IT9829: Do not update meters during an alarm condition, or the
@@ -163,7 +164,7 @@ bool AdjustCtrl::Update ()
             }
 
             // Use the last predicted value for Qin if in valid substate
-            if ((substate >= SS_CHANNEL_SETUP) && (substate < SS_RBC_PTF_SETUP_1))
+            if ( isValidState )
             {
                qin = predictQin;
             }
@@ -172,6 +173,17 @@ bool AdjustCtrl::Update ()
 
       ir    = pd.Run().LastRunInfusion.Get();
       ratio = pd.Run().LastRunRatio.Get();
+
+      // Use predicted value of Qin and Qac for run ratio.
+      if ( isValidState )
+      {
+         float qac = pd.Predict().Qac(true /*draw*/, pd.Run().Substate.Get() );
+
+         if (qac > 0.0f)
+         {
+            ratio = pd.Predict().Qin(true /*draw*/, pd.Run().Substate.Get() ) / qac;
+         }
+      }
 
       //
       //
