@@ -114,7 +114,7 @@ private:                        // member data
    anAlarmMsg                _AF_TimeAlert;             // autoflow, time has increased > 10 min first time
    anAlarmMsg                _AF_TimeAlarm;             // autoflow, time has increased > 10 min having _AF_TimeAlert
    anAlarmMsg                _AF_DQAlarm;               // autoflow, time has exceeded max procedure time
-   anAlarmMsg                _NONAF_DQAlarm;            // autoflow, time has exceeded max procedure time due to Non Autoflow event
+   anAlarmMsg                _NONAF_DQAlarm;            // nonautoflow, time has exceeded max procedure time due to Non Autoflow event
 
    ////// Singletons
    ProcedureList& _procedures;
