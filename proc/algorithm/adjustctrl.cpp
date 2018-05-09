@@ -147,10 +147,10 @@ bool AdjustCtrl::Update ()
                qin = pd.Status().InletPump.CmdFlow();
             }
 
-            // Use predicted value of needle flow while adjusting return flow during draw cycle
-            if (pd.Run().FirstCycleComplete.Get())
+            // Use predicted value of inlet flow in PPR
+            if (RecoveryTypes::RecoveryId(pd.RecoveryName().c_str()) == RecoveryTypes::PumpsPause)
             {
-               qrp = predictQn;
+               qin = predictQin;
             }
          }
       }
@@ -163,10 +163,10 @@ bool AdjustCtrl::Update ()
                qrp = pd.Status().ReturnPump.CmdFlow() - pd.Status().InletPump.CmdFlow();
             }
 
-            // Use the last predicted value for Qin if in valid substate
-            if ( isValidState )
+            // Use the last predicted value for Qrp in PPR
+            if (RecoveryTypes::RecoveryId(pd.RecoveryName().c_str()) == RecoveryTypes::PumpsPause)
             {
-               qin = predictQin;
+               qrp = predictQn;
             }
          }
       }
