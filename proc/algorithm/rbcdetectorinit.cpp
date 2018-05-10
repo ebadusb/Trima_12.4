@@ -225,7 +225,7 @@ void RBCDetectorInit::doBracket (void)
                                 << _GreenReflectanceValue
                                 << endmsg;
 
-   if (_highRedDrive > _lowRedDrive + 1)
+   if (_highRedDrive > _lowRedDrive + 1 && (_RedDriveValue != 0))
    {
 
       if (_RedReflectanceValue > _Target)
@@ -254,7 +254,7 @@ void RBCDetectorInit::doBracket (void)
       }
    }
 
-   if (_highGreenDrive > _lowGreenDrive + 1)
+   if (_highGreenDrive > _lowGreenDrive + 1 && (_GreenDriveValue != 0))
    {
       if (_GreenReflectanceValue > _Target)
       {
