@@ -1021,11 +1021,18 @@ void Predict::process_adjustment (bool isAfAdjustment)
 {
    DataLog(log_level_predict_debug) << "Predict::Adjustment" << endmsg;
    doRepredictForAdjustments(isAfAdjustment);
-   _blockTargets = true;
    SetAllUnoptimized();
 
-   if (_selectedProc)     // should always be valid
+   if (!isAfAdjustment)
+   {
+      _blockTargets = true;     // only block targets for operator-induced adjustments
+   }
+
+   // should always be valid
+   if (_selectedProc)
+   {  
       predictProcedure(*_selectedProc);
+   }
 }
 
 
