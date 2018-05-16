@@ -153,6 +153,7 @@ protected:
    //
    ClearableAlarm _APSPumpsSlowAlarm;
    ClearableAlarm _APSPauseAlarm;
+   ClearableAlarm _APSPauseDuringReturnAlarm;
 
    //
    // APS reading from the APS message

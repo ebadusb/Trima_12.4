@@ -542,6 +542,7 @@ void load_alarms ()
    AlarmTable::add(APS_DECOUPLING_PAUSE,                   OPERATOR_ATTENTION, STOP_PUMPS,        DISP_NONE,     NO_SOUND,         "APS sensor decoupled pause");
 
    AlarmTable::add(APS_PAUSE,                              OPERATOR_ATTENTION, STOP_DONOR_ACCESS, DISP_NONE,     NO_SOUND,         "Automatic APS pause ");
+   AlarmTable::add(APS_PAUSE_DURING_RETURN,                OPERATOR_ATTENTION, STOP_DONOR_ACCESS, DISP_NONE,     NO_SOUND,         "Automatic APS pause during a return");
 
    AlarmTable::add(BARCODE_INFO_ALARM,                     OPERATOR_ATTENTION, NOTHING,           DISP_OPERATOR, NO_SOUND,         "Information alarm to raise the barcode mgmt. screen ");
    AlarmTable::add(CONCENTRATION_OUT_OF_TOLERANCE,         OPERATOR_ATTENTION, NOTHING,           DISP_OPERATOR, NO_SOUND,         "Concentration outside tolerance ");

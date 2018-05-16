@@ -208,6 +208,7 @@ enum ALARM_VALUES
    AUTOFLOW_TIME_ALARM,
    AUTOFLOW_TIME_DQ,                  // This alarm used when procedure time exceeds configured maximum procedure time due to auto flow adjustment
    NON_AUTOFLOW_TIME_DQ,              // This alarm used when procedure time exceeds configured maximum procedure time due to non auto flow adjustment event
+   APS_PAUSE_DURING_RETURN,           // Is set when there is APS low during return cycle
 
    LAST_PROCEDURE_ALARM,              // Don't add procedure alarms after this enum
 

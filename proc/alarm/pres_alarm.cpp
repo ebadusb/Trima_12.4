@@ -87,7 +87,8 @@ PressureAlarm::PressureAlarm()
      _isSystemInRecovery(false),
      _isAutoFlowEnabled(false),
      _stoppedInletRamp(false),
-     _isQinIncreaseTimerPaused(false)
+     _isQinIncreaseTimerPaused(false),
+     _APSPauseDuringReturnAlarm(APS_PAUSE_DURING_RETURN)
 {
    _QincreaseTimer.notifier(Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease) );
    _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
@@ -354,71 +355,86 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                }
             }
             else
-            {  // Autoflow is enabled here
-               if (inAutoPause())
+            {  
+               // Autoflow is enabled here, if 6 secs have passed and pressure has not recovered
+               // latch the alarm, covers both proc and recovery
+               if (inAutoPause() &&
+                   ((_LastPause.getSecs() >= TimeBeforeAlarm) ||
+                    (_LastPauseInRecovery.getSecs() >= TimeBeforeAlarm))
+                  )
                {
-                  // If we exceed 3 APS low and we are in
-                  // substate where AF is not supposed to work
-                  // latch the aps low alarm
-                  if (!_isSystemInRecovery)
+                  if (_APSLowAlarm.getState() != LATCHED)
                   {
-                     if (_Pauses.size() >= MaxPausesInPeriod && !inCorrectSubstates())
+                     DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS(Recovery) " << TIMESTAMP <<  endmsg;
+                     _APSLowAlarm.latchAlarm();
+                     _LocallyLatched = true;
+                  }
+               }               
+               else if (!inCorrectSubstates() &&
+                        (_Pauses.size() >= MaxPausesInPeriod))
+               {
+                  // APS count in Proc has reached max allowed APS in duration
+               }
+               else if (_isSystemInRecovery && 
+                        (_PausesInRecovery.size() >= MaxPausesInPeriod))
+               {
+                  // APS count in Recovery has reached max allowed APS in duration
+                  if (_APSLowAlarm.getState() != LATCHED)
+                  {
+                     DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                     _APSLowAlarm.latchAlarm();
+                     _LocallyLatched = true;
+                  }
+               }
+               else
+               {
+                  // Handle the cusp case
+                  if (low)
+                  {
+                     // In return cycle and detected APS low
+                     if (!_pd.Run().DrawCycle.Get())
                      {
-                        if (_APSLowAlarm.getState() != LATCHED)
+                        if ( _APSPauseDuringReturnAlarm.getState() != ACTIVE )
                         {
-                           DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
-                           _APSLowAlarm.latchAlarm();
-                           _LocallyLatched = true;
+                           // The control driver waits for the pumps to be commanded to 0 before letting us start
+                           DataLog(log_level_proc_alarm_monitor_info) << "Cusp case: Low APS in return cycle -- stop pumps " << TIMESTAMP <<  endmsg;
+                           _APSPauseDuringReturnAlarm.setAlarm("APS pause during return");
                         }
                      }
-                     // We exceed 6 seconds latch the APS low Alarm
-                     else if (_LastPause.getSecs() >= TimeBeforeAlarm)
+
+                     if (_isAutoFlowEnabled && _isSystemInRecovery)
                      {
-                        if (_APSLowAlarm.getState() != LATCHED)
-                        {
-                           DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
-                           _APSLowAlarm.latchAlarm();
-                           _LocallyLatched = true;
-                        }
+                        clearAutoPauseRecoveryAlarm();
                      }
                      else
                      {
                         clearAutoPauseAlarm();
                      }
                   }
-                  else
-                  {
-                     if (_PausesInRecovery.size() >= MaxPausesInPeriod)
-                     {
-                        if (_APSLowAlarm.getState() != LATCHED)
-                        {
-                           DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS(Recovery) " << TIMESTAMP <<  endmsg;
-                           _APSLowAlarm.latchAlarm();
-                           _LocallyLatched = true;
-                        }
-                     }
-                     // We exceed 6 seconds latch the APS low Alarm
-                     else if (_LastPauseInRecovery.getSecs() >= TimeBeforeAlarm)
-                     {
-                        if (_APSLowAlarm.getState() != LATCHED)
-                        {
-                           DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS(Recovery) " << TIMESTAMP <<  endmsg;
-                           _APSLowAlarm.latchAlarm();
-                           _LocallyLatched = true;
-                        }
-                     }
-                     else
-                     {
-                        DataLog(log_level_proc_alarm_monitor_info) << "Clearing LOCAL APS(Recovery) " << TIMESTAMP <<  endmsg;
-                        clearAutoPauseRecoveryAlarm();
-                     }
-                  }
                }
             }
-         }
+            // If any of the alarms is latched, it means we are in hard pause.
+            // Clear the APS alarm here
+            if ( (_APSLowAlarm.getState() != CLEARED) ||
+                 (_APSHighAlarm.getState() != CLEARED) ||
+                 (_APSDuringPauseAlarm_highpres.getState() != CLEARED )
+               )
+            {
+               DataLog(log_level_proc_alarm_monitor_info) << "A hard stop alarm set. " << TIMESTAMP <<  endmsg;
 
-         // special timer only if VEIN_TIMER > 0.0f
-         endVeinRecoveryTimer();
+               if (_isAutoFlowEnabled && _isSystemInRecovery)
+               {
+                  clearAutoPauseRecoveryAlarm();
+               }
+               else
+               {
+                  clearAutoPauseAlarm();
+               }
+
+               // special timer only if VEIN_TIMER > 0.0f
+               endVeinRecoveryTimer();
+            }
+         }
       }
 
       // If AutoFlow is disabled, clear all pauses as manual intervention required
@@ -538,8 +554,12 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
 ///   This function:
 ///   Check pause condition for APS low/high alert in recovery
 ///
-///   @param   aps = APS pressure in mmHg , high = true when APS pressure is higher then nominal value , low = true when APS pressure is lower then nominal value.
-///   @return  0 = If no APS alert is generated in recovery, 1 = if 3 pauses in 3 min generates alert or hard pause alert in recovery
+///   @param   aps = APS pressure in mmHg
+///            high = true when APS pressure is higher then nominal value
+///            low = true when APS pressure is lower then nominal value
+///
+///   @return  0 = If no APS alert is generated in recovery
+///            1 = if 3 pauses in 3 min generates alert or hard pause alert in recovery
 ////////////////////////////////////////////////////////////////////////////////
 int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high, const bool& low)
 {
@@ -611,6 +631,40 @@ int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high,
 
          disableScheduledFlags();
       }
+      else if (!_Pauses.empty() && (_LastPause.getSecs() >= TimeBeforeAlarm))
+      {
+         DataLog(log_level_qa_external) << "auto-pause Condition (in Recovery) non-rec hold over pause :: Six Seconds is up:"
+                               << " aps =" << aps
+                               << " Last Pause rec= " << _LastPauseInRecovery.getSecs()
+                               << " Last Pause proc = " << _LastPause.getSecs()
+                               << TIMESTAMP << endmsg;
+
+         // Boundary case where APS from Proc is active and we enter Rec, handle the case here!
+         // If there are any active Proc pauses and we exceeded 6 sec, we need a hard pause here.
+         // 6 Seconds have passed, check if pressure above nominal
+         if ( aps > APSNominalPressure )
+         {
+            // The pressure has recovered to nominal of -50 mmHg so its ok to proceed
+            // Clear the APS low
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition (in Recovery) :: Pressure recovered to " << TIMESTAMP << endmsg;
+            doAlarm = 0;
+            clearAutoPauseAlarm();
+         }
+         else
+         {
+            // The pressure has not recovered to nominal after 6 secs
+            // But we already incremented the counter, so remove the last pause in rec
+            // The APS came over from Proc when we transitioned to rec which means the pressure never recovered all the way
+            // If Qin decrease scheduled, disable it
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition (in Recovery) :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
+            doAlarm = 1;
+            _PausesInRecovery.pop_back();
+            _isAFDecreaseScheduled = false;
+         }
+
+         disableScheduledFlags();
+
+      }
    }
 
    return doAlarm ;
@@ -655,7 +709,14 @@ void PressureAlarm::unlatchAlarms (const float,
       _APSDuringPauseAlarm_lowpres.unlatchAlarm();
    }
 
-
+   if ( _APSPauseDuringReturnAlarm.getState() == ACTIVE )
+   {
+      if ( !low )
+      {
+         DataLog(log_level_qa_external) << "Clearing APS Pause alarm during return. Pressure recovered." << TIMESTAMP <<  endmsg;
+         _APSPauseDuringReturnAlarm.clearAlarm();
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
