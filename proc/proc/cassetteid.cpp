@@ -142,12 +142,24 @@ int CassetteID::preProcess ()
    {
       pd.Orders().RBCRed(MIN_DRIVE_VALUE);
       pd.Orders().RBCGreen(MIN_DRIVE_VALUE);
+
+      pd.MakeTrimaSetWritable();
+      pd.TrimaSet().RBCRedDriveValue.Set(MIN_DRIVE_VALUE);
+      pd.TrimaSet().RBCGreenDriveValue.Set(MIN_DRIVE_VALUE);
+      pd.MakeTrimaSetReadable();
+
       _RetryAttempted = 2;
    }
    else
    {
       pd.Orders().RBCRed(_RedDriveValue);
       pd.Orders().RBCGreen(_GreenDriveValue);
+
+      pd.MakeTrimaSetWritable();
+      pd.TrimaSet().RBCRedDriveValue.Set(_RedDriveValue);
+      pd.TrimaSet().RBCGreenDriveValue.Set(_GreenDriveValue);
+      pd.MakeTrimaSetReadable();
+
    }
 
    if (!_driveValuesLogged)
@@ -234,6 +246,11 @@ int CassetteID::preEnter ()
    // Drive the leds @ those values.
    pd.Orders().RBCRed(_RedDriveValue);
    pd.Orders().RBCGreen(_GreenDriveValue);
+
+   pd.MakeTrimaSetWritable();
+   pd.TrimaSet().RBCRedDriveValue.Set(_RedDriveValue);
+   pd.TrimaSet().RBCGreenDriveValue.Set(_GreenDriveValue);
+   pd.MakeTrimaSetReadable();
 
    _driveValuesLogged = false;
    //
