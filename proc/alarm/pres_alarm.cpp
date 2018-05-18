@@ -374,6 +374,12 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                         (_Pauses.size() >= MaxPausesInPeriod))
                {
                   // APS count in Proc has reached max allowed APS in duration
+                  if (_APSLowAlarm.getState() != LATCHED)
+                  {
+                     DataLog(log_level_proc_alarm_monitor_info) << "Latching LOCAL APS " << TIMESTAMP <<  endmsg;
+                     _APSLowAlarm.latchAlarm();
+                     _LocallyLatched = true;
+                  }
                }
                else if (_isSystemInRecovery && 
                         (_PausesInRecovery.size() >= MaxPausesInPeriod))
