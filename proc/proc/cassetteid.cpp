@@ -493,7 +493,7 @@ void CassetteID::checkCompatibility ()
 
    int compatible      = cs.compatible( (cassette::cassetteType)_CassetteType, pltTarg, plsTarg, rbcTarg);
 
-   if ( incompatibleSpecial || !compatible)
+   if (incompatibleSpecial || !compatible || _CatalogNumberIsBlack)
    {
       _LoadError = CASSETTE_INVALID;
 
@@ -508,6 +508,11 @@ void CassetteID::checkCompatibility ()
                                                     << ", PLS: " << plsTarg
                                                     << ", RBC: " << rbcTarg
                                                     << ") is " << recommendType << endmsg;
+      }
+
+      if (_CatalogNumberIsBlack)
+      {
+         DataLog(log_level_proc_load_cassette_info) << "Black stamp Kits not supported " << endmsg;
       }
    }
    else

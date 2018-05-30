@@ -533,10 +533,25 @@ INTERNAL_PREDICT_RESULTS procedureDetail::GeneralPreCheck ()
    bool  procedureIsPls = (getProcPlasmaVolFixed() > 0.0f);
    bool  procedureIsRbc = (rbcVol > 0.0f);
 
+   // Checking for AMAP Plt procedure
+   bool isAmapPlt = _AMAP_PLATELETS_ON && ( getAmapPltSize() != AMAP_PLT_NONE );
+
    // IT 8306 - Always determine whether this is prompted split based on configured
    // rbc dose with no scaling or adjustments
    bool procedureExceedsDrbcThreshold = _config.isPromptedDrbcSplit(getProcedureNumber());
 
+   // Procedure validity check
+   // Turning off the following features PAS, RAS/PTF, RBC collection, AMAP-Plt
+   if (procedureIsPas || procedureIsRas || procedureIsRbc || isAmapPlt)
+   {
+      DataLog (log_level_predict_info)
+         << "Not Supported Procedure "
+         << "Procedure(PAS=" << procedureIsPas
+         << ";RAS=" << procedureIsRas
+         << ";RBC=" << procedureIsRbc
+         << ";AMAP Plt=" << isAmapPlt <<");" << endmsg;
+      return NOT_SUPPORTED_PROCEDURE;
+   }
 
    if (func_bits) // if funct bits exits (not 0)
    {

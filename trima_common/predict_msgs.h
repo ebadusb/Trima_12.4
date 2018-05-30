@@ -49,8 +49,8 @@ enum INTERNAL_PREDICT_RESULTS
    RBC_BAG_VOLUME_VIOLATION,                                 // 29 if your RBC prod dose is GT one bag max (275) and less than your split threshold.
    DRBC_VOL_LIMIT_VIOLATION,                                 // 30 Donor's TBV < DRBC Volume Limit,
    PRODUCT_METERING_STATUS_LOCKED,                           // 31 Cannot switch from PAS to non-PAS procedure
-   DRBC_WITH_PLASMA                                          // 32 DRBC procedures with plasma not allowed (regional feature)
-
+   DRBC_WITH_PLASMA,                                         // 32 DRBC procedures with plasma not allowed (regional feature)
+   NOT_SUPPORTED_PROCEDURE                                   // 33 procedure with PAS, RAS/PTF, RBC collection,AMAP-Plt not allowed (regional feature)
 };
 
 

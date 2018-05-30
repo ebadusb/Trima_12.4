@@ -130,9 +130,12 @@ DataLog_Stream & operator << (DataLog_Stream& os, const INTERNAL_PREDICT_RESULTS
          os << "DRBC VOL LIMIT VIOLATION";
          break;
 
-
       case PRODUCT_METERING_STATUS_LOCKED :
          os << "PRODUCT METERING STATUS LOCKED";
+         break;
+
+      case NOT_SUPPORTED_PROCEDURE :
+         os << "NOT SUPPORTED PROCEDURE";
          break;
 
       default :
