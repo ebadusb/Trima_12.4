@@ -133,6 +133,7 @@ public:
 private:
    Software_CDS(Role role);
    static bool                _dataLoaded;
+   static bool                _disallowWrite;
 
    BaseElement<unsigned long> dont_connect_ac_msg_at_set_load;
 

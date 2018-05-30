@@ -55,6 +55,7 @@
 // Begin static data and methods
 OptionFileData* Software_CDS::_guiData    = NULL;
 bool            Software_CDS::_dataLoaded = false;
+bool            Software_CDS::_disallowWrite = false;
 
 // Hard coded value; used for determing R&D users
 const int     TERUMO_RND_CUSTOMER_ID = 1;
@@ -189,6 +190,14 @@ bool Software_CDS::LoadFileData (const char* pathname)
          if (_valueFeatures[i].feature_key_id != INVALID_KEY_ID)
          {
             error = error || !GetValueSetting(_guiData, (VALUE_FEATURE_ID)i, _valueFeatures[i].value);
+
+            if (_valueFeatures[i].value.Get() == 0)
+            {
+               error = true;
+               DataLog(log_level_config_error) << "Value feature " << i <<
+                     " (" << getValueFeatureConfigFileLabel((VALUE_FEATURE_ID)i) << ") is zero." << endmsg;
+            }
+
             if (error && !loggedFirstError)
             {
                loggedFirstError = true;
@@ -218,6 +227,7 @@ bool Software_CDS::LoadFileData (const char* pathname)
 #ifndef __SKIPMSGSYS__
       anAlarmMsg alarm(SW_CONFIG_VALUE_NOT_FOUND);
       alarm.setAlarm();
+      _disallowWrite = true;
 #endif
    }
    else
@@ -272,6 +282,7 @@ bool Software_CDS::LoadFileData (const char* pathname)
 #ifndef __SKIPMSGSYS__
       anAlarmMsg alarm(SW_CONFIG_VALUE_NOT_FOUND);
       alarm.setAlarm();
+      _disallowWrite = true;
 #endif
    }
 
@@ -996,6 +1007,12 @@ int Software_CDS::zipFile (const char* from, const char* to)
 
 void Software_CDS::WriteFeatureFile ()
 {
+   if (_disallowWrite)
+   {
+      DataLog(log_level_datfile_error) << "File " << PNAME_FEATURES_TMP << " write request ignored due to previous error." << endmsg;
+      return;
+   }
+
    // create the new file.
    attrib(PNAME_FEATURES_TMP, "-R");
    ofstream outFile;
@@ -1638,6 +1655,7 @@ void Software_CDS::updateCrc ()
 
       anAlarmMsg alarm(SOFTWARE_CRC_CHECK_FAILURE);
       alarm.setAlarm("regionalization file CRC check failed");
+      _disallowWrite = true;
    }
 }
 
