@@ -25,3 +25,11 @@ unsigned int ccaPciResourcesAvailable (void) { return 0; }
 UINT32 ccaPciIn32 (UINT8 offset, UINT rsrcIndx, BOOL useBar1) { return 0; }
 
 UCHAR  ccaInByte (CcaIoPort barIdWithOffset) { return 0; }
+USHORT ccaInWord (CcaIoPort barIdWithOffset) { return 0; }
+ULONG  ccaInLong (CcaIoPort barIdWithOffset) { return 0; }
+void   ccaOutByte (CcaIoPort barIdWithOffset, CcaByte data) {};
+void   ccaOutWord (CcaIoPort barIdWithOffset, CcaWord data) {};
+void   ccaOutLong (CcaIoPort barIdWithOffset, CcaLong data) {};
+
+STATUS ccaPciGetResource (UINT rsrcIndx, ccaPciResources* pResource) { return ERROR; }
+void ccaIoPortShow(CcaIoPort barIdWithOffset) {};
