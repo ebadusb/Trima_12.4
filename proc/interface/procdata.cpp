@@ -1836,7 +1836,7 @@ void ProcData::definePeriodicSet (DataLog_SetHandle pset)
    datalog_AddMemberFunc(pset, &hal_status._aps, float_func,                    "APS",               "APS (mm Hg)",                   "%.1f");
    datalog_AddMemberFunc(pset, &hal_status._apsHigh, short_func,                "APSHigh",           "APS high limit",                "%d");
 
-   datalog_AddMemberFunc(pset, &Adjustments().Draw.CurrentCap, float_func, "QinAdjustment",   "inlet flow rate operator adjustment", "%.2f");
+   datalog_AddMemberFunc(pset, &Adjustments().Draw.Maximum, float_func, "QinAdjustment",   "inlet flow rate operator adjustment", "%.2f");
    datalog_AddMemberFunc(pset, &Adjustments().Return.CurrentCap, float_func, "QrpAdjustment",   "return flow rate operator adjustment", "%.2f");
    datalog_AddMemberFunc(pset, &Adjustments().Clumping.CurrentCap, float_func, "RatioAdjustment", "AC ratio operator adjustment", "%.2f");
    datalog_AddMemberFunc(pset, &Adjustments().Tingling.CurrentCap, float_func, "IRAdjustment",     "AC infusion rate operator adjustment", "%.2f");
