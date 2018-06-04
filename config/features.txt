@@ -156,7 +156,7 @@ autoflow_flag=1,41b12223
 #
 ppc_conc_low=700,99e6e73a
 ppc_conc_high=2100,a33dd107
-standard_conc_low=0,2e17ae3e
+standard_conc_low=700,8c7bab5f
 standard_conc_high=2100,c4dd56c3
 
 plasma_ladder_max=600,87c6a412
