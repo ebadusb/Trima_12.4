@@ -541,8 +541,8 @@ INTERNAL_PREDICT_RESULTS procedureDetail::GeneralPreCheck ()
    bool procedureExceedsDrbcThreshold = _config.isPromptedDrbcSplit(getProcedureNumber());
 
    // Procedure validity check
-   // Turning off the following features PAS, RAS/PTF, RBC collection, AMAP-Plt
-   if (procedureIsPas || procedureIsRas || procedureIsRbc || isAmapPlt)
+   // Turning off the following features PAS, RAS/PTF, AMAP-Plt
+   if (procedureIsPas || procedureIsRas || isAmapPlt)
    {
       DataLog (log_level_predict_info)
          << "Not Supported Procedure "
