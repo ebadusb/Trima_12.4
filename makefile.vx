@@ -271,8 +271,12 @@ engr_tools_files: force structure
 gui_support: force structure
 	@echo   - Copying GUI support files ...
 	@$(XCOPY) /Y /R /E focgui\fonts\default\\*   current_build\trima\gui\fonts
-	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\*    current_build\fonts
-	@$(XCOPY) /Y /R focgui\data\\*               current_build\data
+# Copy only the required font files
+	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\alb*        current_build\fonts
+	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\san_949*    current_build\fonts
+	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\san949*     current_build\fonts
+	@$(XCOPY) /Y /R /E focgui\fonts\dropin\\san2312*    current_build\fonts
+	@$(XCOPY) /Y /R focgui\data\\*                      current_build\data
 
 .PHONY: string_info_files
 string_info_files: $(addprefix current_build/strings/, $(LANGS))
@@ -438,8 +442,12 @@ data_files: force structure
 font_files: force structure
 	@echo   - Copying font files into sim area...
 	@$(XCOPY) /Y /R /I focgui\fonts\default\\* $(SIMDIR_DOS)\trima\gui\fonts
-	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\* $(SIMDIR_DOS)\config\fonts
-	@$(XCOPY) /Y /R /I gui\SIMNT\fontdefs.o $(SIMDIR_DOS)\source\gui\bin
+# Copy only the required font files
+	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\alb*     $(SIMDIR_DOS)\config\fonts
+	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\san_949* $(SIMDIR_DOS)\config\fonts
+	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\san949*  $(SIMDIR_DOS)\config\fonts
+	@$(XCOPY) /Y /R /I focgui\fonts\dropin\\san2312* $(SIMDIR_DOS)\config\fonts
+	@$(XCOPY) /Y /R /I gui\SIMNT\fontdefs.o          $(SIMDIR_DOS)\source\gui\bin
 
 .PHONY: gui_sim_scripts
 gui_sim_scripts: force structure
