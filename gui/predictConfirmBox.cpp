@@ -50,10 +50,6 @@ Screen_PREDICT_CONFIRM_BOX::Screen_PREDICT_CONFIRM_BOX()
                   textEmptyFormatPredConfirmPlasVolData,
                   textDataUnitsPredConfPlasVol),
 
-     _dataFlowRate(textDataLabelPredConfFlow,
-                   textEmptyFormatPredConfirmFlowData,
-                   textDataUnitsPredConfFlow),
-
      _dataAcRequired(textDataLabelPredConfAcRequired,
                      textEmptyFormatPredConfirmAcData,
                      textDataUnitsPredConfAcRequired),
@@ -130,7 +126,6 @@ void Screen_PREDICT_CONFIRM_BOX::allocate_resources (const char* allocation_para
    _dataPltYield.setData       (curr.estimated_platelets, 1);
    _dataRbcVol.setData         (adjustedRbcVol);
    _dataPlasVol.setData        (curr.estimated_plasma);
-   _dataFlowRate.setData       (curr.estimated_qin_max);
    _dataAcRequired.setData     (curr.estimated_vac);
    _dataTime.setData           (curr.procedure_time, 0);
    _dataTbvProcessed.setData   (curr.estimated_tbv_processed);
@@ -147,7 +142,6 @@ void Screen_PREDICT_CONFIRM_BOX::allocate_resources (const char* allocation_para
    _dataPltYield.allocate_resources(*this);
    _dataRbcVol.allocate_resources(*this);
    _dataPlasVol.allocate_resources(*this);
-   _dataFlowRate.allocate_resources(*this);
    _dataAcRequired.allocate_resources(*this);
    _dataTime.allocate_resources(*this);
    _dataTbvProcessed.allocate_resources(*this);
@@ -168,7 +162,6 @@ void Screen_PREDICT_CONFIRM_BOX::deallocate_resources ()
    _dataPltYield.deallocate_resources();
    _dataRbcVol.deallocate_resources();
    _dataPlasVol.deallocate_resources();
-   _dataFlowRate.deallocate_resources();
    _dataAcRequired.deallocate_resources();
    _dataTime.deallocate_resources();
    _dataTbvProcessed.deallocate_resources();

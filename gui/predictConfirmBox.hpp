@@ -53,7 +53,6 @@ protected:
       _dataPltYield,
       _dataRbcVol,
       _dataPlasVol,
-      _dataFlowRate,
       _dataAcRequired,
       _dataTime,
       _dataTbvProcessed,
