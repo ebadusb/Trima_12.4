@@ -137,10 +137,6 @@ void PrimeRBC_Monitor::check (const float& ratio)
          LogIt2(SPILL_DETECTION, VERIFY_PLATELET_WBCS);
          _pqi.AddReasonToFlag(SPILL_DETECTION, VERIFY_PLATELET_WBCS);
 
-
-         // IT 11037   added alarm
-         pd.RequestObtrusiveWbcAlarm(__FILE__, __LINE__, "WBC event alarm is needed");
-
          _detected = true;
       }
 
