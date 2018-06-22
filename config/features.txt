@@ -72,7 +72,7 @@ special_black_stamp_needle=0,c247be0f
 #
 # Country specific options
 #
-display_residual_volumes=1,ec987140
+display_residual_volumes=0,9b9f41d6
 
 
 #
@@ -131,10 +131,10 @@ cps_high_speed_log_enable=0,70e1fe6f
 show_plasma_volume=0,ab881436
 extra_plasma_no_ac=0,1ed5caea
 allow_auto_conf_plasma_procs=0,9f0a5d70
-procedure_confirmation_popup=0,2ae0aeb
+procedure_confirmation_popup=1,75a93a7d
 confirm_pas_bag_barcode_scan=0,757aa1e0
 pir_preferred=0,af1fac0e
-triple_ppc_flag=1,a4efc457
+triple_ppc_flag=0,d3e8f4c1
 #
 # Adding the Autoflow feature
 #
