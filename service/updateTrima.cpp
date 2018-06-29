@@ -168,11 +168,11 @@ static int unzipFile (const char* from, const char* to)
    return 0;
 }
 
-static string getSerialNumber ()
+static string getSerialNumber (const char* sourceFileName)
 {
    int      lineLength = 256;
    char     line[lineLength];
-   ifstream globVars(GLOBVARS_FILE);
+   ifstream globVars(sourceFileName);
    string   ret;
    char*    loc = NULL;
    if (globVars)
@@ -219,7 +219,7 @@ static void checkForSerialNumber (const char* sourceFileName)
       if (!strstr(buffer, "serial_number="))
       {
          std::stringstream serialNum ;
-         serialNum << "serial_number=" << getSerialNumber();
+         serialNum << "serial_number=" << getSerialNumber(GLOBVARS_FILE);
          fprintf(fp, "serial: %s\n", serialNum.str().c_str());
          unsigned long crc = 0;
          crcgen32(&crc, (const unsigned char*)serialNum.str().c_str(), serialNum.str().length());
@@ -235,6 +235,46 @@ static void checkForSerialNumber (const char* sourceFileName)
 
       delete[] buffer;
    }
+}
+
+static void updateMachineId ()
+{
+   char   tempMachineIdFile[NAME_MAX + 1];
+   string machineIdFile = PNAME_MACHINE_ID;
+   string globvarsFile = "/machine/update/globvars";
+   string newMachineIdFile = "/machine/update/newmachine.tmp";
+
+   attrib(PNAME_MACHINE_ID,"-R");
+   sprintf(tempMachineIdFile, "%s.tmp", machineIdFile.c_str());
+   unzipFile(machineIdFile.c_str(), tempMachineIdFile);
+
+   // Get the serial number from globvars file being updated
+   std::stringstream serialNum ;
+   serialNum << "serial_number=" << getSerialNumber(globvarsFile.c_str());
+   unsigned long crc = 0;
+   crcgen32(&crc, (const unsigned char*)serialNum.str().c_str(), serialNum.str().length());
+   serialNum << "," << hex << crc;
+
+   // Open the Temp MachineID file for reading
+   string   line;
+   ifstream machineFile(tempMachineIdFile);
+   ofstream tempNewFile;
+   tempNewFile.open(newMachineIdFile.c_str());
+
+   while (getline(machineFile, line))
+   {
+      if (line.find("serial_number=") == std::string::npos)
+      {
+         tempNewFile << line << endl;
+      }
+   }
+
+   // Now copy the new serial number
+   tempNewFile << serialNum.str() << endl;
+   tempNewFile.close();
+   remove(tempMachineIdFile);
+   zipFile(newMachineIdFile.c_str(), machineIdFile.c_str());
+   attrib(PNAME_MACHINE_ID,"+R");
 }
 
 static void fileProcess (const char* dirName, const char* fileName)
@@ -284,14 +324,20 @@ static void fileProcess (const char* dirName, const char* fileName)
       checkForSerialNumber(fileName);
    }
 
-   ////  PROCESS THE .DAT FILES (+ special config files) ////////////////
+   ////  PROCESS THE .DAT FILES  ////////////////
    else if (nameLen > 4 &&
-            ((strcmp(&fileName[nameLen - 4], ".dat") == 0) ||
-             (strcmp(fileName, "globvars") == 0)))
+            (strcmp(&fileName[nameLen - 4], ".dat") == 0))
    {
       sprintf(destFileName, "/config/%s", fileName);
    }
 
+   ////  PROCESS THE GLOBVARS FILE  ////////////
+   else if (nameLen > 4 &&
+            (strcmp(fileName, "globvars") == 0))
+   {
+      sprintf(destFileName, "/config/%s", fileName);
+      updateMachineId();
+   }
    ////  PROCESS THE GRAPHICS FILES
    else if (nameLen >= 20 &&
             strcmp(&fileName[nameLen - 20], "graphics_package.out") == 0)
