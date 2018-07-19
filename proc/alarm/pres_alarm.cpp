@@ -18,7 +18,7 @@ DEFINE_OBJ(PressureAlarm);
 
 
 #define TIMESTAMP    " ( " << _pd.GetAbsTimeNowinMinutes() << " )/ ( " << _pd.Status().APS() <<  "; p_cnt-> " << _Pauses.size() << "; r_cnt-> " << _PausesInRecovery.size() << " )"
-
+#define POP_BACK(LIST) if(!LIST.empty()) {LIST.pop_back();} else {DataLog(log_level_proc_alarm_monitor_info) << "Trying to pop an empty list!!!! " << TIMESTAMP <<  endmsg;}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,8 @@ PressureAlarm::PressureAlarm()
      _isAutoFlowEnabled(false),
      _stoppedInletRamp(false),
      _isQinIncreaseTimerPaused(false),
-     _APSPauseDuringReturnAlarm(APS_PAUSE_DURING_RETURN)
+     _APSPauseDuringReturnAlarm(APS_PAUSE_DURING_RETURN),
+     _nonRecCarryOverAps(false)
 {
    _QincreaseTimer.notifier(Callback<PressureAlarm>(this, &PressureAlarm::autoFlowIncrease) );
    _QincreaseTimer.interval(AUTOFLOW_INCR_TIMER);
@@ -113,6 +114,9 @@ void PressureAlarm::Monitor ()
    bool  high       = false;
    bool  low        = false;
    float currentAPS = 0.0f;
+
+   // Set the Recovery Flag
+   setRecoveryFlag();
 
    if ( _OutOfBoundValue != 0.0f )
    {
@@ -164,9 +168,6 @@ void PressureAlarm::Monitor ()
       }
    }
 
-   // Set the Recovery Flag
-   setRecoveryFlag();
-
    // special timer only if VEIN_TIMER > 0.0f
    endVeinRecoveryTimer();
 
@@ -186,6 +187,9 @@ void PressureAlarm::Monitor ()
 
 void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
 {
+   // Clear the flag indicating Non-Recovery Pause carried over to Recovery cycle
+   _nonRecCarryOverAps = false;
+
    ///  see if we can do the slowing yet.... ///////////
    if (!_isAutoFlowEnabled)
    {
@@ -428,7 +432,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
             {
                DataLog(log_level_proc_alarm_monitor_info) << "A hard stop alarm set. " << TIMESTAMP <<  endmsg;
 
-               if (_isAutoFlowEnabled && _isSystemInRecovery)
+               if (_isAutoFlowEnabled && _isSystemInRecovery && !_nonRecCarryOverAps)
                {
                   clearAutoPauseRecoveryAlarm();
                }
@@ -448,7 +452,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
       {
          removeAllPauses();
       }
-      else if(_isSystemInRecovery)
+      else if(_isSystemInRecovery && !_nonRecCarryOverAps)
       {
          removeAllRecoveryPauses();
       }
@@ -537,7 +541,7 @@ int PressureAlarm::pauseCondition (const float aps, const bool high, const bool 
             // If Qin decrease scheduled, disable it
             DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
             doAlarm = 1;
-            _Pauses.pop_back();
+            POP_BACK(_Pauses);
             _isAFDecreaseScheduled = false;
          }
 
@@ -631,7 +635,7 @@ int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high,
             // If Qin decrease scheduled, disable it
             DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition (in Recovery) :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
             doAlarm = 1;
-            _PausesInRecovery.pop_back();
+            POP_BACK(_PausesInRecovery);
             _isAFDecreaseScheduled = false;
          }
 
@@ -659,13 +663,14 @@ int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high,
          else
          {
             // The pressure has not recovered to nominal after 6 secs
-            // But we already incremented the counter, so remove the last pause in rec
+            // But we already incremented the counter, so remove the last pause in proc
             // The APS came over from Proc when we transitioned to rec which means the pressure never recovered all the way
             // If Qin decrease scheduled, disable it
-            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition (in Recovery) :: Pressure NOT recovered alarm to follow.  APS:  " << TIMESTAMP << endmsg;
+            DataLog(log_level_proc_alarm_monitor_info) << "pauseCondition (in Recovery) :: Pressure NOT recovered alarm to follow because of APS in proc.  APS:  " << TIMESTAMP << endmsg;
             doAlarm = 1;
-            _PausesInRecovery.pop_back();
+            POP_BACK(_Pauses);
             _isAFDecreaseScheduled = false;
+            _nonRecCarryOverAps = true;
          }
 
          disableScheduledFlags();

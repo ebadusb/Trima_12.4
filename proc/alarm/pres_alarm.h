@@ -198,6 +198,7 @@ protected:
    bool                    _isAutoFlowEnabled;
    bool                    _stoppedInletRamp;
    bool                    _isQinIncreaseTimerPaused;
+   bool                    _nonRecCarryOverAps;
 
 private:
 
