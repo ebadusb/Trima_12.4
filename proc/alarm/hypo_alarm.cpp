@@ -19,7 +19,9 @@ HypoAlarm::HypoAlarm()
      _HypovolemiaChecker(),
      _HypoAlarmSet(0),
      _VolumeLeft(0.0f),
-     _PrevDrawCycle(false)
+     _PrevDrawCycle(false),
+     _RinsebackLogged(false),
+     _AlarmLogged(false)
 {}
 
 
@@ -46,11 +48,58 @@ void HypoAlarm::Monitor ()
    float replacementvolume = pd.Volumes().VReplacement.Get() + pd.Volumes().VSalineBolus.Get();
    float Vac               = pd.Volumes().Vac.Get();
 
+   _VolumeLeft = _HypovolemiaChecker.VolumeRemainingToHypovolemia(1, // always current procedure
+                                                                  VAccumOverdraw,
+                                                                  PlateletVolume, VacPlateletBag,
+                                                                  PlasmaVolume, VacPlasmaBag,
+                                                                  RBCVolume, VacRBCBag,
+                                                                  replacementvolume, Vac);
+
+   bool logalarm = false;
+   if ( ( !_HypoAlarmSet ) &&
+        ( _VolumeLeft < -10.0f ) )
+   {
+      _HypovolemiaAlarm.setAlarm();
+      _HypoAlarmSet = 1;
+      logalarm = true;
+   }
+
+   bool logrinseback = false;
+   if ( _VolumeLeft < -5.0f)
+   {
+
+      if ( pd.Status().CollectValve.IsCollecting() ||
+           pd.Status().RBCValve.IsCollecting() ||
+           pd.Status().PlasmaValve.IsCollecting() )
+      {
+         RinsebackRequestMsg procHint(MessageBase::SEND_LOCAL);
+         procHint.send(1);
+         logrinseback = true;
+
+         DataLog(log_level_proc_alarm_monitor_info) << "Rinseback forced by hypovolemia" << endmsg;
+      }
+   }
+
    //
    //
-   //   Log where we are at the start of each draw cycle
+   //   Log where we are at the start of each draw cycle or at alarm points
    //
-   if ( DrawCycle && (!_PrevDrawCycle) )
+   bool timetolog = DrawCycle && (!_PrevDrawCycle);
+   _PrevDrawCycle = DrawCycle;
+
+   if (logalarm && (!_AlarmLogged))
+   {
+      timetolog    = true;
+      _AlarmLogged = true;
+   }
+
+   if (logrinseback && (!_RinsebackLogged))
+   {
+      timetolog        = true;
+      _RinsebackLogged = true;
+   }
+
+   if ( timetolog )
    {
       float controlvol = _HypovolemiaChecker.ControlVolumeRemaining(1, // always current procedure
                                                                     VAccumOverdraw,
@@ -68,36 +117,6 @@ void HypoAlarm::Monitor ()
                                                  << _HypovolemiaChecker.ControlLimit(PlateletVolume, PlasmaVolume)
                                                  << "; Safety: " << safetyvol << " remaining of "
                                                  << _HypovolemiaChecker.SafetyLimit() << endmsg;
-   }
-   _PrevDrawCycle = DrawCycle;
-
-
-   _VolumeLeft = _HypovolemiaChecker.VolumeRemainingToHypovolemia(1, // always current procedure
-                                                                  VAccumOverdraw,
-                                                                  PlateletVolume, VacPlateletBag,
-                                                                  PlasmaVolume, VacPlasmaBag,
-                                                                  RBCVolume, VacRBCBag,
-                                                                  replacementvolume, Vac);
-
-   if ( ( !_HypoAlarmSet ) &&
-        ( _VolumeLeft < -10.0f ) )
-   {
-      _HypovolemiaAlarm.setAlarm();
-      _HypoAlarmSet = 1;
-   }
-
-   if ( _VolumeLeft < -5.0f)
-   {
-
-      if ( pd.Status().CollectValve.IsCollecting() ||
-           pd.Status().RBCValve.IsCollecting() ||
-           pd.Status().PlasmaValve.IsCollecting() )
-      {
-         RinsebackRequestMsg procHint(MessageBase::SEND_LOCAL);
-         procHint.send(1);
-
-         DataLog(log_level_proc_alarm_monitor_info) << "Rinseback forced by hypovolemia" << endmsg;
-      }
    }
 }
 

@@ -38,6 +38,8 @@ protected:
    int         _HypoAlarmSet;
    float       _VolumeLeft;
    bool        _PrevDrawCycle;
+   bool        _RinsebackLogged;
+   bool        _AlarmLogged;
 
 };
 
