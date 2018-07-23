@@ -18,35 +18,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define REV_SIZE 256
+#define REV_SIZE 512
 static char rev[ REV_SIZE ] = "Trima Build";
 static int  bInitialized    = 0;
 
 #define CAT_SIZE(__str__) ( REV_SIZE - 1 - strlen(__str__)>0 ? REV_SIZE - 1 - strlen(__str__) : 0 )
 
 
+// Remove any copies of the specified character from the string in place
+//
 static int removeChar (char* strToChange, char ch)
 {
-   int   i, j;
-   char* tmpStr = (char*)malloc(strlen(strToChange) + 1);
-   if ( tmpStr )
+   unsigned int   destIdx, srcIdx;
+   for (destIdx = 0, srcIdx = 0; strToChange[srcIdx] != '\0'; ++srcIdx)
    {
-      for ( i = 0, j = 0 ; i<strlen(strToChange) ; i++ )
+      if (strToChange[srcIdx] != ch)
       {
-         if ( strToChange[i] != ch )
-         {
-            tmpStr[j] = strToChange[i];
-            j++;
-         }
+         strToChange[destIdx] = strToChange[srcIdx];
+         ++destIdx;
       }
-      tmpStr[strlen(strToChange)] = 0;
-      memset(strToChange, 0, strlen(strToChange) );
-      strcpy(strToChange, tmpStr);
-      free(tmpStr);
-
-      return OK;
    }
-   return ERROR;
+
+   strToChange[destIdx] = '\0';
+   return OK;
 }
 
 static const char* getProjectRevision ()
