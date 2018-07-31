@@ -14,6 +14,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <usrLib.h>
+#include <fstream>
 
 #include "software_cds.h"
 #include "cobeconfig.h"
@@ -135,6 +136,9 @@ bool Software_CDS::LoadFileData (const char* pathname)
    OptionFileData* machineData = NULL;
 
    bool            error       = false;
+
+   // Will be used only for new HDD to sync the serial numbers
+   syncSerialNumber();
 
    // Need to decompress the features and machine id files to read them
    unzipFile(PNAME_FEATURES, PNAME_FEATURES_TMP);
@@ -1659,4 +1663,116 @@ void Software_CDS::updateCrc ()
    }
 }
 
+void Software_CDS::syncSerialNumber ()
+{
+   // Unzip the features.bin file to read it
+   unzipFile(PNAME_FEATURES, PNAME_FEATURES_TMP);
+
+   // Get the serial number from features.bin
+   string featureFileSN = getSerialNumber(PNAME_FEATURES_TMP, "serial_number=");
+   DataLog(log_level_config_info) << "Serial number in feature.bin =  " << featureFileSN.c_str() << endmsg;
+
+   // If the serial number in features.bin is not 1T000XX no further processing required
+   if (0 != featureFileSN.compare(DEFAULT_SERIAL_NUMBER))
+   {
+      DataLog(log_level_config_info) << "This is not a new HardDrive install, skip updating features.bin" << endmsg;
+      return;
+   }
+
+   // Unzip the machine.id file
+   unzipFile(PNAME_MACHINE_ID, PNAME_MACHINE_ID_TMP);
+
+   // Get the serial number from machine id file
+   string machineIdSN = getSerialNumber(PNAME_MACHINE_ID_TMP, "serial_number=");
+   DataLog(log_level_config_info) << "Serial number in machine.id =  " << machineIdSN.c_str() << endmsg;
+
+   // Get the serial number from globvars
+   string globvarsSN = getSerialNumber(GLOBVARS_FILE, "MACHINE=");
+   DataLog(log_level_config_info) << "Serial number in globvars =  " << globvarsSN.c_str() << endmsg;
+
+   // Update the serial number in features.bin and machine.id file if:
+   //    - Serial number in PNAME_MACHINE_ID and PNAME_MACHINE_ID is 1T000XX
+   //    - Serial number is globvars is not equal to 1T000XX
+   if ((0 == featureFileSN.compare(DEFAULT_SERIAL_NUMBER)) &&
+         (0 == machineIdSN.compare(DEFAULT_SERIAL_NUMBER)) &&
+         (0 != globvarsSN.compare(DEFAULT_SERIAL_NUMBER)))
+   {
+      DataLog(log_level_config_info) << "Updating the feature.bin and machine.id with machine serial number = " << globvarsSN.c_str() << endmsg;
+
+      // Get the updated serial number with crc
+      std::stringstream serialNum ;
+      serialNum << "serial_number=" << globvarsSN.c_str();
+      unsigned long crc = 0;
+      crcgen32(&crc, (const unsigned char*)serialNum.str().c_str(), serialNum.str().length());
+      serialNum << "," << hex << crc;
+
+      // Update the machine.id file with new serial number
+      updateSerialNumber(PNAME_MACHINE_ID_TMP, PNAME_MACHINE_ID, serialNum);
+
+      // Update the features.bin with new serial number
+      updateSerialNumber(PNAME_FEATURES_TMP, PNAME_FEATURES, serialNum);
+   }
+}
+
+string Software_CDS::getSerialNumber (const char* filename, const char* tag)
+{
+   int      lineLength = 256;
+   char     line[lineLength];
+   ifstream configFile(filename);
+   string   ret;
+   char*    loc = NULL;
+   if (configFile)
+   {
+      while (!configFile.eof())
+      {
+         configFile.getline(line, lineLength);
+         loc = strstr(line, tag);
+         if (loc)
+         {
+            loc += strlen(tag);
+            ret = loc;
+            break;
+         }
+      }
+   }
+
+   // Extract only the serial number
+   ret.erase(ret.begin()+7, ret.end());
+
+   return ret;
+}
+
+void Software_CDS::updateSerialNumber (const char* src, const char* dst, stringstream& serialNum)
+{
+      string   line;
+      char     tempFilename[NAME_MAX + 1];
+      sprintf(tempFilename, "%s.tmp", src);
+      ifstream inputFile(src);
+      ofstream tempFile;
+      tempFile.open(tempFilename);
+
+      if (inputFile)
+      {
+         while (!inputFile.eof())
+         {
+            getline(inputFile, line);
+            if (line.find("serial_number=") == std::string::npos)
+            {
+               tempFile << line << endl;
+            }
+            else
+            {
+               tempFile << serialNum.str() << endl;
+            }
+         }
+      }
+      tempFile.close();
+
+      attrib(dst,"-R");
+      zipFile(tempFilename, dst);
+      attrib(dst,"+R");
+      attrib(src,"-R");
+      remove(src);
+      updateCrc();
+}
 /* FORMAT HASH 18271bb8b9ca50937b6907a82235e1b4 */

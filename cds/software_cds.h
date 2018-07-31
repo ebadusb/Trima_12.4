@@ -14,6 +14,7 @@
 #include "datastore.h"
 #include <vector>
 #include <string>
+#include <sstream>
 using namespace std;
 
 #ifdef WIN32
@@ -25,6 +26,8 @@ using namespace std;
 #include "BooleanFeatures.h"
 
 #include "ValueFeatures.h"
+
+#define DEFAULT_SERIAL_NUMBER "1T000XX"
 
 enum FEATURE_PERMISSION
 {
@@ -97,6 +100,9 @@ public:
    void             SendUpdateNotification ();
 
    void WriteFeatureFile ();
+   void syncSerialNumber ();
+   string getSerialNumber (const char* filename, const char* tag);
+   void updateSerialNumber (const char* src, const char* dst, std::stringstream& serialNum);
 
    string getShortConfirmationCode ();
    string getFullConfirmationCode ();
