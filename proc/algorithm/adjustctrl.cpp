@@ -99,10 +99,10 @@ bool AdjustCtrl::Update ()
    bool     DrawActive, ReturnActive, IRActive, ClumpingActive;
    bool     needUpdate = false;
 
-   float       predictQin    = 0.0f;
-   float       predictQn     = 0.0f;
-   State_names substate      = pd.Run().Substate.Get();
-   bool        isValidState  = ((substate >= SS_CHANNEL_SETUP) && (substate < SS_RBC_PTF_SETUP_1));
+   float       predictQin   = 0.0f;
+   float       predictQn    = 0.0f;
+   State_names substate     = pd.Run().Substate.Get();
+   bool        isValidState = ((substate >= SS_CHANNEL_SETUP) && (substate < SS_RBC_PTF_SETUP_1));
 
    //
    //   IT9829: Do not update meters during an alarm condition, or the
@@ -189,11 +189,11 @@ bool AdjustCtrl::Update ()
       //
       //   Determine which meters are active
       //
-      DrawActive     = true;
+      DrawActive = true;
 
-      ReturnActive   = ( pd.Run().FirstCycleComplete.Get() || !pd.Run().DrawCycle.Get());
+      ReturnActive = ( pd.Run().FirstCycleComplete.Get() || !pd.Run().DrawCycle.Get());
 
-      IRActive       = ( pd.Run().FirstCycleComplete.Get() && (pd.Run().LastRunInfusion.Get() > 0.0f) );
+      IRActive = ( pd.Run().FirstCycleComplete.Get() && (pd.Run().LastRunInfusion.Get() > 0.0f) );
 
       ClumpingActive = (    IRActive
                             && ( !pd.Status().RBCValve.IsCollecting() )
@@ -433,20 +433,6 @@ void AdjustCtrl::ProcessRequest ()
 
    if ( beginChangeCount != _ChangeCount )
    {
-      ProcData pd;
-      pd.MakeRunWritable();
-
-      if ( internal_autoAdjustment )
-      {
-         pd.Run().PredictRequest.Set(pd.Run().PredictRequest.Get() | AUTO_FLOW_ADJUSTMENT);
-      }
-      else
-      {
-         pd.Run().PredictRequest.Set(pd.Run().PredictRequest.Get() | ADJUSTMENT);
-      }
-
-      pd.MakeRunReadable();
-
       need_update = Update();
    }
 
@@ -481,6 +467,10 @@ void AdjustCtrl::ProcessRequest ()
    }
    else
    {
+      ProcData pd;
+      pd.MakeRunWritable();
+      pd.Run().PredictRequest.Set(pd.Run().PredictRequest.Get() | AUTO_FLOW_ADJUSTMENT);
+      pd.MakeRunReadable();
       DataLog(log_level_gui_info) << "AUTOFLOW-ADJCTRL: AUTO_FLOW_ADJUSTMENT queued for predict. (" << rq << ")" << endmsg;
    }
 
@@ -496,19 +486,19 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
    const float maximum      = cds.Maximum.Get();
    const float minimum      = cds.Minimum.Get();
    const float currentValue = cds.CurrentValue.Get();
-   float currentCap = cds.CurrentCap.Get();
+   float       currentCap   = cds.CurrentCap.Get();
 
    DataLog(log_level_proc_info) << "Adjustment Increment: " << maximum
-                                   << " " << minimum
-                                   << " " << currentValue
-                                   << " " << val
-                                   << ", current cap " << currentCap
-                                   << endmsg;
+                                << " " << minimum
+                                << " " << currentValue
+                                << " " << val
+                                << ", current cap " << currentCap
+                                << endmsg;
    ProcData pd;
-   if(!_autoFlowAdjustRequest)
+   if (!_autoFlowAdjustRequest)
    {
       // if no autoflow adjustment request then make cap down before increase
-      if((currentCap > currentValue) && (val < 0))
+      if ((currentCap > currentValue) && (val < 0))
       {
          currentCap = currentValue;
       }
@@ -542,8 +532,8 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
    // if ramp stopped by autoflow decrease then all the subsequent adjustments(manual/autoflow) should update deadRampMaxQin
    // value in PrePlatletPlasma and PrePlatletNoPlasma substate.
    if ( pd.Run().stopRamp.Get() &&
-         pd.Run().Substate.Get() <  SS_PLATELET_PLASMA
-   )
+        pd.Run().Substate.Get() <  SS_PLATELET_PLASMA
+        )
    {
       float dramp        = pd.Run().deadRampMaxQin.Get();
       float newRampSpeed = dramp + val;
@@ -559,8 +549,8 @@ void AdjustCtrl::IncAdjustment (ProcAdjustBar_CDS& cds, float val)
       pd.MakeRunReadable();
 
       DataLog(log_level_proc_info) << "ADJCTRL:   float the stopped ramp speed for manual adj. old speed = "
-            << dramp << "; new speed = "  << pd.Run().deadRampMaxQin.Get()
-            << " change = " << val << endmsg;
+                                   << dramp << "; new speed = "  << pd.Run().deadRampMaxQin.Get()
+                                   << " change = " << val << endmsg;
    }
 }
 
@@ -700,4 +690,4 @@ void AdjustCtrl::ResetAutoFlowsDeltaTimer ()
    pd.MakeRunReadable();
 }
 
-/* FORMAT HASH cbc614c2ed1ee55d796455e188083b59 */
+/* FORMAT HASH 85963877f35cf4f3117b6cebe481dfbd */

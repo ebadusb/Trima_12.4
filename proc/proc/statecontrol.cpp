@@ -221,7 +221,7 @@ void StateControl::alarmOverrides ()
 {
    static bool loggedOnce = false;
 
-   ProcData    pd;
+   ProcData pd;
 
    //
    // Log it if the overrides change ...
@@ -864,7 +864,7 @@ void StateControl::systemOutOfControl ()
    anAlarmMsg outOfControlAlarm(HARDWARE_FAULT);
    outOfControlAlarm.setAlarm();
    _CentStopTimer.interval(0);
-   _CentStopTimerStarted  = false;
+   _CentStopTimerStarted = false;
    _PumpsStopTimer.interval(0);
    _PumpsStopTimerStarted = false;
    _PredictTimer.interval(0);
@@ -872,8 +872,8 @@ void StateControl::systemOutOfControl ()
 
 void StateControl::predictCommunication ()
 {
-   ProcData   pd;
-   int        request     = pd.Run().PredictRequest.Get();
+   ProcData pd;
+   int      request = pd.Run().PredictRequest.Get();
 
    static int lastRequest = -1;
 
@@ -900,6 +900,9 @@ void StateControl::predictCommunication ()
             break;
          case (ADJUSTMENT) :
             DataLog(log_level_proc_info) << "recieving predict request ADJUSTMENT" << endmsg;
+            break;
+         case (AUTO_FLOW_ADJUSTMENT) :
+            DataLog(log_level_proc_info) << "recieving predict request AUTO_FLOW_ADJUSTMENT" << endmsg;
             break;
          case (PTF_FILTER_RECALC) :
             DataLog(log_level_proc_info) << "recieving predict request PTF_FILTER_RECALC" << endmsg;
@@ -995,4 +998,4 @@ void StateControl::predictTimeout ()
    predicterr.setAlarm();
 }
 
-/* FORMAT HASH a4480e0454c9bcea9d1e5cc0481ce088 */
+/* FORMAT HASH c593883530aef437c66615bb531991fd */
