@@ -19,28 +19,22 @@ class ClearableAlarm
 {
 public:
 
-   //
-   // constructors, destructor
-   //
    ClearableAlarm(ALARM_VALUES name)
       : anAlarmMsg(name) {}
 
-   // Destructor
    virtual ~ClearableAlarm() {}
 
-   //
-   //
-   //   I allow you to clear me in addition to my base class functions.
-   //
-   virtual void clearAlarm ()
+   // I allow you to clear me in addition to my base class functions.
+   virtual bool clearAlarm ()
    {
       // Is the alarm currently cleared in this task.
-      if ( the_alarm.alarm_state != CLEARED )
+      if ( getState() != CLEARED )
       {
          // No, clear and send to alarm handler.
-         the_alarm.alarm_state = CLEARED;
-         alarmmsg.send(the_alarm);
+         sendMessage(CLEARED);
+         return true;
       }
+      return false;
    }
 
 protected:
@@ -54,4 +48,4 @@ protected:
 
 #endif
 
-/* FORMAT HASH ef34971145a252b11da54dae36506dcf */
+/* FORMAT HASH d977b961c5ee4eae27d442ad1494569a */
