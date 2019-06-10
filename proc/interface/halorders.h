@@ -46,6 +46,9 @@ public:
    float Qplasma (float flow);
    float Qcollect (void) const;
    float Qcollect (float flow);
+   
+   // safety and control must agree for return pump to go
+   void safeReturnCommands (bool on);
 
    // Centrifuge
    // Ramp rates are in RPM per second when above 1000RPM
@@ -111,6 +114,7 @@ private:
    // copy of current orders
    HalOrders m_Orders;
    bool      m_override;
+   bool      m_safetyReturnCheck;
 };
 
 #endif /* ifndef _HALORDERS_INCLUDE */

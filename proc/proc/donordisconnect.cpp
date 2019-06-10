@@ -350,7 +350,9 @@ int DonorDisconnect::postExit ()
 
    pd.MakeRunWritable();
    pd.Run().DonorDisconnectTime.Set(pd.GetAbsTimeNowinMinutes() );
-
+   
+   // END OF: safety and control must both see fluid to run the return pump...
+   pd.Orders().safeReturnCommands(false);
 
    return NORMAL;
 }

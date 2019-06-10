@@ -199,6 +199,9 @@ int DonorConnected::preEnter ()
 {
    ProcData pd;
 
+   // from here on, safety and control must both see fluid to run the return pump... in the positive direction; ccw
+   pd.Orders().safeReturnCommands(true);
+
    //
    // Set the cassette state ...
    //

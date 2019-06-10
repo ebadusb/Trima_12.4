@@ -27,7 +27,8 @@
 // state.
 
 CHalOrders::CHalOrders(void)
-   : m_override(false)
+   : m_override(false),
+     m_safetyReturnCheck(false) 
 {
    memset(&m_Orders, 0, sizeof( HalOrders ) );
 }
@@ -98,13 +99,35 @@ float CHalOrders::Qrp (void) const
 
 float CHalOrders::Qrp (float flw)
 {
-
    ProcData pd;
    if (pd.SystemState() == METERED_STORAGE)
       pd.LogMSSPumps(true);
    else pd.LogMSSPumps(false);
 
-   return m_Orders.CmdFlow.Return = flw;
+   if ( m_safetyReturnCheck )
+   {
+      if ( !pd.Status().ReservoirIsEmpty() && 
+            (pd.SafetyStatus().reservoir != SHW_RESERVOIR_EMPTY)
+      )
+      {   
+         return m_Orders.CmdFlow.Return = flw;
+      } 
+      else 
+      {
+         if (flw < 0.0f)  // negative direction blood prime excusion
+         {
+            return m_Orders.CmdFlow.Return = flw;
+         }
+         else
+         {
+            return m_Orders.CmdFlow.Return = 0.0f;
+         }
+      }
+   } 
+   else 
+   {
+      return m_Orders.CmdFlow.Return = flw;
+   }
 }
 
 float CHalOrders::Qplasma (void) const
@@ -342,6 +365,11 @@ bool CHalOrders::APSLowDisabled (void) const
 bool CHalOrders::APSHighDisabled (void) const
 {
    return (m_Orders.APSHighLimit == 0);
+}
+
+void CHalOrders::safeReturnCommands (bool on)
+{
+   m_safetyReturnCheck = on;
 }
 
 /* FORMAT HASH 5817a88c590f1666acda1ac2433f135f */
