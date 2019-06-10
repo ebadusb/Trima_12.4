@@ -627,6 +627,7 @@ void aSafetyStatusMsg_rcvr::notify ()
       case SHW_AIR_EVENT :
          if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
          {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_EVENT" << endmsg;
             paSafetyHardwareCommandsExec->respond_to_alarm(OFF_BOTH, DONOR_AIR_ALARM);
 
             _appData->here = 52;             // bread crumb
@@ -652,7 +653,77 @@ void aSafetyStatusMsg_rcvr::notify ()
          _appData->here = 54;           // bread crumb
 
          break;
+         
+         // JPH: new event to send wait notice to control
+      case SHW_AIR_WAIT_EVENT :
+         if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_EVENT" << endmsg;
+            paSafetyHardwareCommandsExec->SetPumpPower(HW_DISABLE);
+            SafetyInAirStop  stopmsg(MessageBase::SEND_GLOBAL);
+            stopmsg.send(0);
+            _appData->here = 83;             // bread crumb
+         }
+         else
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_EVENT with no donor connected" << endmsg;
+         }
+         break;
 
+         // JPH: new event to send wait notice to control
+      case SHW_AIR_WAIT_RESTART_EVENT :
+         if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
+         { 
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT" << endmsg;
+            paSafetyHardwareCommandsExec->SetPumpPower(HW_ENABLE);
+            SafetyClearsAirStop  clearmsg(MessageBase::SEND_GLOBAL);
+            clearmsg.send(1);  // JPH: send clear to go message
+            _appData->here = 84;             // bread crumb
+         } 
+         else 
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT with no donor connected" << endmsg;
+         }
+         break;
+         
+      case SHW_AIR_WAIT_RESTART_EVENT2 :
+         if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
+         {
+            // double check safe_drv vs reality of the DDC state
+            if (SafetyExec::instance()->SystemState() == DONOR_DISCONNECT)
+            {
+               DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT2 for being in DonorDisconnect" << endmsg;
+               paSafetyHardwareCommandsExec->SetPumpPower(HW_ENABLE);
+               SafetyClearsAirStop clearmsg(MessageBase::SEND_GLOBAL);
+               clearmsg.send(1);      // JPH: send clear to go message
+               _appData->here = 85;   // bread crumb
+            }
+            else
+            {
+               // if the driver is lying (cause i'm a paranoid safety computer) and we aren't in DDC...
+               DataLog(log_level_safe_exec_info) << "Ignoring SHW_AIR_WAIT_RESTART_EVENT2; State != DonorDisconnect" << endmsg;
+               paSafetyHardwareCommandsExec->respond_to_alarm(OFF_BOTH, DONOR_AIR_ALARM);
+            }
+         }
+         else
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT with no donor connected" << endmsg;
+         }
+         break;
+
+      case SHW_AIR_EVENT_AFTER_RESTART :
+         if ( _paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED)
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_EVENT_AFTER_RESTART" << endmsg;
+            paSafetyHardwareCommandsExec->respond_to_alarm(OFF_BOTH, DONOR_AIR_ALARM);
+            _appData->here = 86;              // bread crumb
+         }
+         else
+         {
+            DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_EVENT_AFTER_RESTART with no donor connected" << endmsg;
+         }
+         break;
+         
       default :
       {
          DataLog(log_level_critical) << "Undefined SHwStateData.event: "

@@ -749,6 +749,15 @@ void aSafetyHardwareCommandsExec::SetDonorMode (HW_ORDERS mode)
    SafetyPFRDataToSave.PFRdonorConnectMode = _SHwOrdersData.donorConnectMode;
 }
 
+void aSafetyHardwareCommandsExec::SetDonorDisconnectState (bool inDDC)
+{
+   _SHwOrdersData.donorDisconnectState = inDDC;
+   DataLog(log_level_safe_exec_info) << "aSafetyHardwareCommandsExec :: SetDonorDisconnectState("
+                                     <<  inDDC << ") sending SHwOrdersMsg( _SHwOrdersData.donorDisconnectState == " <<_SHwOrdersData.donorDisconnectState  << ")" << endmsg;
+
+   send();
+}
+
 void aSafetyHardwareCommandsExec::SetSubstate (long newState)
 {
    _SHwOrdersData.test1 = newState;
@@ -775,15 +784,18 @@ void aSafetyHardwareCommandsExec::initializeForState (long newState, HW_CASSETTE
       case AC_PRIME :
       case METERED_STORAGE :
       case METERED_STORAGE_DISCONNECT :
+         SetDonorDisconnectState(false);
          SetDonorMode(HW_DISABLE);
          break;
       case DONOR_CONNECTED :
       case BLOOD_PRIME :
       case BLOOD_RUN :
       case BLOOD_RINSEBACK :
+         SetDonorDisconnectState(false);
          SetDonorMode(HW_ENABLE);
          break;
       case DONOR_DISCONNECT :
+         SetDonorDisconnectState(true);
          SetDonorMode(HW_ENABLE);
          SetBothPower(HW_DISABLE);
          // allow the power to be enabled if we are in donor disconnect

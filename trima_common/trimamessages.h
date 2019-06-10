@@ -221,6 +221,8 @@ INT_MESSAGE(VistaDonorRejectedMsg);                 // GUI -> VIP  Donor Rejecte
 INT_MESSAGE(VistaNumberOfNewPinsMsg);               // VIP CMD -> GUI  New PIN list size
 INT_MESSAGE(VistaWritePinFileMsg);                  // VIP CMD -> GUI  New PIN list is completed
 INT_MESSAGE(VistaConnectionStatusMsg);              // VIP CMD -> GUI  Vista is connected or disconnected
+INT_MESSAGE(SafetyInAirStop);                       // JPH: stop control to wait to see if air clears
+INT_MESSAGE(SafetyClearsAirStop);                   // JPH: tell control air cleared
 
 // No need to add to the bottom on this list.  Add alphabetically.
 

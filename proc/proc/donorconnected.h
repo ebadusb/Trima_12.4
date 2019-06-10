@@ -15,6 +15,8 @@
 #include "stateabs.h"
 #include "aplimiter.h"
 #include "trimamessages.h"
+#include "timekeeper.h"
+#include "clearablealarm.h"
 
 class DonorConnected
    : public StateAbs
@@ -49,6 +51,13 @@ public:
    //
    virtual int postExit ();
 
+protected:
+   // stuff for the micro air stop prior to Air to donor alarm... it's a long story see IT 7260/14300
+      void SafetyInAirStopHandler ();
+      
+      void SafetyClearsAirStopHandler ();
+
+      virtual void reset ();
 private:
    //
    // Function which will set the Adjust Control Button status
@@ -69,6 +78,15 @@ private:
    // Access Pressure limit setting object
    //
    APLimiter _AccessPressureLimiter;
+   
+   // Safety power command interface
+   SafetyInAirStop      _safetyInAirStopMsg;               
+   SafetyClearsAirStop  _safetyClearsAirStopMsg;
+   bool _quietPlease_airCheck;
+
+   ClearableAlarm _silentWaitAlarm;
+
+   TimeKeeper _microAirWaitTimer;
 
 };
 

@@ -154,6 +154,7 @@ private:
    unsigned long  _myNID;
    unsigned long  _sendingNID;
    unsigned char& _powerFailFlag;
+   readValve      _cassette;
 };
 
 // SPECIFICATION:    pump hall class, this class is used to read hall
@@ -283,6 +284,7 @@ private:
    rawTime              _lastFluidTime;      // last fluid time
    rawTime              _acPrimeTime;        // used to enable air2donor
    rawTime              _dogLastTime;        // last time of petting hardware watchdog
+   rawTime              _a2dWaitTime;        // this does the 20s wait to see if microair settles out (restarts 24v)
    bool                 _softDogBite;        // Temporary flag
 
    bool                 _newMxInstalled;     // New MX Technology or Legacy FPGAs Installed
@@ -310,6 +312,9 @@ private:
    int                        _lastTimeIndex;
 
    safetyRamSafetyDriverData* _driverData;
+   
+   bool _inA2Dwait;
+   int  _a2dRestartsInDDC;                       // attempted restarts so we dont jerk the system around
 
 #ifdef DRIVER_TESTING
    AirDonorTestCase  mytestCase;

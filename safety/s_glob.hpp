@@ -245,6 +245,7 @@ public:
    void SetAlarmState (bool alarmState);
    void respond_to_alarm (char cSafeStateAction, ALARM_VALUES alarm_name);
    void SetDonorMode (HW_ORDERS mode);
+   void SetDonorDisconnectState (bool inDDC);
    void SetSubstate (long newState);
    void initializeForState (long newState, HW_CASSETTE_STATES cassettePosition);
    void BlockPumpPower (bool state);

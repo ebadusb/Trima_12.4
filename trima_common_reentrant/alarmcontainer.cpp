@@ -556,6 +556,7 @@ void load_alarms ()
    AlarmTable::add(SET_IDENTIFICATION_ALARM,               OPERATOR_ATTENTION, STOP_PUMPS,        DISP_OPERATOR, NO_SOUND,         "Prompt operator to manually determine the set type ");
    AlarmTable::add(SPILLOVER_DETECTED,                     OPERATOR_ATTENTION, NOTHING,           DISP_OPERATOR, ATTENTION1_SOUND, "Spillover Detected ");
    AlarmTable::add(SILENT_PAUSE_FOR_RET_TOO_SHORT_CHECK,   OPERATOR_ATTENTION, STOP_PUMPS,        DISP_NONE,     NO_SOUND,         "Pause for Return Too Short Check");
+   AlarmTable::add(SILENT_PAUSE_FOR_MICROAIR_CHECK,        OPERATOR_ATTENTION, STOP_PUMPS,        DISP_NONE,     NO_SOUND,         "Pause for Safety MicroAir Check");
 
 
    //                                                                                                        //

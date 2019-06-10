@@ -51,7 +51,10 @@ static const short DEBOUNCE_COUNT = 10;               // debounce count
 #define MS 1000
 #define US 1000000
 #define PRIORITY 27
-static const int RETURN_SWITCH_TIME = 250;                        // return pump switch time, ms
+static const int RETURN_SWITCH_TIME = 250;                   // return pump switch time, ms
+static const int MAXIMUM_MICROAIR_WAIT_TIME = 20000;         // maximum time to wait to see fluid after the driver stop us, in milliseconds of course.
+static const int MINIMUM_MICROAIR_WAIT_TIME = 3000;          // minimum time  to wait to see fluid after the driver stop us, in milliseconds of course.
+static const int MAX_RESTARTS_IN_DDC        = 1;             // MAX attempted restarts so we dont jerk the system around
 static const int RPM_CONV           = 60 * 1000;
 #define STR_LEN 80
 #define VALVE_TEST_COUNT (60 * 2)                       // once a minute
@@ -87,6 +90,8 @@ static const int MAX_SOFT_WATCHDOG_TIME = 8000;            // soft watchdog time
 
 static bool shutdownInProgress = false;
 static bool safeState          = false;
+
+static bool blockReturnPumpinDDC = false;                   // in DDC so pull power if return pump moves
 
 static rawTime shutdownTime = {0, 0};
 
@@ -186,7 +191,8 @@ void debounce::update (void)
 commands::commands(unsigned char& powerFailFlag)
    : _powerFailFlag(powerFailFlag),
      _serviceMode(HW_DISABLE),
-     _donorMode(HW_DISABLE)
+     _donorMode(HW_DISABLE),
+     _cassette(hw_cassette)
 {
    // create shared memory for communication to the safety message task
    _SHOPtr = (SHO*)shmem_create("safetyOrder", sizeof(SHO));
@@ -336,10 +342,27 @@ void commands::update ()
 
       // are we in donor connected mode?
       if (_orderData.donorConnectMode == HW_ENABLE)
+      {
          _donorMode = HW_ENABLE;
+      }
       else
+      {
          _donorMode = HW_DISABLE;
-
+         blockReturnPumpinDDC = false;  // reset this once we dont see a donor.
+      }
+      
+      // we are in donor disconnect state so block return pump. 
+      if ( (_orderData.donorDisconnectState == true ) &&
+           (_cassette.updateCassette() == HW_CASSETTE_DOWN)
+           )
+      {
+         DataLog_Default << "Driver thinks we're in DDC. " << endmsg;
+         blockReturnPumpinDDC = true;
+      }
+      else
+      {
+         blockReturnPumpinDDC = false;
+      }
    }
 }
 
@@ -956,7 +979,9 @@ updateTimer::updateTimer(unsigned long dt,
      _centrifuge(),
      _tempCapture(shw_basinDataSource, 65.535),
      _basinData(&_tempCapture),
-     _driverData(NULL)
+     _driverData(NULL),
+     _inA2Dwait(false),
+     _a2dRestartsInDDC(0)
 {
    trima_assert(_commands);
 
@@ -1126,6 +1151,12 @@ void updateTimer::notify ()
 
       _airToDonorEnable = false;
       _airToDonor       = false;
+      if (blockReturnPumpinDDC)
+      {
+         DataLog_Default << "Resetting ATD return pump counter" << endmsg;
+      }
+      blockReturnPumpinDDC = false;
+      _a2dRestartsInDDC    = 0;
       osTime::snapshotRawTime(_lastFluidTime);
 
       _driverData->here = 9;   // breadcrumb
@@ -1224,7 +1255,7 @@ void updateTimer::notify ()
       }
       else if (mode == FATAL_MODE)
       {
-         sendStatus(SHW_AIR_EVENT);                 // send event
+         sendStatus(SHW_SERVICE_MODE_VIOLATION);              //send event
          _FATAL_ERROR(__FILE__, __LINE__, "Shutdown for Illegal service mode");
       }
    }
@@ -1294,21 +1325,82 @@ void updateTimer::notify ()
 
       if (dt > RETURN_SWITCH_TIME)
       {
-         shw_powerSet(shw_ledPower);
-
          _driverData->here = 24;   // breadcrumb
 
          if (!_airToDonor)
          {
             _airToDonor = true;
-            sendStatus(SHW_AIR_EVENT);                    // send event
+            
+            if (_a2dRestartsInDDC < MAX_RESTARTS_IN_DDC)
+            {
+               // JPH START with the wait notice:
+               sendStatus(SHW_AIR_WAIT_EVENT);                     // send event
 
-            DataLog_Default << "Shutdown Air Timeout = " << dt << " ms" << endmsg;
-            _lowLevel.logHistory();
+               _inA2Dwait = true;
 
-            _driverData->here = 25;   // breadcrumb
+               // JPH: start 20sec timing to see if this is micro
+               osTime::snapshotRawTime(_a2dWaitTime);
+
+               DataLog_Default << "starting wait for Shutdown Air Timeout = " << dt << " ms" << endmsg;
+               _lowLevel.logHistory();
+
+               _driverData->here = 25;   // breadcrumb
+            }
+            else
+            {
+               // JPH: we thought this was in DDC and allowed restart but the return pump moved again so pull the plug for good!
+               DataLog_Default << "Shutdown Air return pump moved in donorDisconnect. "  << endmsg;
+               shw_powerSet(shw_ledPower);
+               _lowLevel.logHistory();
+               sendStatus(SHW_AIR_EVENT_AFTER_RESTART);
+               _inA2Dwait = false;
+            }
          }
       }
+   }
+
+   //JPH: check air at LL sensor for 20sec to see if this is micro
+   if (_inA2Dwait && _airToDonorEnable)
+   {
+       const int dt_ofAir = osTime::howLongMilliSec(_a2dWaitTime);
+       if (dt_ofAir > MAXIMUM_MICROAIR_WAIT_TIME)
+       { 
+             //JPH: Shutdown
+            DataLog_Default << "Shutdown Air Timeout after 20 second wait. "  << endmsg;
+            shw_powerSet(shw_ledPower); 
+           _lowLevel.logHistory();
+            sendStatus(SHW_AIR_EVENT);  
+            _inA2Dwait = false;   
+       } 
+       else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) && _lowLevel.isFluid()  ) 
+       {
+           //JPH: restart
+            DataLog_Default << "Fluid seen after air wait at . " <<  dt_ofAir << " ms" << endmsg;
+            _lowLevel.logHistory();
+            _airToDonor = false;
+            sendStatus(SHW_AIR_WAIT_RESTART_EVENT);     
+            _inA2Dwait = false;   
+       }
+       else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) &&
+             blockReturnPumpinDDC                  &&
+             (_a2dRestartsInDDC < MAX_RESTARTS_IN_DDC)
+       )
+       {
+          // JPH: restart --  skip the timer if we look like we are in donor disconnect.
+          DataLog_Default << "A2d Timer stopped in DonorDisconnect" << endmsg;
+          _lowLevel.logHistory();
+          _airToDonor = false;
+          sendStatus(SHW_AIR_WAIT_RESTART_EVENT2);
+          _inA2Dwait = false;
+          _a2dRestartsInDDC++;
+       }
+       else 
+       {
+          if (dt_ofAir%5000)// throttle logging
+          {             
+             DataLog_Default << "Safety Count Down: Waiting to see Fluid " <<  dt_ofAir << " ms" << endmsg;              
+          }
+       }
    }
 
    // test ac and return pump speeds when the donor is enabled

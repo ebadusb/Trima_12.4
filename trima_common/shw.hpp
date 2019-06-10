@@ -32,7 +32,12 @@ enum SHW_EVENTS
    SHW_RETURN_EVENT              =5,
    SHW_AIR_EVENT                 =6,
    SHW_RETURN_PUMP_TOO_FAST_EVENT=7,
-   SHW_AC_PUMP_TOO_FAST_EVENT    =8
+   SHW_AC_PUMP_TOO_FAST_EVENT    =8,
+   SHW_SERVICE_MODE_VIOLATION    =9,
+   SHW_AIR_WAIT_EVENT            =10,
+   SHW_AIR_WAIT_RESTART_EVENT    =11,
+   SHW_AIR_WAIT_RESTART_EVENT2   =12,
+   SHW_AIR_EVENT_AFTER_RESTART   =13,
 };
 
 enum SHW_DIRECTION
@@ -64,6 +69,8 @@ typedef struct
 // test modes
    long          test1;
    unsigned long sequenceNumber;
+   
+   bool          donorDisconnectState;
 
 } SHwOrders;
 
