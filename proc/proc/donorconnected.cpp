@@ -46,16 +46,20 @@ int DonorConnected::transitionStatus ()
 int DonorConnected::preProcess ()
 {
    if (_quietPlease_airCheck)
-   {  
+   {
       if (!_microAirWaitTimer.activated())
       {
          DataLog(log_level_proc_info) << "Control in safety microAir wait started"  << endmsg;
          _microAirWaitTimer.activate();
-      } else {
+      }
+      else
+      {
          if (_microAirWaitTimer.getSecs() >= 20.0f)
          {
             DataLog(log_level_proc_info) << "Control in safety microAir timer expired with no call from safety!" << endmsg;
-         } else {
+         }
+         else
+         {
             DataLog(log_level_proc_info) << "Control in safety microAir wait at t= " << _microAirWaitTimer.getSecs() << " seconds" << endmsg;
          }
       }
@@ -394,23 +398,23 @@ void DonorConnected::setButtonStatus ()
 
 void DonorConnected::SafetyInAirStopHandler ()
 {
-    ProcData pd;
-    // 24 volt pulled by safety
-    DataLog(log_level_proc_donor_disconnect_info) << "Control got stop event from safety:  Setting silent pause alarm "  << endmsg;
-    _quietPlease_airCheck = true;
-    //switch to draw if not in rinseback
-    if ( BLOOD_RUN == pd.SystemState() )
-    {
-       if (!pd.Run().DrawCycle.Get())
-       {
-           DataLog(log_level_proc_donor_disconnect_info) << "Control switching to Draw cycle during microAir wait "  << endmsg;
+   ProcData pd;
+   // 24 volt pulled by safety
+   DataLog(log_level_proc_donor_disconnect_info) << "Control got stop event from safety:  Setting silent pause alarm "  << endmsg;
+   _quietPlease_airCheck = true;
+   // switch to draw if not in rinseback
+   if ( BLOOD_RUN == pd.SystemState() )
+   {
+      if (!pd.Run().DrawCycle.Get())
+      {
+         DataLog(log_level_proc_donor_disconnect_info) << "Control switching to Draw cycle during microAir wait "  << endmsg;
 
-           MidCycleSwitchMsg msg(MessageBase::SEND_GLOBAL);
-           msg.send(SWITCH_TO_DRAW);
+         MidCycleSwitchMsg msg(MessageBase::SEND_GLOBAL);
+         msg.send(SWITCH_TO_DRAW);
 
-           pd.SwitchtoDraw();
-       }
-    }
+         pd.SwitchtoDraw();
+      }
+   }
    _silentWaitAlarm.setAlarm();
 
 }
@@ -418,12 +422,13 @@ void DonorConnected::SafetyInAirStopHandler ()
 void DonorConnected::SafetyClearsAirStopHandler ()
 {
 
-    DataLog(log_level_proc_donor_disconnect_info) << "Control got start event from safety: Clearing silent pause alarm "  << endmsg;
-    DataLog(log_level_proc_donor_disconnect_info) << "It took  " << _microAirWaitTimer.getSecs() << " seconds to clear the microAir (whew!)"  << endmsg;
-    _microAirWaitTimer.inactivate();
-    _microAirWaitTimer.init();
-    // 24 volt on by safety
-    _quietPlease_airCheck = false;
-    _silentWaitAlarm.clearAlarm();
+   DataLog(log_level_proc_donor_disconnect_info) << "Control got start event from safety: Clearing silent pause alarm "  << endmsg;
+   DataLog(log_level_proc_donor_disconnect_info) << "It took  " << _microAirWaitTimer.getSecs() << " seconds to clear the microAir (whew!)"  << endmsg;
+   _microAirWaitTimer.inactivate();
+   _microAirWaitTimer.init();
+   // 24 volt on by safety
+   _quietPlease_airCheck = false;
+   _silentWaitAlarm.clearAlarm();
 }
-/* FORMAT HASH 51f3817adad6a667318cc000e2c7fe4a */
+
+/* FORMAT HASH 0bccb01de437e9c1e480c4ae88bf81ea */

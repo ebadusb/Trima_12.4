@@ -52,7 +52,7 @@
 // global definition for Safety PFR data
 extern SPFRecovery SafetyPFRDataFromRestore;
 
-SafetyExec*        SafetyExec::m_instance = NULL;
+SafetyExec* SafetyExec::m_instance = NULL;
 
 SafetyExec::SafetyExec()
    : groups(ModuleGroup::LAST_GROUP),
@@ -210,7 +210,7 @@ void SafetyExec::update (const CHwStates& state)
    // copy over access pressure
    execData.control.accessPressure = state.accessPressure;
 
-   _appData->here                  = 6; // bread crumb
+   _appData->here = 6;                  // bread crumb
 
    if (_pump_stroke_volume_logging)
    {
@@ -220,7 +220,7 @@ void SafetyExec::update (const CHwStates& state)
    // copy over timestamp
    execData.control.timestamp = state.timestamp;
 
-   _appData->here             = 7;   // bread crumb
+   _appData->here = 7;               // bread crumb
 
    process(ModuleGroup::CONTROL_STATUS);
 
@@ -275,7 +275,7 @@ void SafetyExec::update (State_names state)
 {
    _appData->here = 15;               // bread crumb
 
-   _procState     = state;
+   _procState = state;
    DataLog(log_level_safe_exec_info) << "Safety setting state " << state << endmsg;
 
    // enable/disable monitors based on state
@@ -373,7 +373,7 @@ void SafetyExec::update (SET_TYPE type)
 {
    _appData->here = 24;               // bread crumb
 
-   _setType       = type;
+   _setType = type;
 
    process(ModuleGroup::SET_TYPE);
 
@@ -404,8 +404,8 @@ void SafetyExec::RestoreFromPFR ()
 {
    _appData->here = 28;               // bread crumb
 
-   _setType       = SafetyPFRDataFromRestore.PFR_SetType;
-   _procState     = SafetyPFRDataFromRestore.PFR_SystemState;
+   _setType   = SafetyPFRDataFromRestore.PFR_SetType;
+   _procState = SafetyPFRDataFromRestore.PFR_SystemState;
 
    //
    //
@@ -518,7 +518,7 @@ void aSafetyStatusMsg_rcvr::checkForbiddenMode (HW_ORDERS mode)
 
 void aSafetyStatusMsg_rcvr::notify ()
 {
-   SHwStateData   = _theSHwStatesMsg.getData();
+   SHwStateData = _theSHwStatesMsg.getData();
 
    _appData->here = 37;              // bread crumb
 
@@ -653,14 +653,14 @@ void aSafetyStatusMsg_rcvr::notify ()
          _appData->here = 54;           // bread crumb
 
          break;
-         
-         // JPH: new event to send wait notice to control
+
+      // JPH: new event to send wait notice to control
       case SHW_AIR_WAIT_EVENT :
          if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
          {
             DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_EVENT" << endmsg;
             paSafetyHardwareCommandsExec->SetPumpPower(HW_DISABLE);
-            SafetyInAirStop  stopmsg(MessageBase::SEND_GLOBAL);
+            SafetyInAirStop stopmsg(MessageBase::SEND_GLOBAL);
             stopmsg.send(0);
             _appData->here = 83;             // bread crumb
          }
@@ -670,22 +670,22 @@ void aSafetyStatusMsg_rcvr::notify ()
          }
          break;
 
-         // JPH: new event to send wait notice to control
+      // JPH: new event to send wait notice to control
       case SHW_AIR_WAIT_RESTART_EVENT :
          if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
-         { 
+         {
             DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT" << endmsg;
             paSafetyHardwareCommandsExec->SetPumpPower(HW_ENABLE);
-            SafetyClearsAirStop  clearmsg(MessageBase::SEND_GLOBAL);
-            clearmsg.send(1);  // JPH: send clear to go message
-            _appData->here = 84;             // bread crumb
-         } 
-         else 
+            SafetyClearsAirStop clearmsg(MessageBase::SEND_GLOBAL);
+            clearmsg.send(1);    // JPH: send clear to go message
+            _appData->here = 84; // bread crumb
+         }
+         else
          {
             DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_WAIT_RESTART_EVENT with no donor connected" << endmsg;
          }
          break;
-         
+
       case SHW_AIR_WAIT_RESTART_EVENT2 :
          if (_paDonor->GetDonorConnectedState() == DONOR_IS_CONNECTED )
          {
@@ -723,7 +723,7 @@ void aSafetyStatusMsg_rcvr::notify ()
             DataLog(log_level_safe_exec_info) << "Safety saw SHW_AIR_EVENT_AFTER_RESTART with no donor connected" << endmsg;
          }
          break;
-         
+
       default :
       {
          DataLog(log_level_critical) << "Undefined SHwStateData.event: "
@@ -816,11 +816,11 @@ aQuerySafetyAliveMsg_rcvr::~aQuerySafetyAliveMsg_rcvr()
    delete _panAnswerSafetyAliveMsg_sndr;
    _panAnswerSafetyAliveMsg_sndr = NULL;
 
-   _paControlCommandsMsg_rcvr    = NULL;
-   _paControlStatusMsg_rcvr      = NULL;
-   _paSafetyStatusMsg_rcvr       = NULL;
-   _paPFR_Safety                 = NULL;
-   _appData                      = NULL;
+   _paControlCommandsMsg_rcvr = NULL;
+   _paControlStatusMsg_rcvr   = NULL;
+   _paSafetyStatusMsg_rcvr    = NULL;
+   _paPFR_Safety              = NULL;
+   _appData                   = NULL;
 }
 
 
@@ -922,7 +922,7 @@ aControlCommandsMsg_rcvr::~aControlCommandsMsg_rcvr()
 
 void aControlCommandsMsg_rcvr::notify ()
 {
-   CHwOrderData   = _theCHwOrdersMsg.getData();
+   CHwOrderData = _theCHwOrdersMsg.getData();
 
    _appData->here = 64;              // bread crumb
 
@@ -1202,11 +1202,11 @@ void aSafetyCommandsMsg_rcvr::notify ()
    // get message data into local structure.
    structSHwOrderData = _theSHwOrdersMsg.getData();
 
-   _appData->here     = 80;          // bread crumb
+   _appData->here = 80;              // bread crumb
 
 //   msgHeader( pid, nid, timestamp );
-   pid            = _theSHwOrdersMsg.originTask();
-   nid            = _theSHwOrdersMsg.originNode();
+   pid = _theSHwOrdersMsg.originTask();
+   nid = _theSHwOrdersMsg.originNode();
 
    _appData->here = 81;              // bread crumb
 
@@ -1227,4 +1227,4 @@ void aSafetyCommandsMsg_rcvr::notify ()
 
 }  // END void aSafetyCommandsMsg_rcvr :: notify()
 
-/* FORMAT HASH bf98220d76b2c5761c8ec75bebfca1f8 */
+/* FORMAT HASH 8f8c2fcf9d341f8d266f0188ca1278e0 */

@@ -249,52 +249,52 @@ private:
    void                  requestUpdate ();     // check for status requests
    void                  monitorTiming (void); // check for proper timing information
 
-   SHS*                 _SHSPtr;
+   SHS* _SHSPtr;
 
-   pumpHall             _acPump;            // pumps
-   pumpHall             _inletPump;
-   pumpHall             _plateletPump;
-   pumpHall             _plasmaPump;
-   pumpHall             _returnPump;
+   pumpHall _acPump;                        // pumps
+   pumpHall _inletPump;
+   pumpHall _plateletPump;
+   pumpHall _plasmaPump;
+   pumpHall _returnPump;
 
-   unsigned             _dt;                 // update interval
+   unsigned _dt;                             // update interval
 
-   debounce             _stop;              // pushbuttons
-   debounce             _pause;
+   debounce _stop;                          // pushbuttons
+   debounce _pause;
 
-   readValve            _plasmaValve;       // valves
-   readValve            _plateletValve;
-   readValve            _rbcValve;
-   readValve            _cassette;          // cassette
+   readValve _plasmaValve;                  // valves
+   readValve _plateletValve;
+   readValve _rbcValve;
+   readValve _cassette;                     // cassette
 
-   SafetyCentRpm        _centrifuge;        // centrifuge
-   ultrasonics          _lowLevel;          // ultrasonics
-   locks                _locks;             // door lock and latch
+   SafetyCentRpm _centrifuge;               // centrifuge
+   ultrasonics   _lowLevel;                 // ultrasonics
+   locks         _locks;                    // door lock and latch
 
    commands*            _commands;           // link to command data
    requestDriverStatus* _request;            // link to driver status request
 
-   getbyte              _tempCapture;        // captures single-bit line temp data from basin
-   basinData            _basinData;          // basin temperature data
+   getbyte   _tempCapture;                   // captures single-bit line temp data from basin
+   basinData _basinData;                     // basin temperature data
 
-   bool                 _airToDonorEnable;   // flag enabling air to donor monitoring
-   bool                 _airToDonor;         // one-shot indicates air2donor occured
-   bool                 _returnPumpRunaway;  // one-shot indicates return pump runaway occured
-   bool                 _acPumpRunaway;      // one-shot indicates ac pump runaway occured
-   rawTime              _lastFluidTime;      // last fluid time
-   rawTime              _acPrimeTime;        // used to enable air2donor
-   rawTime              _dogLastTime;        // last time of petting hardware watchdog
-   rawTime              _a2dWaitTime;        // this does the 20s wait to see if microair settles out (restarts 24v)
-   bool                 _softDogBite;        // Temporary flag
+   bool    _airToDonorEnable;                // flag enabling air to donor monitoring
+   bool    _airToDonor;                      // one-shot indicates air2donor occured
+   bool    _returnPumpRunaway;               // one-shot indicates return pump runaway occured
+   bool    _acPumpRunaway;                   // one-shot indicates ac pump runaway occured
+   rawTime _lastFluidTime;                   // last fluid time
+   rawTime _acPrimeTime;                     // used to enable air2donor
+   rawTime _dogLastTime;                     // last time of petting hardware watchdog
+   rawTime _a2dWaitTime;                     // this does the 20s wait to see if microair settles out (restarts 24v)
+   bool    _softDogBite;                     // Temporary flag
 
-   bool                 _newMxInstalled;     // New MX Technology or Legacy FPGAs Installed
+   bool _newMxInstalled;                     // New MX Technology or Legacy FPGAs Installed
 
-   HWWatchDogStatus     _newWdStatus;        // Safety WatchDog Status New/Old
-   HWWatchDogStatus     _oldWdStatus;
+   HWWatchDogStatus _newWdStatus;            // Safety WatchDog Status New/Old
+   HWWatchDogStatus _oldWdStatus;
 
-   rawTime              _ShutdownTime;       // Time when the fatal error was called.  The driver
+   rawTime _ShutdownTime;                    // Time when the fatal error was called.  The driver
                                              //  will exit 2 seconds after this time.
-   unsigned char&       _powerFailFlag;
+   unsigned char& _powerFailFlag;
 
    //
    // see monitorTiming for usage of these data members
@@ -307,12 +307,12 @@ private:
    // keep history of last few scans to help debug timing errors
    //
    enum { TimingHistorySize = 3 };
-   rawTime                    _lastStartTime[TimingHistorySize];
-   rawTime                    _lastEndTime[TimingHistorySize];
-   int                        _lastTimeIndex;
+   rawTime _lastStartTime[TimingHistorySize];
+   rawTime _lastEndTime[TimingHistorySize];
+   int     _lastTimeIndex;
 
    safetyRamSafetyDriverData* _driverData;
-   
+
    bool _inA2Dwait;
    int  _a2dRestartsInDDC;                       // attempted restarts so we dont jerk the system around
 
@@ -325,4 +325,4 @@ private:
 
 #endif /* ifndef SAFE_DRV_HPP */
 
-/* FORMAT HASH 074a52f16bc0bc9d1c54399198df750f */
+/* FORMAT HASH a635fdce90796670d1db47c7eed55e23 */

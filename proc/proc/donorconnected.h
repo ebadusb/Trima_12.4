@@ -53,11 +53,11 @@ public:
 
 protected:
    // stuff for the micro air stop prior to Air to donor alarm... it's a long story see IT 7260/14300
-      void SafetyInAirStopHandler ();
-      
-      void SafetyClearsAirStopHandler ();
+   void SafetyInAirStopHandler ();
 
-      virtual void reset ();
+   void SafetyClearsAirStopHandler ();
+
+   virtual void reset ();
 private:
    //
    // Function which will set the Adjust Control Button status
@@ -78,11 +78,11 @@ private:
    // Access Pressure limit setting object
    //
    APLimiter _AccessPressureLimiter;
-   
+
    // Safety power command interface
-   SafetyInAirStop      _safetyInAirStopMsg;               
-   SafetyClearsAirStop  _safetyClearsAirStopMsg;
-   bool _quietPlease_airCheck;
+   SafetyInAirStop     _safetyInAirStopMsg;
+   SafetyClearsAirStop _safetyClearsAirStopMsg;
+   bool                _quietPlease_airCheck;
 
    ClearableAlarm _silentWaitAlarm;
 
@@ -93,4 +93,4 @@ private:
 
 #endif
 
-/* FORMAT HASH 10951da80d748a1b01b4619b3c8bef32 */
+/* FORMAT HASH ffff7d3a5d0aba7e76847b075afa8889 */

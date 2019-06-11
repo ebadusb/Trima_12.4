@@ -51,11 +51,11 @@ static const short DEBOUNCE_COUNT = 10;               // debounce count
 #define MS 1000
 #define US 1000000
 #define PRIORITY 27
-static const int RETURN_SWITCH_TIME = 250;                   // return pump switch time, ms
+static const int RETURN_SWITCH_TIME         = 250;           // return pump switch time, ms
 static const int MAXIMUM_MICROAIR_WAIT_TIME = 20000;         // maximum time to wait to see fluid after the driver stop us, in milliseconds of course.
 static const int MINIMUM_MICROAIR_WAIT_TIME = 3000;          // minimum time  to wait to see fluid after the driver stop us, in milliseconds of course.
 static const int MAX_RESTARTS_IN_DDC        = 1;             // MAX attempted restarts so we dont jerk the system around
-static const int RPM_CONV           = 60 * 1000;
+static const int RPM_CONV                   = 60 * 1000;
 #define STR_LEN 80
 #define VALVE_TEST_COUNT (60 * 2)                       // once a minute
 #define VALVE_MASK1 (0xff)
@@ -347,11 +347,11 @@ void commands::update ()
       }
       else
       {
-         _donorMode = HW_DISABLE;
+         _donorMode           = HW_DISABLE;
          blockReturnPumpinDDC = false;  // reset this once we dont see a donor.
       }
-      
-      // we are in donor disconnect state so block return pump. 
+
+      // we are in donor disconnect state so block return pump.
       if ( (_orderData.donorDisconnectState == true ) &&
            (_cassette.updateCassette() == HW_CASSETTE_DOWN)
            )
@@ -1255,7 +1255,7 @@ void updateTimer::notify ()
       }
       else if (mode == FATAL_MODE)
       {
-         sendStatus(SHW_SERVICE_MODE_VIOLATION);              //send event
+         sendStatus(SHW_SERVICE_MODE_VIOLATION);              // send event
          _FATAL_ERROR(__FILE__, __LINE__, "Shutdown for Illegal service mode");
       }
    }
@@ -1330,7 +1330,7 @@ void updateTimer::notify ()
          if (!_airToDonor)
          {
             _airToDonor = true;
-            
+
             if (_a2dRestartsInDDC < MAX_RESTARTS_IN_DDC)
             {
                // JPH START with the wait notice:
@@ -1359,48 +1359,48 @@ void updateTimer::notify ()
       }
    }
 
-   //JPH: check air at LL sensor for 20sec to see if this is micro
+   // JPH: check air at LL sensor for 20sec to see if this is micro
    if (_inA2Dwait && _airToDonorEnable)
    {
-       const int dt_ofAir = osTime::howLongMilliSec(_a2dWaitTime);
-       if (dt_ofAir > MAXIMUM_MICROAIR_WAIT_TIME)
-       { 
-             //JPH: Shutdown
-            DataLog_Default << "Shutdown Air Timeout after 20 second wait. "  << endmsg;
-            shw_powerSet(shw_ledPower); 
-           _lowLevel.logHistory();
-            sendStatus(SHW_AIR_EVENT);  
-            _inA2Dwait = false;   
-       } 
-       else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) && _lowLevel.isFluid()  ) 
-       {
-           //JPH: restart
-            DataLog_Default << "Fluid seen after air wait at . " <<  dt_ofAir << " ms" << endmsg;
-            _lowLevel.logHistory();
-            _airToDonor = false;
-            sendStatus(SHW_AIR_WAIT_RESTART_EVENT);     
-            _inA2Dwait = false;   
-       }
-       else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) &&
-             blockReturnPumpinDDC                  &&
-             (_a2dRestartsInDDC < MAX_RESTARTS_IN_DDC)
-       )
-       {
-          // JPH: restart --  skip the timer if we look like we are in donor disconnect.
-          DataLog_Default << "A2d Timer stopped in DonorDisconnect" << endmsg;
-          _lowLevel.logHistory();
-          _airToDonor = false;
-          sendStatus(SHW_AIR_WAIT_RESTART_EVENT2);
-          _inA2Dwait = false;
-          _a2dRestartsInDDC++;
-       }
-       else 
-       {
-          if (dt_ofAir%5000)// throttle logging
-          {             
-             DataLog_Default << "Safety Count Down: Waiting to see Fluid " <<  dt_ofAir << " ms" << endmsg;              
-          }
-       }
+      const int dt_ofAir = osTime::howLongMilliSec(_a2dWaitTime);
+      if (dt_ofAir > MAXIMUM_MICROAIR_WAIT_TIME)
+      {
+         // JPH: Shutdown
+         DataLog_Default << "Shutdown Air Timeout after 20 second wait. "  << endmsg;
+         shw_powerSet(shw_ledPower);
+         _lowLevel.logHistory();
+         sendStatus(SHW_AIR_EVENT);
+         _inA2Dwait = false;
+      }
+      else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) && _lowLevel.isFluid()  )
+      {
+         // JPH: restart
+         DataLog_Default << "Fluid seen after air wait at . " <<  dt_ofAir << " ms" << endmsg;
+         _lowLevel.logHistory();
+         _airToDonor = false;
+         sendStatus(SHW_AIR_WAIT_RESTART_EVENT);
+         _inA2Dwait = false;
+      }
+      else if ( (dt_ofAir > MINIMUM_MICROAIR_WAIT_TIME) &&
+                blockReturnPumpinDDC                  &&
+                (_a2dRestartsInDDC < MAX_RESTARTS_IN_DDC)
+                )
+      {
+         // JPH: restart --  skip the timer if we look like we are in donor disconnect.
+         DataLog_Default << "A2d Timer stopped in DonorDisconnect" << endmsg;
+         _lowLevel.logHistory();
+         _airToDonor = false;
+         sendStatus(SHW_AIR_WAIT_RESTART_EVENT2);
+         _inA2Dwait = false;
+         _a2dRestartsInDDC++;
+      }
+      else
+      {
+         if (dt_ofAir%5000) // throttle logging
+         {
+            DataLog_Default << "Safety Count Down: Waiting to see Fluid " <<  dt_ofAir << " ms" << endmsg;
+         }
+      }
    }
 
    // test ac and return pump speeds when the donor is enabled
@@ -1879,4 +1879,4 @@ void updateTimer::monitorTiming (void)
    }
 }
 
-/* FORMAT HASH 75c03a6b3bf75c433e27d8e958aaa085 */
+/* FORMAT HASH 250f3c27edef8372fd61bd52929e914b */

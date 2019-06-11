@@ -251,12 +251,12 @@ bool acAlarmActive[NUM_SAFETY_ALARMS];
 //
 // calibration vbls for 3 point
 //
-static float fAPS_gain_POS             = 0.f; // gain for positive pressures incl 0 mmHG
-static float fAPS_gain_NEG             = 0.f; // gain for negative pressures
-static float fAPS_raw_REF              = 0.f; // current adc raw value for 0 mmHg
-static float fAPS_raw_REF_from_file    = 0.f; // adc raw value for 0 mmHg (as read from cal.dat)
+static float fAPS_gain_POS          = 0.f;    // gain for positive pressures incl 0 mmHG
+static float fAPS_gain_NEG          = 0.f;    // gain for negative pressures
+static float fAPS_raw_REF           = 0.f;    // current adc raw value for 0 mmHg
+static float fAPS_raw_REF_from_file = 0.f;    // adc raw value for 0 mmHg (as read from cal.dat)
 
-static bool  bAPS_cal_data_initialized = false;
+static bool bAPS_cal_data_initialized = false;
 
 void initialize_APS_cal (void)
 {
@@ -890,4 +890,4 @@ void aSafetyAlarmRepeater::notify ()
    }
 }
 
-/* FORMAT HASH 422bf40eda6c555c36727523466c7bce */
+/* FORMAT HASH f35bba3026d2ce070d9a3fc843233057 */

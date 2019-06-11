@@ -423,4 +423,4 @@ DEFINE_OBJ(VistaConnectionStatusMsg);
 
 #endif // #ifdef _TRIMA_MESSAGES_CPP_
 
-/* FORMAT HASH c407497168a2fbcbcc68426d4030c1b4 */
+/* FORMAT HASH 0220397ffe9584965ab316c32fab7173 */

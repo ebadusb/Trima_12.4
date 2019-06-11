@@ -264,10 +264,10 @@ private:
    Message<SHwOrders>   _theSHwOrdersMsg;
    aSafetyAlarmRepeater _safetyAlarmRepeater;
 
-   bool                 _alarmState;
-   bool                 _blockPower;
-   unsigned long        _msgCounter;
-   AlarmTable           _alarmTable;
+   bool          _alarmState;
+   bool          _blockPower;
+   unsigned long _msgCounter;
+   AlarmTable    _alarmTable;
 
 };  // END aSafetyHardwareCommandsExec class definition
 
@@ -275,4 +275,4 @@ extern aSafetyHardwareCommandsExec* paSafetyHardwareCommandsExec;
 
 #endif
 
-/* FORMAT HASH 63c261a18022f681dd1b4a80ebbcf72b */
+/* FORMAT HASH 4944cdf658914fe020b235b477489d4f */

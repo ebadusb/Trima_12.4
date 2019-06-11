@@ -69,7 +69,7 @@ typedef struct
 // test modes
    long          test1;
    unsigned long sequenceNumber;
-   
+
    bool          donorDisconnectState;
 
 } SHwOrders;
@@ -158,4 +158,4 @@ typedef struct
 } SHwStates;
 #endif
 
-/* FORMAT HASH b2c8445c4293df9f329f94695acc8d5f */
+/* FORMAT HASH 84f8fe69bdefcbe6a7fac49f36d817a3 */
