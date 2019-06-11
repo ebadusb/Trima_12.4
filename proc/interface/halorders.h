@@ -46,7 +46,7 @@ public:
    float Qplasma (float flow);
    float Qcollect (void) const;
    float Qcollect (float flow);
-   
+
    // safety and control must agree for return pump to go
    void safeReturnCommands (bool on);
 
@@ -119,4 +119,4 @@ private:
 
 #endif /* ifndef _HALORDERS_INCLUDE */
 
-/* FORMAT HASH 26e650d6ba27177e40b176274b1e4dbe */
+/* FORMAT HASH fc4a2b958a9eb3c69d1ce4a1411edc96 */

@@ -322,7 +322,7 @@ int DonorDisconnect::preEnter ()
    _HypovolemiaDistance += pd.Volumes().Vreturn.Get();
    _VinAtStart           = pd.Volumes().VinTotal.Get();
 
-   _PowerRespRegistered  = false;
+   _PowerRespRegistered = false;
 
    return NORMAL;
 }
@@ -350,7 +350,7 @@ int DonorDisconnect::postExit ()
 
    pd.MakeRunWritable();
    pd.Run().DonorDisconnectTime.Set(pd.GetAbsTimeNowinMinutes() );
-   
+
    // END OF: safety and control must both see fluid to run the return pump...
    pd.Orders().safeReturnCommands(false);
 
@@ -877,9 +877,9 @@ void DonorDisconnect::reset ()
    _AchievedPressureGoal  = 0;
    _AlarmDisplayCount     = 0;
 
-   _TestHasFailed         = false;
-   _ReadyForTransition    = false;
-   _safetyConfirmed       = false;
+   _TestHasFailed      = false;
+   _ReadyForTransition = false;
+   _safetyConfirmed    = false;
 }
 
 int DonorDisconnect::Hypovolemic ()
@@ -960,4 +960,4 @@ void DonorDisconnect::safetyStatus ()
    }
 }
 
-/* FORMAT HASH ca68cd70cc23b0cb6fcb14200127c79b */
+/* FORMAT HASH 6b59cd9dd0bc1314bdaf6b43ed685335 */

@@ -28,7 +28,7 @@
 
 CHalOrders::CHalOrders(void)
    : m_override(false),
-     m_safetyReturnCheck(false) 
+     m_safetyReturnCheck(false)
 {
    memset(&m_Orders, 0, sizeof( HalOrders ) );
 }
@@ -106,13 +106,13 @@ float CHalOrders::Qrp (float flw)
 
    if ( m_safetyReturnCheck )
    {
-      if ( !pd.Status().ReservoirIsEmpty() && 
-            (pd.SafetyStatus().reservoir != SHW_RESERVOIR_EMPTY)
-      )
-      {   
+      if ( !pd.Status().ReservoirIsEmpty() &&
+           (pd.SafetyStatus().reservoir != SHW_RESERVOIR_EMPTY)
+           )
+      {
          return m_Orders.CmdFlow.Return = flw;
-      } 
-      else 
+      }
+      else
       {
          if (flw < 0.0f)  // negative direction blood prime excusion
          {
@@ -123,8 +123,8 @@ float CHalOrders::Qrp (float flw)
             return m_Orders.CmdFlow.Return = 0.0f;
          }
       }
-   } 
-   else 
+   }
+   else
    {
       return m_Orders.CmdFlow.Return = flw;
    }
@@ -372,4 +372,4 @@ void CHalOrders::safeReturnCommands (bool on)
    m_safetyReturnCheck = on;
 }
 
-/* FORMAT HASH 5817a88c590f1666acda1ac2433f135f */
+/* FORMAT HASH 2f3d85162e6a72fa1976d637fe4df472 */
