@@ -18,7 +18,7 @@ DEFINE_OBJ(PressureAlarm);
 
 
 #define TIMESTAMP    " ( " << _pd.GetAbsTimeNowinMinutes() << " )/ ( " << _pd.Status().APS() <<  "; p_cnt-> " << _Pauses.size() << "; r_cnt-> " << _PausesInRecovery.size() << " )"
-#define POP_BACK(LIST) if(!LIST.empty()) {LIST.pop_back();} else {DataLog(log_level_proc_alarm_monitor_info) << "Trying to pop an empty list!!!! " << TIMESTAMP <<  endmsg;}
+      #define POP_BACK(LIST) if (!LIST.empty()) {LIST.pop_back(); } else {DataLog(log_level_proc_alarm_monitor_info) << "Trying to pop an empty list!!!! " << TIMESTAMP <<  endmsg; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ const float PausePeriod       = CobeConfig::data().ApsPausePeriod;           // 
 const float MaxPausesInPeriod = CobeConfig::data().ApsMaxPausesInPeriod;     // 3 count
 
 
-const int VEIN_TIMER          = int(1000.0f * CobeConfig::data().ApsAdditionalDelay); // in millisecs of course (
+const int VEIN_TIMER = int(1000.0f * CobeConfig::data().ApsAdditionalDelay);          // in millisecs of course (
 
 const int AUTOFLOW_INCR_TIMER = int(1000.0f * 60.0f * CobeConfig::data().AutoflowIncreaseTimer); // in millisecs of course
 
@@ -125,8 +125,8 @@ void PressureAlarm::Monitor ()
       currentAPS       = _OutOfBoundValue; // from HAL -- APS reading that stopped the pumps
       _OutOfBoundValue = 0.0f;
 
-      high             = ( currentAPS > 0.0f );
-      low              = ( currentAPS <= 0.0f );
+      high = ( currentAPS > 0.0f );
+      low  = ( currentAPS <= 0.0f );
    }
    else
    {
@@ -221,7 +221,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                autoFlowDecrease();
                _isAFDecreaseScheduled = false;
             }
-         }// If pressure does not recover above nominal in 6 sec
+         } // If pressure does not recover above nominal in 6 sec
          else if (_LastPause.getSecs() >= TimeBeforeAlarm)
          {
             // If the pressure has recovered over nominal, proceed with Qin decrease
@@ -254,13 +254,13 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
 
    //  if it is in AKO or saline bolus
    bool IsSalineOrAKO = (  _pd.AlarmActive()  &&                            // AKO is in progress or
-                              ( _pd.Status().ReturnPump.CmdRPM() == CobeConfig::data().QrpAKO
-                              || ( _pd.Status().ReturnPump.CmdRPM() > 0.0f
+                           ( _pd.Status().ReturnPump.CmdRPM() == CobeConfig::data().QrpAKO
+                             || ( _pd.Status().ReturnPump.CmdRPM() > 0.0f
                                   && RecoveryTypes::RecoveryId(_pd.RecoveryName().c_str() ) == RecoveryTypes::SalineBolus )
-                              )
-                             );
+                           )
+                           );
 
-   bool outOfRange           = ( high || low );
+   bool outOfRange = ( high || low );
 
    bool okTolookForAPSAlarms = ( !_pd.Run().DrawCycle.Get() || IsSalineOrAKO || isSystemInAPSAlarm() );
 
@@ -320,6 +320,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
          //  for operator intervention.
          //
          if (    _pd.AlarmActive()
+                 && ( high || low ) // IT 17812 - Pre-applying high/low condition so that false value of both low and high, skips the loop execution.
                  && _APSHighAlarm.getState() != LATCHED
                  && _APSLowAlarm.getState()  != LATCHED
                  && (
@@ -359,13 +360,13 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                }
             }
             else
-            {  
+            {
                // Autoflow is enabled here, if 6 secs have passed and pressure has not recovered
                // latch the alarm, covers both proc and recovery
                if (inAutoPause() &&
                    ((_LastPause.getSecs() >= TimeBeforeAlarm) ||
                     (_LastPauseInRecovery.getSecs() >= TimeBeforeAlarm))
-                  )
+                   )
                {
                   if (_APSLowAlarm.getState() != LATCHED)
                   {
@@ -373,7 +374,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                      _APSLowAlarm.latchAlarm();
                      _LocallyLatched = true;
                   }
-               }               
+               }
                else if (!inCorrectSubstates() &&
                         (_Pauses.size() >= MaxPausesInPeriod))
                {
@@ -385,7 +386,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
                      _LocallyLatched = true;
                   }
                }
-               else if (_isSystemInRecovery && 
+               else if (_isSystemInRecovery &&
                         (_PausesInRecovery.size() >= MaxPausesInPeriod))
                {
                   // APS count in Recovery has reached max allowed APS in duration
@@ -428,7 +429,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
             if ( (_APSLowAlarm.getState() != CLEARED) ||
                  (_APSHighAlarm.getState() != CLEARED) ||
                  (_APSDuringPauseAlarm_highpres.getState() != CLEARED )
-               )
+                 )
             {
                DataLog(log_level_proc_alarm_monitor_info) << "A hard stop alarm set. " << TIMESTAMP <<  endmsg;
 
@@ -452,7 +453,7 @@ void PressureAlarm::updateAPS (const float aps, const bool high, const bool low)
       {
          removeAllPauses();
       }
-      else if(_isSystemInRecovery && !_nonRecCarryOverAps)
+      else if (_isSystemInRecovery && !_nonRecCarryOverAps)
       {
          removeAllRecoveryPauses();
       }
@@ -644,10 +645,10 @@ int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high,
       else if (!_Pauses.empty() && (_LastPause.getSecs() >= TimeBeforeAlarm))
       {
          DataLog(log_level_qa_external) << "auto-pause Condition (in Recovery) non-rec hold over pause :: Six Seconds is up:"
-                               << " aps =" << aps
-                               << " Last Pause rec= " << _LastPauseInRecovery.getSecs()
-                               << " Last Pause proc = " << _LastPause.getSecs()
-                               << TIMESTAMP << endmsg;
+                                        << " aps =" << aps
+                                        << " Last Pause rec= " << _LastPauseInRecovery.getSecs()
+                                        << " Last Pause proc = " << _LastPause.getSecs()
+                                        << TIMESTAMP << endmsg;
 
          // Boundary case where APS from Proc is active and we enter Rec, handle the case here!
          // If there are any active Proc pauses and we exceeded 6 sec, we need a hard pause here.
@@ -670,7 +671,7 @@ int PressureAlarm::pauseConditionInRecovery (const float& aps, const bool& high,
             doAlarm = 1;
             POP_BACK(_Pauses);
             _isAFDecreaseScheduled = false;
-            _nonRecCarryOverAps = true;
+            _nonRecCarryOverAps    = true;
          }
 
          disableScheduledFlags();
@@ -808,7 +809,7 @@ void PressureAlarm::removeOldPauses ()
          _PausesInRecovery.remove(*oldestTime);
 
          DataLog(log_level_qa_external) << "Remove Old auto-pause from history:(Recovery) "  << ((TimeKeeper*)*oldestTime)->getMins()
-                                              << ", "  << TIMESTAMP << endmsg;
+                                        << ", "  << TIMESTAMP << endmsg;
 
          delete *oldestTime;
       }
@@ -890,7 +891,7 @@ void PressureAlarm::clearAutoPauseAlarm ()
       _LastPause.init();
       _disarmTimer = true;
 
-      if(_initialQinTimerStarted && !_isQinIncreaseTimerPaused)
+      if (_initialQinTimerStarted && !_isQinIncreaseTimerPaused)
       {
          _QincreaseTimer.init();
          DataLog(log_level_qa_external) << "AutoFlow: Qin increase timer reset. (at clear of APS AutoPause) " << TIMESTAMP <<  endmsg;
@@ -919,7 +920,7 @@ void PressureAlarm::clearAutoPauseRecoveryAlarm ()
       _LastPauseInRecovery.init();
       _disarmTimer = true;
 
-      if(_initialQinTimerStarted && !_isQinIncreaseTimerPaused)
+      if (_initialQinTimerStarted && !_isQinIncreaseTimerPaused)
       {
          _QincreaseTimer.init();
          DataLog(log_level_qa_external) << "AutoFlow: Qin increase timer reset. (at clear of APS AutoPause in Recovery) " << TIMESTAMP <<  endmsg;
@@ -1121,7 +1122,7 @@ void PressureAlarm::autoFlowIncrease ()
 void PressureAlarm::stopInletRamp ()
 {
 
-   State_names ss     =   _pd.Run().Substate.Get();
+   State_names ss =   _pd.Run().Substate.Get();
 
    if (  !_stoppedInletRamp  &&
          ( (ss == SS_PREPLATELET_PLASMA) ||  (ss == SS_PREPLATELET_NOPLASMA) )
@@ -1171,11 +1172,11 @@ void PressureAlarm::rinsebackState ()
 
 void PressureAlarm::startQinTimerAfterRamp ()
 {
-   if(!_initialQinTimerStarted)
+   if (!_initialQinTimerStarted)
    {
-      float Vincv = CobeConfig::data().MinVinCollectStart;
-      float Vinr  = (Vincv < CobeConfig::data().VinEndOfQinRamp ? Vincv : CobeConfig::data().VinEndOfQinRamp);
-      float Vin   = _pd.Volumes().Vin.Get();
+      float       Vincv     = CobeConfig::data().MinVinCollectStart;
+      float       Vinr      = (Vincv < CobeConfig::data().VinEndOfQinRamp ? Vincv : CobeConfig::data().VinEndOfQinRamp);
+      float       Vin       = _pd.Volumes().Vin.Get();
       static bool logItOnce = true;
 
       if ( Vin >= Vinr)
@@ -1195,7 +1196,7 @@ void PressureAlarm::startQinTimerAfterRamp ()
       }
       else
       {
-         if(_pd.Run().stopRamp.Get())
+         if (_pd.Run().stopRamp.Get())
          {
             if (logItOnce)
             {
@@ -1300,18 +1301,18 @@ bool PressureAlarm::inCorrectSubstates ()
    if (_isAutoFlowEnabled)
    {
       return (_pd.Status().CassIsPltPlsRBC() &&
-                 // Check if we are in valid sub-states
-                 // Exception states are PIR states
-                 (subState > SS_CHANNEL_SETUP &&
-                  subState != SS_PIR_PLASMA &&
-                  subState != SS_PIR_NOPLASMA &&
-                  subState < SS_RBC_PTF_SETUP_1)
+              // Check if we are in valid sub-states
+              // Exception states are PIR states
+              (subState > SS_CHANNEL_SETUP &&
+               subState != SS_PIR_PLASMA &&
+               subState != SS_PIR_NOPLASMA &&
+               subState < SS_RBC_PTF_SETUP_1)
               );
    }
    else
    {
       return ( _pd.Status().CassIsPltPlsRBC() &&
-                 subState < SS_RBC_PTF_SETUP_1);
+               subState < SS_RBC_PTF_SETUP_1);
    }
 }
 
@@ -1352,11 +1353,11 @@ void PressureAlarm::disableScheduledFlags ()
 bool PressureAlarm::isSystemPaused ()
 {
    if (_pd.AlarmActive() &&
-      _pd.Status().ACPump.ActFlow()      == 0.0f &&
-      _pd.Status().CollectPump.ActFlow() == 0.0f &&
-      _pd.Status().InletPump.ActFlow()   == 0.0f &&
-      _pd.Status().PlasmaPump.ActFlow()  == 0.0f &&
-      _pd.Status().ReturnPump.ActFlow()  == 0.0f)
+       _pd.Status().ACPump.ActFlow()      == 0.0f &&
+       _pd.Status().CollectPump.ActFlow() == 0.0f &&
+       _pd.Status().InletPump.ActFlow()   == 0.0f &&
+       _pd.Status().PlasmaPump.ActFlow()  == 0.0f &&
+       _pd.Status().ReturnPump.ActFlow()  == 0.0f)
    {
       return true;
    }
@@ -1460,4 +1461,5 @@ int PressureAlarm::checkPauseCondition (const float& aps, const bool& high, cons
       return pauseCondition(aps, high, low);
    }
 }
-/* FORMAT HASH 9fff9f1134959345225571be5747e6d3 */
+
+/* FORMAT HASH 3d42872c1b2c3209dd3911b9efd2b611 */
