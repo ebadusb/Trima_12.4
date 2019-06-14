@@ -18,7 +18,7 @@ DEFINE_OBJ(PressureAlarm);
 
 
 #define TIMESTAMP    " ( " << _pd.GetAbsTimeNowinMinutes() << " )/ ( " << _pd.Status().APS() <<  "; p_cnt-> " << _Pauses.size() << "; r_cnt-> " << _PausesInRecovery.size() << " )"
-      #define POP_BACK(LIST) if (!LIST.empty()) {LIST.pop_back(); } else {DataLog(log_level_proc_alarm_monitor_info) << "Trying to pop an empty list!!!! " << TIMESTAMP <<  endmsg; }
+#define POP_BACK(LIST) if (!LIST.empty()) {LIST.pop_back(); } else {DataLog(log_level_proc_alarm_monitor_info) << "Trying to pop an empty list!!!! " << TIMESTAMP <<  endmsg; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1462,4 +1462,4 @@ int PressureAlarm::checkPauseCondition (const float& aps, const bool& high, cons
    }
 }
 
-/* FORMAT HASH 3d42872c1b2c3209dd3911b9efd2b611 */
+/* FORMAT HASH 5206312f660c0355b7f8904b8fb7a3e9 */
