@@ -429,11 +429,11 @@ void AdjustCtrl::ProcessRequest ()
    //
    // If something changed ...
    //
-   bool need_update = false;
+   bool need_update = beginChangeCount != _ChangeCount;
 
-   if ( beginChangeCount != _ChangeCount )
    {
-      need_update = Update();
+      bool old_update = Update();
+      DataLog(log_level_proc_debug) << "Old update flag: " << old_update << endmsg;
    }
 
 
