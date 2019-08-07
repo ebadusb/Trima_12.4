@@ -28,7 +28,7 @@
  **********************************************************************************/
 
 static const char DCL_TEXT_PWRUP_VERSION [] =                    "Version 6.4" ;
-static const char TEXT_FULL_VERSION []      =                         "Version 6.4.0";
+static const char TEXT_FULL_VERSION []      =                         "Version 6.4.2";
 
 #endif
 
