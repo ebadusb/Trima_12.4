@@ -133,7 +133,7 @@ extra_plasma_no_ac=0,1ed5caea
 allow_auto_conf_plasma_procs=0,9f0a5d70
 procedure_confirmation_popup=1,75a93a7d
 confirm_pas_bag_barcode_scan=0,757aa1e0
-pir_preferred=0,af1fac0e
+pir_preferred=1,d8189c98
 triple_ppc_flag=0,d3e8f4c1
 #
 # Adding the Autoflow feature
